@@ -64,6 +64,23 @@
             <post>commits@camel.apache.org</post>
         </mailingList>
     </mailingLists>
+    
+   <scm>
+        <connection>scm:git:http://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=camel-upgrade-recipes.git;a=summary</url>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.apache.org/jira/browse/CAMEL</url>
+    </issueManagement>
+    <distributionManagement>
+        <site>
+            <id>apache.website</id>
+            <url>${site-repo-url}</url>
+        </site>
+    </distributionManagement>
 
 
     <properties>
