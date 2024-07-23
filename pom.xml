@@ -68,8 +68,8 @@
    <scm>
         <connection>scm:git:http://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</developerConnection>
-        <url>https://gitbox.apache.org/repos/asf?p=camel-upgrade-recipes.git;a=summary</url>
-        <tag>0.0.1</tag>
+        <url>https://github.com/apache/camel-upgrade-recipes</url>
+        <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>jira</system>
