@@ -17,9 +17,15 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>33</version>
+    </parent>
 
     <groupId>org.apache.camel</groupId>
     <version>1.0.0-SNAPSHOT</version>
@@ -27,6 +33,37 @@
 
     <name>Camel Upgrades Recipes</name>
     <description>Migration recipes (using openrewrite) to make Maven migrations easier</description>
+
+    <developers>
+        <developer>
+            <name>The Apache Camel Team</name>
+            <email>dev@camel.apache.org</email>
+            <url>https://camel.apache.org</url>
+            <organization>Apache Software Foundation</organization>
+            <organizationUrl>http://apache.org/</organizationUrl>
+        </developer>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>Development List</name>
+            <subscribe>dev-subscribe@camel.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@camel.apache.org</unsubscribe>
+            <post>dev@camel.apache.org</post>
+        </mailingList>
+        <mailingList>
+            <name>User List</name>
+            <subscribe>users-subscribe@camel.apache.org</subscribe>
+            <unsubscribe>users-unsubscribe@camel.apache.org</unsubscribe>
+            <post>users@camel.apache.org</post>
+        </mailingList>
+        <mailingList>
+            <name>Commits List</name>
+            <subscribe>commits-subscribe@camel.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@camel.apache.org</unsubscribe>
+            <post>commits@camel.apache.org</post>
+        </mailingList>
+    </mailingLists>
 
 
     <properties>
