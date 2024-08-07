@@ -33,7 +33,8 @@ public class CamelTestUtil {
     public enum CamelVersion {
         v3_18(3, 18, 6),
         v4_0(4, 0, 3),
-        v4_4(4, 4, 2);
+        v4_4(4, 4, 2),
+        v4_5(4, 5, 0);
 
         private int major;
         private int minor;
@@ -82,7 +83,7 @@ public class CamelTestUtil {
         }).collect(Collectors.toList());
 
         return JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true)
-                .classpathFromResources(new InMemoryExecutionContext(), resources.toArray(new String[resources.size()]));
+                    .classpathFromResources(new InMemoryExecutionContext(), resources.toArray(new String[resources.size()]));
     }
 
 }
