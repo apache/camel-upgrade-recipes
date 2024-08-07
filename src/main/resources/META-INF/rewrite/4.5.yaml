@@ -1,0 +1,103 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html
+#####
+
+#####
+# Update the Camel project from 4.4 to 4.5
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel45.CamelMigrationRecipe
+displayName: Migrates `camel 4.4` application to `camel 4.5`
+description: Migrates `camel 4.4` application to `camel 4.5`.
+recipeList:
+  - org.apache.camel.updates.camel45.UseExtendedCamelContextGetters
+  - org.apache.camel.updates.camel45.TraceProperties
+  - org.apache.camel.updates.camel45.renamedClasses
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel45.UseExtendedCamelContextGetters
+displayName: Replace context.${method}(*) with context.getCamelContextExtension().${method}(*)
+recipeList:
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setTypeConverter
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getOrCreateTypeConverter
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setManagementMBeanAssembler
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getRestRegistryFactory
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setRestRegistryFactory
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setTransformerRegistry
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setValidatorRegistry
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setName
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setDescription
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getBootstrapFactoryFinder
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getFactoryFinder
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getFactoryFinder
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: addInterceptStrategy
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getStartupStepRecorder
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setStartupStepRecorder
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: resolvePropertyPlaceholders
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: getBasePackageScan
+  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+      oldMethodName: setBasePackageScan
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_core
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel45.TraceProperties
+displayName: Replace 'camel.main.backlogTracing' with `camel.trace.enabled'
+recipeList:
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: camel.main.backlogTracing
+      newPropertyKey: camel.trace.enabled
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_spring_redis
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel45.renamedClasses
+displayName: Renamed classes for elasticsearch,opensearch and spring regis
+description: Renamed classes for elasticsearch,opensearch and spring regis.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.redis.processor.idempotent.RedisIdempotentRepository
+      newFullyQualifiedTypeName: org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.redis.processor.idempotent.RedisStringIdempotentRepository
+      newFullyQualifiedTypeName: org.apache.camel.component.redis.processor.idempotent.SpringRedisStringIdempotentRepository
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.opensearch.aggregation.BulkRequestAggregationStrategy
+      newFullyQualifiedTypeName: org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.es.aggregation.BulkRequestAggregationStrategy
+      newFullyQualifiedTypeName: org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy
