@@ -90,7 +90,7 @@
         <camel3.18-version>3.18.6</camel3.18-version>
         <camel4.0-version>4.0.3</camel4.0-version>
         <camel4.4-version>4.4.2</camel4.4-version>
-
+        <camel4.5-version>4.5.0</camel4.5-version>
 
         <rewrite-recipe-bom.version>2.10.0</rewrite-recipe-bom.version>
 
@@ -171,6 +171,16 @@
         <dependency>
             <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-xml</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openrewrite</groupId>
+            <artifactId>rewrite-yaml</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openrewrite</groupId>
+            <artifactId>rewrite-maven</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -395,6 +405,49 @@
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-elasticsearch</artifactId>
                                     <version>${camel4.4-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <!-- 4.5-->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-api</artifactId>
+                                    <version>${camel4.5-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-elasticsearch</artifactId>
+                                    <version>${camel4.5-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-base-engine</artifactId>
+                                    <version>${camel4.5-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-spring-redis</artifactId>
+                                    <version>${camel4.5-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-opensearch</artifactId>
+                                    <version>${camel4.5-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-langchain-chat</artifactId>
+                                    <version>${camel4.5-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-langchain-embeddings</artifactId>
+                                    <version>${camel4.5-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>

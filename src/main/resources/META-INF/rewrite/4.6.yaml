@@ -1,0 +1,116 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html
+#####
+
+#####
+# Update the Camel project from 4.5 to 4.6
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel46.CamelMigrationRecipe
+displayName: Migrates `camel 4.5` application to `camel 4.6`
+description: Migrates `camel 4.5` application to `camel 4.6`.
+recipeList:
+  - org.apache.camel.updates.camel46.renamedClasses
+  - org.apache.camel.updates.camel46.yamStreamCaching
+  - org.apache.camel.updates.camel46.YamlDsl46Recipe
+  - org.apache.camel.updates.camel46.XmlDsl46Recipe
+  - org.apache.camel.updates.camel46.renamedDependencies
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_elasticsearch
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel46.renamedClasses
+displayName: Renamed classes for elasticsearch,opensearch and spring regis
+description: Renamed classes for elasticsearch,opensearch and spring regis.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy
+      newFullyQualifiedTypeName: org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy
+# langchain chat
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.chat.LangChainChatComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChatComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.chat.LangChainChatConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.chat.LangChainChatEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChatEndpoint
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.chat.LangChainChat
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChat
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.chat.LangChainChatOperations
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.chat.LangChainChatProducer
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChatProducer
+# langchain embeddings
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConverter
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsEndpoint
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain.embeddings.LangChainEmbeddings
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsProducer
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsProducer
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel46.renamedDependencies
+displayName: Renamed dependencies
+description: Renamed dependencies.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-langchain-chat
+      newGroupId: org.apache.camel
+      newArtifactId: camel-langchain4j-chat
+      newVersion: 4.6.0
+      overrideManagedVersion: true
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-langchain-embeddings
+      newGroupId: org.apache.camel
+      newArtifactId: camel-langchain4j-embeddings
+      newVersion: 4.6.0
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_yaml_dsl
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel46.yamStreamCaching
+displayName: Renamed streamCaching to streamCache on the route
+description: Renamed streamCaching to streamCache on the route.
+recipeList:
+  - org.openrewrite.yaml.ChangePropertyKey:
+      oldPropertyKey: route.streamCaching
+      newPropertyKey: route.streamCache
+
+
+
