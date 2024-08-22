@@ -51,7 +51,7 @@ recipeList:
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.updates.camel40.ChangeTypes
-displayName: Migrate moved types between Came 3.x and Camel 4.x
+displayName: Migrate moved types between Camel 3.x and Camel 4.x
 description: Change type of classes related to change of API.
 recipeList:
   - org.openrewrite.java.ChangeType:
