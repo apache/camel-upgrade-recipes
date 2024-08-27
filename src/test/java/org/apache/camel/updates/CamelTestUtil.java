@@ -16,8 +16,12 @@
  */
 package org.apache.camel.updates;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.openrewrite.InMemoryExecutionContext;
@@ -79,7 +83,17 @@ public class CamelTestUtil {
     public static Parser.Builder parserFromClasspath(CamelVersion from, String... classpath) {
         List<String> resources = Arrays.stream(classpath).map(cl -> {
             if (cl.startsWith("camel-")) {
-                return cl + "-" + from.getVersion();
+                String maxVersion = cl + "-" +  from.getVersion();
+                //find the highest version lesser or equals the required one
+                Optional<String> dependency = Arrays.stream(Paths.get("target/test-classes/META-INF/rewrite/classpath").toFile().listFiles())
+                        .filter(f -> f.getName().startsWith(cl))
+                        .map(f -> f.getName().substring(0, f.getName().lastIndexOf(".")))
+                        //filter out or higher version the requested
+                        .filter(f -> f.compareTo(maxVersion) <= 0)
+                        .sorted(Comparator.reverseOrder())
+                        .findFirst();
+
+                return dependency.orElse(cl);
             }
             return cl;
         }).collect(Collectors.toList());
