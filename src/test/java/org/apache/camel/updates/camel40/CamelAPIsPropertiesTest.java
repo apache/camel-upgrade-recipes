@@ -28,10 +28,9 @@ public class CamelAPIsPropertiesTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        CamelTestUtil
-                .recipe(spec, CamelTestUtil.CamelVersion.v4_0, "org.openrewrite.java.camel.migrate.ChangePropertyValue")
-                .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true))
-                .typeValidationOptions(TypeValidation.none());
+        CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_0)
+            .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true))
+            .typeValidationOptions(TypeValidation.none());
     }
 
     @Test
