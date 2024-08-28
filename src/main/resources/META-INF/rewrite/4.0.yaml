@@ -44,6 +44,7 @@ recipeList:
   - org.apache.camel.upgrade.camel40.java.CamelEIPRecipe
   - org.apache.camel.upgrade.camel40.java.CamelBeanRecipe
   - org.apache.camel.upgrade.camel40.java.CamelHttpRecipe
+  - org.apache.camel.upgrade.camel40.properties.rejectedPolicy
   - org.apache.camel.upgrade.camel40.UsePluginHelperForContextGetters
   - org.apache.camel.upgrade.camel40.ChangeTypes
   - org.apache.camel.upgrade.camel40.ChangeManagedChoiceMBeanMethodName
@@ -59,7 +60,7 @@ recipeList:
       newFullyQualifiedTypeName: org.apache.camel.impl.engine.IntrospectionSupport
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.camel.migrate.ChangePropertyValue
+name: org.apache.camel.upgrade.camel40.properties.rejectedPolicy
 displayName: Camel API changes in application.properties
 description: Apache Camel API migration from version 3.20 or higher to 4.0. Removal of deprecated APIs, which could be part of the application.properties.
 #todo would be better to put a comment about changed property and its alternative, once the openrewrite recipe allows that
