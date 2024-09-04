@@ -40,7 +40,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_camel_aws2_sns">doc</a>
      */
     @Test
-    void testAws2SnsQueueUrl() {
+    public void testAws2SnsQueueUrl() {
         //language=java
         rewriteRun(java(
                 """
@@ -71,7 +71,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_camel_tracing">doc</a>
      */
     @Test
-    void testTracingTag() {
+    public void testTracingTag() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.tracing.Tag;
@@ -99,7 +99,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_xml_and_yaml_dsl">doc</a>
      */
     @Test
-    void testYamlDsl() {
+    public void testYamlDsl() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
                 - beans:
@@ -122,7 +122,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_xml_and_yaml_dsl">doc</a>
      */
     @Test
-    void testYamlDslNPE() {
+    public void testYamlDslNPE() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
                 apiVersion: v1
@@ -171,7 +171,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_xml_and_yaml_dsl">doc</a>
      */
     @Test
-    void testXmlDsl() {
+    public void testXmlDsl() {
         //language=xml
         rewriteRun(xml("""
                 <routes xmlns="http://camel.apache.org/schema/spring">

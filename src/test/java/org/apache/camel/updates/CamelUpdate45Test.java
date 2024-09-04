@@ -38,7 +38,7 @@ public class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_core">CAMEL_CORE</a>
      */
     @Test
-    void testCamelCore() {
+    public void testCamelCore() {
         //language=java
         rewriteRun(java(
                 """
@@ -103,7 +103,7 @@ public class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_main">CAMEL-MAIN</a>
      */
     @Test
-    void testCamelMain() {
+    public void testCamelMain() {
         rewriteRun(Assertions.properties("""
                    #test
                    camel.main.backlogTracing=true
@@ -118,7 +118,7 @@ public class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_spring_redis">CAMEL-SPRING-REDIS</a>
      */
     @Test
-    void testSpringRedis() {
+    public void testSpringRedis() {
         //language=java
         rewriteRun(java(
                 """
@@ -151,7 +151,7 @@ public class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
     @Test
-    void testSearch() {
+    public void testSearch() {
         //language=java
         rewriteRun(java(
                 """
