@@ -40,7 +40,7 @@ public class CamelUpdate42Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_2.html#_camel_main">The documentation</a>
      */
     @Test
-    void testCamelMainDebugger() {
+    public void testCamelMainDebugger() {
         rewriteRun(Assertions.properties("""
                    #test
                    quarkus.camel.main.debugger=true
@@ -71,7 +71,7 @@ public class CamelUpdate42Test implements RewriteTest {
      *
      */
     @Test
-    void testAddedExchangeIntoSaga() {
+    public void testAddedExchangeIntoSaga() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.CamelContext;

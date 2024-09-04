@@ -36,7 +36,7 @@ public class CamelJmxTest implements RewriteTest {
     }
 
     @Test
-    void testRenamedMethods() {
+    public void testRenamedMethods() {
         //language=java
         rewriteRun(java(
                 """

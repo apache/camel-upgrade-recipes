@@ -52,7 +52,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    void testStateRepository() {
+    public void testStateRepository() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.BindToRegistry;
@@ -123,7 +123,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    void testResequenceStramConfig() {
+    public void testResequenceStramConfig() {
         //language=xml
         rewriteRun(xml("""
                 <routes>
@@ -160,7 +160,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    void testResequenceBatchConfig() {
+    public void testResequenceBatchConfig() {
         //language=xml
         rewriteRun(xml("""
                 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -204,7 +204,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    void testThrottleEIP() {
+    public void testThrottleEIP() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
@@ -291,7 +291,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    void testKafka() {
+    public void testKafka() {
         //language=java
         rewriteRun(java(
                 """

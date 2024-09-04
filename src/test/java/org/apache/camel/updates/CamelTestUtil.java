@@ -28,9 +28,11 @@ import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.Parser;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CamelTestUtil {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelTestUtil.class);
     /**
      * Enumeration of Camel version, with precise versions of dependencies and the name of the recipe
      */
@@ -93,10 +95,16 @@ public class CamelTestUtil {
                         .sorted(Comparator.reverseOrder())
                         .findFirst();
 
-                return dependency.orElse(cl);
+                if(dependency.isEmpty()) {
+                    LOGGER.warn("Dependency not found in classpath: {}", cl);
+                }
+
+                return dependency.orElse(null);
             }
             return cl;
-        }).collect(Collectors.toList());
+        })
+                .filter(cl -> cl != null)
+                .collect(Collectors.toList());
 
         return JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true)
                     .classpathFromResources(new InMemoryExecutionContext(), resources.toArray(new String[resources.size()]));

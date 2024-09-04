@@ -35,7 +35,7 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testClassTypeAndInt() {
+    public void testClassTypeAndInt() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
@@ -65,7 +65,7 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testClassTypeAndBoolean() {
+    public void testClassTypeAndBoolean() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
@@ -95,7 +95,7 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testClassTypeAndFloat() {
+    public void testClassTypeAndFloat() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
@@ -125,7 +125,7 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testDoubleAndChar() {
+    public void testDoubleAndChar() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
@@ -155,7 +155,7 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testMultipleTo() {
+    public void testMultipleTo() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.builder.RouteBuilder;

@@ -35,7 +35,7 @@ public class CamelAPIsPropertiesTest implements RewriteTest {
     }
 
     @Test
-    void testRejectedPolicyDiscardOldeste() {
+    public void testRejectedPolicyDiscardOldeste() {
         rewriteRun(Assertions.properties("""
                    #test
                    camel.threadpool.rejectedPolicy=DiscardOldest
@@ -47,7 +47,7 @@ public class CamelAPIsPropertiesTest implements RewriteTest {
     }
 
     @Test
-    void testRejectedPolicyDiscard() {
+    public void testRejectedPolicyDiscard() {
         rewriteRun(Assertions.properties("""
                    #test
                    camel.threadpool.rejectedPolicy=Discard

@@ -36,7 +36,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testRemovedExchangePatternInOptionalOut() {
+    public void testRemovedExchangePatternInOptionalOut() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.ExchangePattern;
@@ -76,7 +76,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testRemovedFullyExchangePatternInOptionalOut() {
+    public void testRemovedFullyExchangePatternInOptionalOut() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
@@ -114,7 +114,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testComponentNameResolver() {
+    public void testComponentNameResolver() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.CamelContext;
@@ -143,7 +143,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testFallbackConverterOnMethod() {
+    public void testFallbackConverterOnMethod() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.FallbackConverter;
@@ -167,7 +167,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testFallbackConverterOnClassDef() {
+    public void testFallbackConverterOnClassDef() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.FallbackConverter;
@@ -185,7 +185,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testEndpointInject() {
+    public void testEndpointInject() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.component.mock.MockEndpoint;
@@ -209,7 +209,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testProduce() {
+    public void testProduce() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.component.mock.MockEndpoint;
@@ -237,7 +237,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testConsume() {
+    public void testConsume() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.component.mock.MockEndpoint;
@@ -265,7 +265,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testUriEndpoint() {
+    public void testUriEndpoint() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.spi.UriEndpoint;
@@ -286,7 +286,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testUriEndpointWithUnknownValue() {
+    public void testUriEndpointWithUnknownValue() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.spi.UriEndpoint;
@@ -308,7 +308,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testAsyncCallback() {
+    public void testAsyncCallback() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                 import org.apache.camel.ProducerTemplate;
@@ -345,7 +345,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testOnCamelContextStart() {
+    public void testOnCamelContextStart() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.spi.OnCamelContextStart;
@@ -367,7 +367,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testOnCamelContextStop() {
+    public void testOnCamelContextStop() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.spi.OnCamelContextStop;
@@ -389,7 +389,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testAdapt() {
+    public void testAdapt() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.CamelContext;
@@ -419,7 +419,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testMoreOccurrencesAdapt() {
+    public void testMoreOccurrencesAdapt() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                     import org.apache.camel.CamelContext;
@@ -455,7 +455,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testAdaptStandalone() {
+    public void testAdaptStandalone() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                     import org.apache.camel.CamelContext;
@@ -487,7 +487,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testAdapt2() {
+    public void testAdapt2() {
         //language=java
         rewriteRun(java("""
                 package org.apache.camel.component.test.it;
@@ -522,7 +522,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testComponenetNameResolverViaPluginHelper() {
+    public void testComponenetNameResolverViaPluginHelper() {
         //language=java
         rewriteRun(
                 java("""
@@ -561,7 +561,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testModelJAXBContextFactoryViaPluginHelper() {
+    public void testModelJAXBContextFactoryViaPluginHelper() {
         //language=java
         rewriteRun(
                 java("""
@@ -604,7 +604,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testModelToXMLDumperViaPluginHelper() {
+    public void testModelToXMLDumperViaPluginHelper() {
         //language=java
         rewriteRun(java("""
                     package org.apache.camel.component.test.it;
@@ -646,7 +646,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void getRoutesLoaderViaPluginHelper() {
+    public void getRoutesLoaderViaPluginHelper() {
         //language=java
         rewriteRun(java("""
                     package org.apache.camel.component.test.it;
@@ -688,7 +688,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testRuntimeCatalog() {
+    public void testRuntimeCatalog() {
         //language=java
         rewriteRun(java(
                 """
@@ -724,7 +724,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testAdaptRouteDefinition() {
+    public void testAdaptRouteDefinition() {
         //language=java
         rewriteRun(java(
                 """
@@ -762,7 +762,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testDecoupleExtendedCamelContext() {
+    public void testDecoupleExtendedCamelContext() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.CamelContext;
@@ -795,7 +795,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testDecoupleExtendedExchange() {
+    public void testDecoupleExtendedExchange() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.Exchange;
@@ -830,7 +830,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testDecoupleExtendedExchange2() {
+    public void testDecoupleExtendedExchange2() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.CamelContext;
@@ -861,7 +861,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testExchangeIsFailureHandled() {
+    public void testExchangeIsFailureHandled() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.Exchange;
@@ -894,7 +894,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testThreadPoolRejectedPolicy() {
+    public void testThreadPoolRejectedPolicy() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -931,7 +931,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testSimpleBuilder() {
+    public void testSimpleBuilder() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                 import org.apache.camel.builder.SimpleBuilder;
@@ -942,7 +942,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testOneIntrospectionSupport() {
+    public void testOneIntrospectionSupport() {
         //language=java
         rewriteRun(
                 spec -> CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_0),
@@ -971,7 +971,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testMultiIntrospectionSupport() {
+    public void testMultiIntrospectionSupport() {
         //language=java
         rewriteRun(
                 spec -> CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_0),
@@ -1009,7 +1009,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testarchetypeCatalogAsXml() {
+    public void testarchetypeCatalogAsXml() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                     import org.apache.camel.catalog.CamelCatalog;
@@ -1038,7 +1038,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testMainListenerConfigureImpl() {
+    public void testMainListenerConfigureImpl() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                     import org.apache.camel.CamelContext;
@@ -1067,7 +1067,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testDumpRoutes() {
+    public void testDumpRoutes() {
         //language=java
         rewriteRun(spec -> spec.expectedCyclesThatMakeChanges(2), java("""
                     import org.apache.camel.CamelContext;
@@ -1092,7 +1092,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testAdapt3() {
+    public void testAdapt3() {
         //language=java
         rewriteRun(java(
                 """
@@ -1164,7 +1164,7 @@ public class CamelAPIsTest implements RewriteTest {
     }
 
     @Test
-    void testBacklogTracerEventMessage() {
+    public void testBacklogTracerEventMessage() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;

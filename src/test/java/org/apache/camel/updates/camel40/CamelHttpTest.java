@@ -36,7 +36,7 @@ public class CamelHttpTest implements RewriteTest {
     }
 
     @Test
-    void testHttp() {
+    public void testHttp() {
         //language=java
         rewriteRun(java(
                 """
@@ -111,7 +111,7 @@ public class CamelHttpTest implements RewriteTest {
     }
 
     @Test
-    void testNoopHostnameVerifier() {
+    public void testNoopHostnameVerifier() {
         //language=java
         rewriteRun(java(
                 """

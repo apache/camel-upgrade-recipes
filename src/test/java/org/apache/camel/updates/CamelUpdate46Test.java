@@ -40,7 +40,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_elasticsearch">CAMEL-ELASTICSEARCH</a>
      */
     @Test
-    void testSearch() {
+    public void testSearch() {
         //language=java
         rewriteRun(java(
                 """
@@ -65,7 +65,7 @@ public class CamelUpdate46Test implements RewriteTest {
 
 
     @Test
-    void testBeanPropertyToProperties() {
+    public void testBeanPropertyToProperties() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
                 beans:
@@ -84,7 +84,7 @@ public class CamelUpdate46Test implements RewriteTest {
     }
 
     @Test
-    void testYamlStreamCaching() {
+    public void testYamlStreamCaching() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
             route:
@@ -104,7 +104,7 @@ public class CamelUpdate46Test implements RewriteTest {
     }
 
     @Test
-    void testYamlBeanPropertyToProperties2() {
+    public void testYamlBeanPropertyToProperties2() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
                 - beans:
@@ -126,7 +126,7 @@ public class CamelUpdate46Test implements RewriteTest {
     }
 
     @Test
-    void testXmlProperties() {
+    public void testXmlProperties() {
         //language=xml
         rewriteRun(xml("""
                 <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
@@ -145,7 +145,7 @@ public class CamelUpdate46Test implements RewriteTest {
 
 
     @Test
-    void testRenamedDependencies() {
+    public void testRenamedDependencies() {
         //language=xml
         rewriteRun(org.openrewrite.maven.Assertions.pomXml(
                 """
@@ -201,7 +201,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    void testLangchainChat() {
+    public void testLangchainChat() {
         //language=java
         rewriteRun(java(
                 """
@@ -242,7 +242,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    void testLangchainEmbeddings() {
+    public void testLangchainEmbeddings() {
         //language=java
         rewriteRun(java(
                 """
