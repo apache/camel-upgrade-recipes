@@ -27,7 +27,7 @@
     </parent>
 
     <groupId>org.apache.camel</groupId>
-    <version>4.7.0-SNAPSHOT</version>
+    <version>4.8.0-SNAPSHOT</version>
     <artifactId>camel-upgrade-recipes</artifactId>
 
     <name>Camel Upgrades Recipes</name>
