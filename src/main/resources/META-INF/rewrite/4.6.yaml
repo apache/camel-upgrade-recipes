@@ -24,19 +24,19 @@
 #####
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel46.CamelMigrationRecipe
+name: org.apache.camel.upgrade.camel46.CamelMigrationRecipe
 displayName: Migrates `camel 4.5` application to `camel 4.6`
 description: Migrates `camel 4.5` application to `camel 4.6`.
 recipeList:
-  - org.apache.camel.updates.camel46.renamedClasses
-  - org.apache.camel.updates.camel46.yamStreamCaching
-  - org.apache.camel.updates.camel46.YamlDsl46Recipe
-  - org.apache.camel.updates.camel46.XmlDsl46Recipe
-  - org.apache.camel.updates.camel46.renamedDependencies
+  - org.apache.camel.upgrade.camel46.renamedClasses
+  - org.apache.camel.upgrade.camel46.yamStreamCaching
+  - org.apache.camel.upgrade.camel46.YamlDsl46Recipe
+  - org.apache.camel.upgrade.camel46.XmlDsl46Recipe
+  - org.apache.camel.upgrade.camel46.renamedDependencies
 ---
 #https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_elasticsearch
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel46.renamedClasses
+name: org.apache.camel.upgrade.camel46.renamedClasses
 displayName: Renamed classes for elasticsearch,opensearch and spring regis
 description: Renamed classes for elasticsearch,opensearch and spring regis.
 recipeList:
@@ -84,7 +84,7 @@ recipeList:
 ---
 #https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel46.renamedDependencies
+name: org.apache.camel.upgrade.camel46.renamedDependencies
 displayName: Renamed dependencies
 description: Renamed dependencies.
 recipeList:
@@ -104,7 +104,7 @@ recipeList:
 ---
 #https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_yaml_dsl
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel46.yamStreamCaching
+name: org.apache.camel.upgrade.camel46.yamStreamCaching
 displayName: Renamed streamCaching to streamCache on the route
 description: Renamed streamCaching to streamCache on the route.
 recipeList:

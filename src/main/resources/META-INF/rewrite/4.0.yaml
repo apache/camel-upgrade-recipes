@@ -28,29 +28,29 @@
 ---
 type: specs.openrewrite.org/v1beta/category
 name: Camel 3.x
-packageName: org.apache.camel.updates30
+packageName: org.apache.camel.upgrade30
 description: Migrate from Camel 3.x to 4.x.
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel40.CamelMigrationRecipe
+name: org.apache.camel.upgrade.camel40.CamelMigrationRecipe
 displayName: Migrate `camel3` application to `camel4.`
 description: Migrate `camel3` application to `camel4`.
 recipeList:
-  - org.apache.camel.updates.camel40.xml.XmlDslRecipe
-  - org.apache.camel.updates.camel40.xml.CircuitBreakerXmlDslRecipe
-  - org.apache.camel.updates.camel40.yaml.CamelYamlRouteConfigurationSequenceRecipe
-  - org.apache.camel.updates.camel40.yaml.CamelYamlStepsInFromRecipe
-  - org.apache.camel.updates.camel40.java.CamelAPIsRecipe
-  - org.apache.camel.updates.camel40.java.CamelEIPRecipe
-  - org.apache.camel.updates.camel40.java.CamelBeanRecipe
-  - org.apache.camel.updates.camel40.java.CamelHttpRecipe
-  - org.apache.camel.updates.camel40.UsePluginHelperForContextGetters
-  - org.apache.camel.updates.camel40.ChangeTypes
-  - org.apache.camel.updates.camel40.ChangeManagedChoiceMBeanMethodName
-  - org.apache.camel.updates.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
+  - org.apache.camel.upgrade.camel40.xml.XmlDslRecipe
+  - org.apache.camel.upgrade.camel40.xml.CircuitBreakerXmlDslRecipe
+  - org.apache.camel.upgrade.camel40.yaml.CamelYamlRouteConfigurationSequenceRecipe
+  - org.apache.camel.upgrade.camel40.yaml.CamelYamlStepsInFromRecipe
+  - org.apache.camel.upgrade.camel40.java.CamelAPIsRecipe
+  - org.apache.camel.upgrade.camel40.java.CamelEIPRecipe
+  - org.apache.camel.upgrade.camel40.java.CamelBeanRecipe
+  - org.apache.camel.upgrade.camel40.java.CamelHttpRecipe
+  - org.apache.camel.upgrade.camel40.UsePluginHelperForContextGetters
+  - org.apache.camel.upgrade.camel40.ChangeTypes
+  - org.apache.camel.upgrade.camel40.ChangeManagedChoiceMBeanMethodName
+  - org.apache.camel.upgrade.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel40.ChangeTypes
+name: org.apache.camel.upgrade.camel40.ChangeTypes
 displayName: Migrate moved types between Camel 3.x and Camel 4.x
 description: Change type of classes related to change of API.
 recipeList:
@@ -74,7 +74,7 @@ recipeList:
         oldValue: Discard
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel40.ChangeManagedChoiceMBeanMethodName
+name: org.apache.camel.upgrade.camel40.ChangeManagedChoiceMBeanMethodName
 displayName: Change of method names brought by Camel JMX API changes
 description: MBeans now use a consistent method name of `extendedInformation`.
 recipeList:
@@ -85,7 +85,7 @@ recipeList:
       ignoreDefinition: null
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
+name: org.apache.camel.upgrade.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
 displayName: Change of method names brought by Camel JMX API changes
 description: MBeans now use a consistent method name of `extendedInformation`.
 recipeList:
@@ -96,14 +96,14 @@ recipeList:
       ignoreDefinition: null
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel40.UsePluginHelperForContextGetters
+name: org.apache.camel.upgrade.camel40.UsePluginHelperForContextGetters
 displayName: Replace context.getExtension(ExtendedCamelContext.class).get* with PluginHelper.get*(context)
 recipeList:
-  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToPluginHelper:
       oldMethodName: getComponentNameResolver
-  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToPluginHelper:
       oldMethodName: getModelJAXBContextFactory
-  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToPluginHelper:
       oldMethodName: getModelToXMLDumper
-  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToPluginHelper:
       oldMethodName: getRoutesLoader
