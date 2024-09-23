@@ -24,58 +24,58 @@
 #####
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel45.CamelMigrationRecipe
+name: org.apache.camel.upgrade.camel45.CamelMigrationRecipe
 displayName: Migrates `camel 4.4` application to `camel 4.5`
 description: Migrates `camel 4.4` application to `camel 4.5`.
 recipeList:
-  - org.apache.camel.updates.camel45.UseExtendedCamelContextGetters
-  - org.apache.camel.updates.camel45.TraceProperties
-  - org.apache.camel.updates.camel45.renamedClasses
+  - org.apache.camel.upgrade.camel45.UseExtendedCamelContextGetters
+  - org.apache.camel.upgrade.camel45.TraceProperties
+  - org.apache.camel.upgrade.camel45.renamedClasses
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel45.UseExtendedCamelContextGetters
+name: org.apache.camel.upgrade.camel45.UseExtendedCamelContextGetters
 displayName: Replace context.${method}(*) with context.getCamelContextExtension().${method}(*)
 recipeList:
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setTypeConverter
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getOrCreateTypeConverter
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setManagementMBeanAssembler
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getRestRegistryFactory
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setRestRegistryFactory
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setTransformerRegistry
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setValidatorRegistry
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setName
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setDescription
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getBootstrapFactoryFinder
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getFactoryFinder
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getFactoryFinder
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: addInterceptStrategy
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getStartupStepRecorder
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setStartupStepRecorder
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: resolvePropertyPlaceholders
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: getBasePackageScan
-  - org.apache.camel.updates.customRecipes.MoveGetterToExtendedCamelContext:
+  - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setBasePackageScan
 ---
 #https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_core
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel45.TraceProperties
+name: org.apache.camel.upgrade.camel45.TraceProperties
 displayName: Replace 'camel.main.backlogTracing' with `camel.trace.enabled'
 recipeList:
   - org.openrewrite.properties.ChangePropertyKey:
@@ -85,7 +85,7 @@ recipeList:
 #https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch
 #https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_spring_redis
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel45.renamedClasses
+name: org.apache.camel.upgrade.camel45.renamedClasses
 displayName: Renamed classes for elasticsearch,opensearch and spring regis
 description: Renamed classes for elasticsearch,opensearch and spring regis.
 recipeList:

@@ -24,18 +24,18 @@
 #####
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel47.CamelMigrationRecipe
+name: org.apache.camel.upgrade.camel47.CamelMigrationRecipe
 displayName: Migrates `camel 4.6` application to `camel 4.7`
 description: Migrates `camel 4.6` application to `camel 4.7`.
 recipeList:
-  - org.apache.camel.updates.camel47.renamedClasses
-  - org.apache.camel.updates.camel47.XmlDsl47Recipe
-  - org.apache.camel.updates.camel47.YamlDsl47Recipe
-  - org.apache.camel.updates.camel47.Java47Recipes
-  - org.apache.camel.updates.camel47.removedDependencies
+  - org.apache.camel.upgrade.camel47.renamedClasses
+  - org.apache.camel.upgrade.camel47.XmlDsl47Recipe
+  - org.apache.camel.upgrade.camel47.YamlDsl47Recipe
+  - org.apache.camel.upgrade.camel47.Java47Recipes
+  - org.apache.camel.upgrade.camel47.removedDependencies
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel47.renamedClasses
+name: org.apache.camel.upgrade.camel47.renamedClasses
 displayName: Renamed classes for API
 description: Renamed classes for API.
 recipeList:
@@ -47,7 +47,7 @@ recipeList:
       newFullyQualifiedTypeName: org.apache.camel.spi.ValidatorKey
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.updates.camel47.removedDependencies
+name: org.apache.camel.upgrade.camel47.removedDependencies
 displayName: Moved the camel-cloudevents api into camel-api and removed the camel-cloudevents
 description: Moved the camel-cloudevents api into camel-api and removed the camel-cloudevents.
 recipeList:
