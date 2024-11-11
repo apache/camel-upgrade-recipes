@@ -28,7 +28,7 @@ version=$1
 mkdir $1/
 cd $1/
 
-wget https://github.com/apache/camel-kamelets/archive/refs/tags/v$1.tar.gz -O camel-upgrade-recipes-sources-$1.tar.gz
+wget https://github.com/apache/camel-upgrade-recipes/archive/refs/tags/v$1.tar.gz -O camel-upgrade-recipes-sources-$1.tar.gz
 cd ../
 ./sign.sh $1/
 svn import $1/ https://dist.apache.org/repos/dist/dev/camel/camel-upgrade-recipes/$2/ -m "Import camel-upgrade-recipes release"

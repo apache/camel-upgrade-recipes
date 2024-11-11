@@ -25,13 +25,14 @@ import org.openrewrite.test.TypeValidation;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.xml.Assertions.xml;
 
-public class CamelUpdate43Test implements RewriteTest {
+class CamelUpdate43Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_4)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-api",
-                        "camel-core-model", "camel-support", "camel-base-engine", "camel-endpointdsl", "camel-kafka"))
+                        "camel-core-model", "camel-support", "camel-base-engine", "camel-endpointdsl", "camel-kafka",
+                        "jakarta.xml.bind-api"))
                 .typeValidationOptions(TypeValidation.none());
     }
 
@@ -52,40 +53,40 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    public void testStateRepository() {
+    void testStateRepository() {
         //language=java
         rewriteRun(java("""
-                    import org.apache.camel.BindToRegistry;
-                    import org.apache.camel.impl.engine.FileStateRepository;
-                    import org.apache.camel.impl.engine.MemoryStateRepository;
-
-                    import java.io.File;
-
-                    public class CoreTest {
-
-                        @BindToRegistry("stateRepository")
-                        private static final MemoryStateRepository stateRepository = new MemoryStateRepository();
-
-                        // Create the repository in which the Kafka offsets will be persisted
-                        FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
-                    }
-                """,
+                            import org.apache.camel.BindToRegistry;
+                            import org.apache.camel.impl.engine.FileStateRepository;
+                            import org.apache.camel.impl.engine.MemoryStateRepository;
+                        
+                            import java.io.File;
+                        
+                            public class CoreTest {
+                        
+                                @BindToRegistry("stateRepository")
+                                private static final MemoryStateRepository stateRepository = new MemoryStateRepository();
+                        
+                                // Create the repository in which the Kafka offsets will be persisted
+                                FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
+                            }
+                        """,
                 """
                         import org.apache.camel.BindToRegistry;
                         import org.apache.camel.support.processor.state.FileStateRepository;
                         import org.apache.camel.support.processor.state.MemoryStateRepository;
-
+                        
                         import java.io.File;
-
+                        
                         public class CoreTest {
-
+                        
                             @BindToRegistry("stateRepository")
                             private static final MemoryStateRepository stateRepository = new MemoryStateRepository();
-
+                        
                             // Create the repository in which the Kafka offsets will be persisted
                             FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
                         }
-                            """));
+                        """));
     }
 
     /**
@@ -123,7 +124,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    public void testResequenceStramConfig() {
+    void testResequenceStramConfig() {
         //language=xml
         rewriteRun(xml("""
                 <routes>
@@ -136,7 +137,7 @@ public class CamelUpdate43Test implements RewriteTest {
                         </resequence>
                     </route>
                 </routes>
-                                            """, """
+                """, """
                     <routes>
                         <route>
                             <from uri="direct:start"/>
@@ -160,7 +161,7 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    public void testResequenceBatchConfig() {
+    void testResequenceBatchConfig() {
         //language=xml
         rewriteRun(xml("""
                 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -173,7 +174,7 @@ public class CamelUpdate43Test implements RewriteTest {
                         </resequence>
                      </route>
                  </camelContext>
-                                            """, """
+                """, """
                     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
                         <route>
                             <from uri="direct:start" />
@@ -204,78 +205,78 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    public void testThrottleEIP() {
+    void testThrottleEIP() {
         //language=java
         rewriteRun(java("""
-                    import org.apache.camel.builder.RouteBuilder;
-
-                    public class ThrottleEIPTest extends RouteBuilder {
-                        @Override
-                        public void configure() {
-                            long maxRequestsPerPeriod = 100L;
-                            Long maxRequests = Long.valueOf(maxRequestsPerPeriod);
-
-                            from("seda:a")
-                                    .throttle(maxRequestsPerPeriod).timePeriodMillis(500).asyncDelayed()
-                                    .to("seda:b");
-
-                            from("seda:a")
-                                    .throttle(maxRequestsPerPeriod).timePeriodMillis(500)
-                                    .to("seda:b");
-
-                            from("seda:c")
-                                    .throttle(maxRequestsPerPeriod)
-                                    .to("seda:d");
-
-                            from("seda:a")
-                                    .throttle(maxRequests).timePeriodMillis(500).asyncDelayed()
-                                    .to("seda:b");
-
-                            from("seda:a")
-                                    .throttle(maxRequests).timePeriodMillis(500)
-                                    .to("seda:b");
-
-                            from("seda:c")
-                                    .throttle(maxRequests)
-                                    .to("seda:d");
-                        }
-                    }
-                """,
+                            import org.apache.camel.builder.RouteBuilder;
+                        
+                            public class ThrottleEIPTest extends RouteBuilder {
+                                @Override
+                                void configure() {
+                                    long maxRequestsPerPeriod = 100L;
+                                    Long maxRequests = maxRequestsPerPeriod;
+                        
+                                    from("seda:a")
+                                            .throttle(maxRequestsPerPeriod).timePeriodMillis(500).asyncDelayed()
+                                            .to("seda:b");
+                        
+                                    from("seda:a")
+                                            .throttle(maxRequestsPerPeriod).timePeriodMillis(500)
+                                            .to("seda:b");
+                        
+                                    from("seda:c")
+                                            .throttle(maxRequestsPerPeriod)
+                                            .to("seda:d");
+                        
+                                    from("seda:a")
+                                            .throttle(maxRequests).timePeriodMillis(500).asyncDelayed()
+                                            .to("seda:b");
+                        
+                                    from("seda:a")
+                                            .throttle(maxRequests).timePeriodMillis(500)
+                                            .to("seda:b");
+                        
+                                    from("seda:c")
+                                            .throttle(maxRequests)
+                                            .to("seda:d");
+                                }
+                            }
+                        """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
-
+                        
                         public class ThrottleEIPTest extends RouteBuilder {
                             @Override
-                            public void configure() {
+                            void configure() {
                                 long maxRequestsPerPeriod = 100L;
-                                Long maxRequests = Long.valueOf(maxRequestsPerPeriod);
-
+                                Long maxRequests = maxRequestsPerPeriod;
+                        
                                 /* Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.*/from("seda:a")
                                         .throttle(maxRequestsPerPeriod).asyncDelayed()
                                         .to("seda:b");
-
+                        
                                 /* Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.*/from("seda:a")
                                         .throttle(maxRequestsPerPeriod)
                                         .to("seda:b");
-
+                        
                                 /* Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.*/from("seda:c")
                                         .throttle(maxRequestsPerPeriod)
                                         .to("seda:d");
-
+                        
                                 /* Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.*/from("seda:a")
                                         .throttle(maxRequests).asyncDelayed()
                                         .to("seda:b");
-
+                        
                                 /* Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.*/from("seda:a")
                                         .throttle(maxRequests)
                                         .to("seda:b");
-
+                        
                                 /* Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.*/from("seda:c")
                                         .throttle(maxRequests)
                                         .to("seda:d");
                             }
                         }
-                                """));
+                               \s"""));
     }
 
     /**
@@ -291,32 +292,29 @@ public class CamelUpdate43Test implements RewriteTest {
      * </p>
      */
     @Test
-    public void testKafka() {
+    void testKafka() {
         //language=java
         rewriteRun(java(
                 """
-                            import org.apache.camel.CamelContext;
-                            import org.apache.camel.Message;
-                            import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
-                            import org.apache.camel.component.kafka.KafkaConstants;
-                            import org.apache.kafka.clients.producer.RecordMetadata;
-                            import org.apache.camel.support.DefaultMessage;
-
-                            import java.util.List;
-
-                            public class KafkaTest extends EndpointRouteBuilder {
-                                private CamelContext context;
-                                private final Message in = new DefaultMessage(context);
-
-                                @Override
-                                public void configure() throws Exception {
-
-                                    List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
-
-
-                                    from(kafka().orgApacheKafkaClientsProducerRecordmetadata()).to(mock("test"));
-                                }
+                        import org.apache.camel.CamelContext;
+                        import org.apache.camel.Message;
+                        import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+                        import org.apache.camel.component.kafka.KafkaConstants;
+                        import org.apache.kafka.clients.producer.RecordMetadata;
+                        import org.apache.camel.support.DefaultMessage;
+                        
+                        import java.util.List;
+                        
+                        public class KafkaTest extends EndpointRouteBuilder {
+                        
+                            @Override
+                            void configure() throws Exception {
+                                final Message in = new DefaultMessage(getContext());
+                                List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+                        
+                                from(kafka().orgApacheKafkaClientsProducerRecordmetadata()).to(mock("test"));
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.CamelContext;
@@ -325,22 +323,19 @@ public class CamelUpdate43Test implements RewriteTest {
                         import org.apache.camel.component.kafka.KafkaConstants;
                         import org.apache.kafka.clients.producer.RecordMetadata;
                         import org.apache.camel.support.DefaultMessage;
-
+                        
                         import java.util.List;
-
+                        
                         public class KafkaTest extends EndpointRouteBuilder {
-                            private CamelContext context;
-                            private final Message in = new DefaultMessage(context);
-
+                        
                             @Override
-                            public void configure() throws Exception {
-
+                            void configure() throws Exception {
+                                final Message in = new DefaultMessage(getContext());
                                 List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORD_META);
-
-
+                        
                                 from(kafka().kafkaRecordMeta()).to(mock("test"));
                             }
                         }
-                            """));
+                        """));
     }
 }
