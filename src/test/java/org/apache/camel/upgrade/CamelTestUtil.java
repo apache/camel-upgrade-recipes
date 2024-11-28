@@ -42,7 +42,9 @@ public class CamelTestUtil {
         v4_4(4, 4, 2),
         v4_5(4, 5, 0),
         v4_6(4, 6, 0),
-        v4_7(4, 7, 0);
+        v4_7(4, 7, 0),
+        v4_8(4, 8, 0),
+        v4_9(4, 9, 0);
 
         private int major;
         private int minor;

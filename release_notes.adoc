@@ -1,0 +1,45 @@
+= Release notes
+
+
+
+[%autowidth,stripes=hover]
+|===
+| from | to | chapter
+
+| 4.8.0 | 4.9.0 | <<_4_9_0>>
+
+|===
+
+=== 4.9.0
+
+Upgrading Camel 4.8 to 4.9 (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html[guide])
+
+Not all of the migrations could be covered by the openrewrite recipes.
+See the table for more details:
+
+[%autowidth,stripes=hover]
+|===
+| component | status | comment
+
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_api[camel-api] | partial | Renamed Exchange.ACTIVE_SPAN to Exchange.OTEL_ACTIVE_SPAN. Renamed ExchangePropertyKey.ACTIVE_SPAN to ExchangePropertyKey.OTEL_ACTIVE_SPAN.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_management[camel-management] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_using_route_templates[Route Templates] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_xml_io[camel-xml-io] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_jackson[camel-jackson] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_jms[camel-jms] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_opentelemetry[camel-opentelemetry] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_pubnub[camel-pubnub] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_smooks[camel-smooks] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_hashicorp_vault_properties_function[camel-hashicorp-vault properties function	] | partial | Literal expressions matching `(\{\{hashicorp:secret:[^/]+)/([^/]+}})` are migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_aws_secrets_manager_properties_function[camel-aws-secrets-manager properties function] | partial | Literal expressions matching `(\{\{aws:[^/]+)/([^/]+}})` are migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_aws_secrets_manager_properties_function[camel-google-secret-manager properties function] | partial | Literal expressions matching `(\{\{gcp:[^/]+)/([^/]+}})` are migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_azure_key_vault_properties_function[camel-azure-key-vault properties function] | partial | Literal expressions matching `(\{\{azure:[^/]+)/([^/]+}})` are migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_azure_key_vault_properties_function[camel-aws] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_test[camel-test] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_debezium[camel-debezium] | covered |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_deprecated_components[Deprecated components] | N/A |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_deprecated_components[Removed deprecated components] | covered |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_api[Removed API] | covered |
+
+
