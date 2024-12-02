@@ -56,8 +56,8 @@ public class CamelCoreRecipe extends Recipe {
 
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            public J.Literal visitLiteral(J.Literal literal, ExecutionContext context) {
-                J.Literal l = super.visitLiteral(literal, context);
+            public J.Literal doVisitLiteral(J.Literal literal, ExecutionContext context) {
+                J.Literal l = super.doVisitLiteral(literal, context);
 
                 //is it possible to precondition that aws2 is present?
                 if (JavaType.Primitive.String.equals(l.getType())
