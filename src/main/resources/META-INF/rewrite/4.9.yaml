@@ -1,0 +1,268 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_8.html#_upgrading_camel_4_7_to_4_8
+# None of the migrations can be covered by the automation migrations.
+#####
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.CamelMigrationRecipe
+displayName: Migrates `camel 4.8` application to `camel 4.9`
+description: Migrates `camel 4.8` application to `camel 4.9`.
+recipeList:
+  - org.apache.camel.upgrade.camel49.renamedAPIs
+  - org.apache.camel.upgrade.camel49.HashicorpSecretRecipe
+  - org.apache.camel.upgrade.camel49.GcpSecretRecipe
+  - org.apache.camel.upgrade.camel49.AwsSecretRecipe
+  - org.apache.camel.upgrade.camel49.AzureSecretRecipe
+  - org.apache.camel.upgrade.camel49.DebeziumChangeTypes
+  - org.apache.camel.upgrade.camel49.removedDependencies
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_api
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.renamedAPIs
+displayName: Renamed classes for API
+description: Renamed classes for API.
+recipeList:
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.camel.Exchange.ACTIVE_SPAN
+      fullyQualifiedConstantName: org.apache.camel.Exchange.OTEL_ACTIVE_SPAN
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.camel.ExchangePropertyKey.ACTIVE_SPAN
+      fullyQualifiedConstantName: org.apache.camel.ExchangePropertyKey.OTEL_ACTIVE_SPAN
+---
+#thttps://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_hashicorp_vault_properties_function
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.HashicorpSecretRecipe
+displayName: The syntax for retrieving a single field of a secret has been changed
+description: The syntax for retrieving a single field of a secret has been changed..
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.LiteralRegexpConverterRecipe:
+      regexp: "(\\{\\{hashicorp:secret:[^/]+)/([^/]+}})"
+      replacement:  "${1}#${2}"
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_google_secret_manager_properties_function
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.GcpSecretRecipe
+displayName: The syntax for retrieving a single field of a secret has been changed
+description: The syntax for retrieving a single field of a secret has been changed..
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.LiteralRegexpConverterRecipe:
+      regexp: "(\\{\\{gcp:[^/]+)/([^/]+}})"
+      replacement:  "${1}#${2}"
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_aws_secrets_manager_properties_function
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.AwsSecretRecipe
+displayName: The syntax for retrieving a single field of a secret has been changed
+description: The syntax for retrieving a single field of a secret has been changed..
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.LiteralRegexpConverterRecipe:
+      regexp: "(\\{\\{aws:[^/]+)/([^/]+}})"
+      replacement:  "${1}#${2}"
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_azure_key_vault_properties_function
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.AzureSecretRecipe
+displayName: The syntax for retrieving a single field of a secret has been changed
+description: The syntax for retrieving a single field of a secret has been changed..
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.LiteralRegexpConverterRecipe:
+      regexp: "(\\{\\{azure:[^/]+)/([^/]+}})"
+      replacement:  "${1}#${2}"
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_debezium
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.DebeziumChangeTypes
+displayName: Each camel-debezium module has its own subpackage corresponding to the database type
+description: each camel-debezium module has its own subpackage corresponding to the database type. So for example, all the classes of the module camel-debezium-postgres have been moved to a dedicated package which is org.apache.camel.component.debezium.postgres instead of having everything under the root package org.apache.camel.component.debezium.
+recipeList:
+#  db2
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.configuration.Db2ConnectorEmbeddedDebeziumConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2ComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2ComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2EndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2EndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2EndpointUriFactory
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2EndpointUriFactory
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2Component
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2Component
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2ComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2ComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2EndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2EndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumDb2Endpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.db2.DebeziumDb2Endpoint
+#  mongoDb
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.configuration.MongodbConnectorEmbeddedDebeziumConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.configuration.MongodbConnectorEmbeddedDebeziumConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbEndpointUriFactory
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbEndpointUriFactory
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMongodbEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mongodb.DebeziumMongodbEndpoint
+#  mysql
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlEndpointUriFactory
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpointUriFactory
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumMySqlEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpoint
+#  oracle
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleEndpointUriFactory
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleEndpointUriFactory
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumOracleEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.oracle.DebeziumOracleEndpoint
+#  postgres
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresEndpointUriFactory
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpointUriFactory
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumPostgresEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpoint
+#  sqlserver
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.configuration.SqlserverConnectorEmbeddedDebeziumConfiguration
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.configuration.SqlserverConnectorEmbeddedDebeziumConfiguration
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverEndpointUriFactory
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpointUriFactory
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverComponent
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverComponent
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverComponentConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverComponentConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverEndpointConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpointConfigurer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.debezium.DebeziumSqlserverEndpoint
+      newFullyQualifiedTypeName: org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpoint
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_deprecated_components
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_api
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel49.removedDependencies
+displayName: Removed deprecated components
+description: Removed deprecated components (camel-groovy-dsl, camel-js-dsl, camel-jsh-dsl, camel-kotlin-api, camel-kotlin-dsl).
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-groovy-dsl
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-js-dsl
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-jsh-dsl
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-kotlin-api
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-kotlin-dsl

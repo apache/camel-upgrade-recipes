@@ -91,6 +91,7 @@
         <camel4.4-version>4.4.2</camel4.4-version>
         <camel4.5-version>4.5.0</camel4.5-version>
         <camel4.6-version>4.6.0</camel4.6-version>
+        <camel4.8-version>4.8.0</camel4.8-version>
 
         <rewrite-recipe-bom.version>2.21.1</rewrite-recipe-bom.version>
 
@@ -193,6 +194,20 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-engine</artifactId>
+            <version>${camel4.8-version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-languages</artifactId>
+            <version>${camel4.8-version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -231,7 +246,7 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <!-- camel 3.18 dependencies-->
+                                <!-- camel 3.18 dependencies -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-activemq</artifactId>
@@ -292,19 +307,7 @@
                                     <version>${camel3.18-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <!--3.18 non-camel dependencies-->
-                                <artifactItem>
-                                    <groupId>org.apache.httpcomponents</groupId>
-                                    <artifactId>httpclient</artifactId>
-                                    <version>${http-client.version}</version>
-                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.httpcomponents</groupId>
-                                    <artifactId>httpcore</artifactId>
-                                    <version>${http-core.version}</version>
-                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
-                                </artifactItem>
+
                                 <!-- camel 4.0 dependencies -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -384,6 +387,7 @@
                                     <version>${camel4.0-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
                                 <!-- camel 4.4 dependencies -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -403,7 +407,8 @@
                                     <version>${camel4.4-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <!-- 4.5-->
+
+                                <!-- 4.5 -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-elasticsearch</artifactId>
@@ -422,7 +427,8 @@
                                     <version>${camel4.5-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <!-- 4.6-->
+
+                                <!-- 4.6 -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-http-common</artifactId>
@@ -435,12 +441,79 @@
                                     <version>${camel4.6-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
+                                <!-- 4.8 -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-api</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-model</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-db2</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-mongodb</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-oracle</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-mysql</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-postgres</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-sqlserver</artifactId>
+                                    <version>${camel4.8-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- Apache HTTP Client -->
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpclient</artifactId>
+                                    <version>${http-client.version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpcore</artifactId>
+                                    <version>${http-core.version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- Servlet API -->
                                 <artifactItem>
                                     <groupId>jakarta.servlet</groupId>
                                     <artifactId>jakarta.servlet-api</artifactId>
                                     <version>6.0.0</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
                                 <!-- JAXB -->
                                 <artifactItem>
                                     <groupId>javax.xml.bind</groupId>
@@ -454,6 +527,7 @@
                                     <version>4.0.2</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
                                 <!-- @Inject API -->
                                 <artifactItem>
                                     <groupId>jakarta.inject</groupId>
@@ -461,6 +535,7 @@
                                     <version>2.0.0</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
                                 <!-- Jakarta RS -->
                                 <artifactItem>
                                     <groupId>jakarta.ws.rs</groupId>
@@ -468,6 +543,7 @@
                                     <version>3.1.0</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
                             </artifactItems>
                         </configuration>
                     </execution>

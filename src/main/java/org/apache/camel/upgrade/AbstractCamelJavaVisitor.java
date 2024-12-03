@@ -19,6 +19,7 @@ package org.apache.camel.upgrade;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -43,6 +44,9 @@ public abstract class AbstractCamelJavaVisitor extends JavaIsoVisitor<ExecutionC
     //There is no need to  initialize all patterns at the class start.
     //Map is a cache for created patterns
     private static final Map<String, MethodMatcher> methodMatchers = new HashMap<>();
+
+    //cache for patterns
+    private static final Map<String, Pattern> patterns = new HashMap<>();
 
     @Override
     public final J.Import visitImport(J.Import _import, ExecutionContext context) {
@@ -80,6 +84,11 @@ public abstract class AbstractCamelJavaVisitor extends JavaIsoVisitor<ExecutionC
         return executeVisitWithCatch(() -> doVisitNewClass(newClass, context), newClass, context);
     }
 
+    @Override
+    public final J.Literal visitLiteral(J.Literal literal, ExecutionContext context) {
+        return executeVisitWithCatch(() -> doVisitLiteral(literal, context), literal, context);
+    }
+
     //-------------------------------- internal methods used by children---------------------------------
 
     protected J.Import doVisitImport(J.Import _import, ExecutionContext context) {
@@ -110,6 +119,10 @@ public abstract class AbstractCamelJavaVisitor extends JavaIsoVisitor<ExecutionC
         return super.visitNewClass(newClass, context);
     }
 
+    protected J.Literal doVisitLiteral(J.Literal literal, ExecutionContext context) {
+        return super.visitLiteral(literal, context);
+    }
+
     // ------------------------------------------ helper methods -------------------------------------------
 
     // If the migration fails - do not fail whole migration process, only this one recipe
@@ -132,6 +145,19 @@ public abstract class AbstractCamelJavaVisitor extends JavaIsoVisitor<ExecutionC
             }
 
             return matcher;
+        }
+    }
+
+    protected Pattern getPattern(String pattern) {
+        synchronized (patterns) {
+            Pattern p = patterns.get(pattern);
+
+            if (p == null) {
+                p = Pattern.compile(pattern);
+                patterns.put(pattern, p);
+            }
+
+            return p;
         }
     }
 }
