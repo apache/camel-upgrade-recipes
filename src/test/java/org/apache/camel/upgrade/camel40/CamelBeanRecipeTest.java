@@ -24,24 +24,24 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-public class CamelBeanRecipeTest implements RewriteTest {
+class CamelBeanRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_0)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v3_18,
-                        "camel-bean", "camel-core-model"))
+                        "camel-api", "camel-bean", "camel-core-model", "jaxb-api"))
                 .typeValidationOptions(TypeValidation.none());
     }
 
     @Test
-    public void testClassTypeAndInt() {
+    void testClassTypeAndInt() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -50,9 +50,9 @@ public class CamelBeanRecipeTest implements RewriteTest {
                     }
                 """, """
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -65,13 +65,13 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    public void testClassTypeAndBoolean() {
+    void testClassTypeAndBoolean() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -80,9 +80,9 @@ public class CamelBeanRecipeTest implements RewriteTest {
                     }
                 """, """
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -95,13 +95,13 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    public void testClassTypeAndFloat() {
+    void testClassTypeAndFloat() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -110,9 +110,9 @@ public class CamelBeanRecipeTest implements RewriteTest {
                     }
                 """, """
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -125,13 +125,13 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    public void testDoubleAndChar() {
+    void testDoubleAndChar() {
         //language=java
         rewriteRun(java("""
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -140,9 +140,9 @@ public class CamelBeanRecipeTest implements RewriteTest {
                     }
                 """, """
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")
@@ -155,13 +155,13 @@ public class CamelBeanRecipeTest implements RewriteTest {
     }
 
     @Test
-    public void testMultipleTo() {
+    void testMultipleTo() {
         //language=java
         rewriteRun(java("""
                 import org.apache.camel.builder.RouteBuilder;
-
+                
                 public class MySimpleToDRoute extends RouteBuilder {
-
+                
                     @Override
                     public void configure() {
                         from("direct:a")
@@ -171,9 +171,9 @@ public class CamelBeanRecipeTest implements RewriteTest {
                 }
                 """, """
                     import org.apache.camel.builder.RouteBuilder;
-
+                
                     public class MySimpleToDRoute extends RouteBuilder {
-
+                
                         @Override
                         public void configure() {
                             from("direct:a")

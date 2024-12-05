@@ -26,13 +26,13 @@ import org.openrewrite.yaml.Assertions;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.xml.Assertions.xml;
 
-public class CamelUpdate41Test implements RewriteTest {
+class CamelUpdate41Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_4)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-core-model",
-                        "camel-tracing"))
+                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-api",
+                        "camel-core-model", "camel-tracing", "jakarta.xml.bind-api"))
                 .typeValidationOptions(TypeValidation.none());
     }
 
@@ -40,23 +40,23 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_camel_aws2_sns">doc</a>
      */
     @Test
-    public void testAws2SnsQueueUrl() {
+    void testAws2SnsQueueUrl() {
         //language=java
         rewriteRun(java(
                 """
-                            import org.apache.camel.builder.RouteBuilder;
-
-                            public class Jsonpath2Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:start")
-                                      .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxxx");
-                                }
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Jsonpath2Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:start")
+                                  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxxx");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
-
+                        
                         public class Jsonpath2Test extends RouteBuilder {
                             @Override
                             public void configure()  {
@@ -71,35 +71,35 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_camel_tracing">doc</a>
      */
     @Test
-    public void testTracingTag() {
+    void testTracingTag() {
         //language=java
         rewriteRun(java("""
-                    import org.apache.camel.tracing.Tag;
-
-                    public class Test {
-
-                        public Tag test() {
-                            return Tag.URL_SCHEME;
+                        import org.apache.camel.tracing.Tag;
+                        
+                        public class Test {
+                        
+                            public Tag test() {
+                                return Tag.URL_SCHEME;
+                            }
                         }
-                    }
-                """,
+                        """,
                 """
                         import org.apache.camel.tracing.TagConstants;
-
+                        
                         public class Test {
-
+                        
                             public TagConstants test() {
                                 return TagConstants.URL_SCHEME;
                             }
                         }
-                            """));
+                        """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_xml_and_yaml_dsl">doc</a>
      */
     @Test
-    public void testYamlDsl() {
+    void testYamlDsl() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
                 - beans:
@@ -122,7 +122,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_xml_and_yaml_dsl">doc</a>
      */
     @Test
-    public void testYamlDslNPE() {
+    void testYamlDslNPE() {
         //language=yaml
         rewriteRun(Assertions.yaml("""
                 apiVersion: v1
@@ -171,7 +171,7 @@ public class CamelUpdate41Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_xml_and_yaml_dsl">doc</a>
      */
     @Test
-    public void testXmlDsl() {
+    void testXmlDsl() {
         //language=xml
         rewriteRun(xml("""
                 <routes xmlns="http://camel.apache.org/schema/spring">
@@ -183,7 +183,7 @@ public class CamelUpdate41Test implements RewriteTest {
                         </bean>
                     </route>
                 </routes>
-                                                """, """
+                """, """
                 <routes xmlns="http://camel.apache.org/schema/spring">
                     <route id="myRoute">
                         <bean name="myBean" type="com.foo.MyBean" scriptLanguage="groovy">

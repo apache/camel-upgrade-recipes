@@ -64,7 +64,7 @@
         </mailingList>
     </mailingLists>
 
-   <scm>
+    <scm>
         <connection>scm:git:http://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</developerConnection>
         <url>https://github.com/apache/camel-upgrade-recipes</url>
@@ -81,7 +81,6 @@
         </site>
     </distributionManagement>
 
-
     <properties>
         <!-- Place for jars of the different version, used to compile tests -->
         <rewrite-tmp-classpath>${project.build.testOutputDirectory}/META-INF/rewrite/classpath</rewrite-tmp-classpath>
@@ -94,7 +93,7 @@
         <camel4.6-version>4.6.0</camel4.6-version>
         <camel4.8-version>4.8.0</camel4.8-version>
 
-        <rewrite-recipe-bom.version>2.10.0</rewrite-recipe-bom.version>
+        <rewrite-recipe-bom.version>2.21.1</rewrite-recipe-bom.version>
 
         <lombok.version>1.18.34</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
@@ -125,7 +124,7 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Operewrite dependencies should not be packaged into built jar -->
+        <!-- Openrewrite dependencies should not be packaged into built jar -->
         <dependency>
             <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-java</artifactId>
@@ -177,20 +176,9 @@
         </dependency>
         <dependency>
             <groupId>org.openrewrite</groupId>
-            <artifactId>rewrite-yaml</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openrewrite</groupId>
-            <artifactId>rewrite-maven</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -203,6 +191,8 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -219,7 +209,6 @@
         </dependency>
 
     </dependencies>
-
 
     <build>
         <plugins>
@@ -257,7 +246,7 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <!-- camel 3.18 dependencies-->
+                                <!-- camel 3.18 dependencies -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-activemq</artifactId>
@@ -302,6 +291,12 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-mock</artifactId>
+                                    <version>${camel3.18-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-support</artifactId>
                                     <version>${camel3.18-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
@@ -312,20 +307,14 @@
                                     <version>${camel3.18-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <!--3.18 non-camel dependencies-->
+
+                                <!-- camel 4.0 dependencies -->
                                 <artifactItem>
-                                    <groupId>org.apache.httpcomponents</groupId>
-                                    <artifactId>httpclient</artifactId>
-                                    <version>${http-client.version}</version>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-api</artifactId>
+                                    <version>${camel4.0-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.httpcomponents</groupId>
-                                    <artifactId>httpcore</artifactId>
-                                    <version>${http-core.version}</version>
-                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
-                                </artifactItem>
-                                <!-- camel 4.0 dependencies-->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-base</artifactId>
@@ -335,6 +324,12 @@
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-base-engine</artifactId>
+                                    <version>${camel4.0-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-model</artifactId>
                                     <version>${camel4.0-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
@@ -358,7 +353,31 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-main</artifactId>
+                                    <version>${camel4.0-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-management-api</artifactId>
+                                    <version>${camel4.0-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-mock</artifactId>
+                                    <version>${camel4.0-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-saga</artifactId>
+                                    <version>${camel4.0-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-support</artifactId>
                                     <version>${camel4.0-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
@@ -368,6 +387,8 @@
                                     <version>${camel4.0-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
+                                <!-- camel 4.4 dependencies -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-spring-redis</artifactId>
@@ -386,7 +407,8 @@
                                     <version>${camel4.4-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <!-- 4.5-->
+
+                                <!-- 4.5 -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-elasticsearch</artifactId>
@@ -405,7 +427,8 @@
                                     <version>${camel4.5-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <!-- 4.6-->
+
+                                <!-- 4.6 -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-http-common</artifactId>
@@ -418,12 +441,7 @@
                                     <version>${camel4.6-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>jakarta.servlet</groupId>
-                                    <artifactId>jakarta.servlet-api</artifactId>
-                                    <version>6.0.0</version>
-                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
-                                </artifactItem>
+
                                 <!-- 4.8 -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -473,6 +491,59 @@
                                     <version>${camel4.8-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+
+                                <!-- Apache HTTP Client -->
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpclient</artifactId>
+                                    <version>${http-client.version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpcore</artifactId>
+                                    <version>${http-core.version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- Servlet API -->
+                                <artifactItem>
+                                    <groupId>jakarta.servlet</groupId>
+                                    <artifactId>jakarta.servlet-api</artifactId>
+                                    <version>6.0.0</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- JAXB -->
+                                <artifactItem>
+                                    <groupId>javax.xml.bind</groupId>
+                                    <artifactId>jaxb-api</artifactId>
+                                    <version>2.3.1</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jakarta.xml.bind</groupId>
+                                    <artifactId>jakarta.xml.bind-api</artifactId>
+                                    <version>4.0.2</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- @Inject API -->
+                                <artifactItem>
+                                    <groupId>jakarta.inject</groupId>
+                                    <artifactId>jakarta.inject-api</artifactId>
+                                    <version>2.0.0</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- Jakarta RS -->
+                                <artifactItem>
+                                    <groupId>jakarta.ws.rs</groupId>
+                                    <artifactId>jakarta.ws.rs-api</artifactId>
+                                    <version>3.1.0</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -528,7 +599,7 @@
                         <configuration>
                             <source>8</source>
                             <additionalOptions>${javadoc.opts}</additionalOptions>
-                            <!-- disable Javadoc linting for buildung the release with Java 11 -->
+                            <!-- disable Javadoc linting for building the release with Java 11 -->
                             <doclint>none</doclint>
                         </configuration>
                     </plugin>
