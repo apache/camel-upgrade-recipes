@@ -26,7 +26,7 @@ import org.openrewrite.yaml.Assertions;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.xml.Assertions.xml;
 
-class CamelUpdate41Test implements RewriteTest {
+public class CamelUpdate41Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {

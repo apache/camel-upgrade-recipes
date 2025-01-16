@@ -24,7 +24,7 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-class CamelEIPRecipeTest implements RewriteTest {
+public class CamelEIPRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
