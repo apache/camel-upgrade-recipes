@@ -16,12 +16,13 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.CamelSpringBootMigrationRecipe
-displayName: Migrates `Camel Spring Boot` application to the latest version
-description: Migrates `Camel Spring Boot` application to the latest version
+name: org.apache.camel.upgrade.camel410.CamelSpringBootMigrationRecipe
+displayName: Migrates `Camel Spring Boot` application to `Camel Spring Boot 4.10`
+description: Migrates `Camel Spring Boot` application to `Camel Spring Boot 4.10`
 recipeList:
   - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 # Evaluate if Camel will upgrade to SB 3.4!!!!!!!!!!!!!!!!!
   - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel45.CamelMigrationRecipe
@@ -31,14 +32,6 @@ recipeList:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
       newVersion: @project.version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: 'spring-boot'
-      newVersion: @project.version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: 'camel-spring-boot-dependencies'
-      newVersion: @project.version@
   - org.openrewrite.maven.RemoveDependency:
-      groupId: org.apache.camel.springboot
-      artifactId: camel-k-starter
+        groupId: org.apache.camel.springboot
+        artifactId: camel-k-starter

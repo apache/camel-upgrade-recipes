@@ -381,6 +381,20 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
+                                <!-- 4.9 -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-smb</artifactId>
+                                    <version>${camel4.9-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-azure-files</artifactId>
+                                    <version>${camel4.9-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
                                 <!-- Apache HTTP Client -->
                                 <artifactItem>
                                     <groupId>org.apache.httpcomponents</groupId>

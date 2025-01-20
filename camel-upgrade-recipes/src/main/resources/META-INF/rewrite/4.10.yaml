@@ -1,0 +1,53 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc
+#####
+
+#####
+# Update the Camel project from 4.9 to 4.10
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel410.CamelMigrationRecipe
+displayName: Migrates `camel 4.9` application to `camel 4.10`
+description: Migrates `camel 4.9` application to `camel 4.10`.
+recipeList:
+  - org.apache.camel.upgrade.camel410.XmlDsl410Recipe
+  - org.apache.camel.upgrade.camel410.camelSmb
+  - org.apache.camel.upgrade.camel410.camelAzureFiles
+---
+#https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#camel-azure-files
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel410.camelAzureFiles
+displayName: Renamed constants in camel-azure-files
+description: Renamed constants in camel-azure-files.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.file.azure.FilesHeaders
+      newFullyQualifiedTypeName: org.apache.camel.component.file.azure.FilesConstants
+---
+#https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#camel-smb
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel410.camelSmb
+displayName: Renamed constants in camel-smb
+description: Renamed constants in camel-smb.
+recipeList:
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.camel.component.smb.SmbConstants.SMB_FILE_PATH
+      fullyQualifiedConstantName: org.apache.camel.component.smb.SmbConstants.FILE_PATH

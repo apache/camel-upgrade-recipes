@@ -98,6 +98,7 @@
         <camel4.5-version>4.5.0</camel4.5-version>
         <camel4.6-version>4.6.0</camel4.6-version>
         <camel4.8-version>4.8.0</camel4.8-version>
+        <camel4.9-version>4.9.0</camel4.9-version>
 
         <rewrite-recipe-bom.version>2.21.1</rewrite-recipe-bom.version>
 
