@@ -17,8 +17,8 @@
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.CamelSpringBootMigrationRecipe
-displayName: Migrates `Camel Spring Boot` application to the latest version
-description: Migrates `Camel Spring Boot` application to the latest version
+displayName: Migrates `Camel Spring Boot` application to @project.version@
+description: Migrates `Camel Spring Boot` application to @project.version@
 recipeList:
   - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 # Update once SB 3_4 is released
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe

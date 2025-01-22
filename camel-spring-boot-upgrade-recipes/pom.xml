@@ -32,11 +32,6 @@
     <name>Camel Spring Boot Upgrades Recipes</name>
     <description>Migration recipes (using openrewrite) for Camel Spring Boot to make Maven migrations easier</description>
 
-    <properties>
-        <!-- Update this with each spring-rewrite release -->
-        <spring-rewrite-version>6.0.1</spring-rewrite-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel.upgrade</groupId>
@@ -46,7 +41,6 @@
         <dependency>
             <groupId>org.openrewrite.recipe</groupId>
             <artifactId>rewrite-spring</artifactId>
-            <version>${spring-rewrite-version}</version>
         </dependency>
     </dependencies>
 
