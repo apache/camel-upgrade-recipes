@@ -16,11 +16,11 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.CamelSpringBootMigrationRecipe
-displayName: Migrates `Camel Spring Boot` application to the latest version
-description: Migrates `Camel Spring Boot` application to the latest version
+name: org.apache.camel.upgrade.CamelMigrationRecipe
+displayName: Migrates `Camel` application to @project.version@
+description: Migrates `Camel` application to @project.version@
 recipeList:
-  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 # Update once SB 3_4 is released
+  - org.openrewrite.java.migrate.UpgradeToJava17
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
@@ -28,14 +28,10 @@ recipeList:
   - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
   - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: '*camel*'
-      artifactId: 'camel-spring-boot-bom'
+      groupId: 'org.apache.camel'
+      artifactId: '*'
       newVersion: @project.version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: 'spring-boot'
-      newVersion: @project.version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: 'camel-spring-boot-dependencies'
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
       newVersion: @project.version@
