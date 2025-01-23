@@ -17,8 +17,8 @@
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.CamelMigrationRecipe
-displayName: Migrates `Camel` application to @project.version@
-description: Migrates `Camel` application to @project.version@
+displayName: Migrate to @camel-version@
+description: Migrates Apache Camel application to @camel-version@
 recipeList:
   - org.openrewrite.java.migrate.UpgradeToJava17
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
@@ -30,8 +30,12 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'
-      newVersion: @project.version@
+      newVersion: @camel-version@
   - org.openrewrite.maven.UpgradePluginVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'
-      newVersion: @project.version@
+      newVersion: @camel-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-version@

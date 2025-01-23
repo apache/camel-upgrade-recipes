@@ -30,7 +30,6 @@
     <artifactId>camel-spring-boot-upgrade-recipes</artifactId>
 
     <properties>
-        <camel-version>${project.version}</camel-version>
         <!-- Use same version as https://github.com/apache/camel-spring-boot/blob/${project.version}/pom.xml#L111C9-L111C57 -->
         <spring-boot-version>3.4.0</spring-boot-version>
         <springframework-version>6.2.0</springframework-version>
