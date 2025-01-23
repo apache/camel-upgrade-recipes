@@ -17,8 +17,9 @@
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.CamelSpringBootMigrationRecipe
-displayName: Migrates `Camel Spring Boot` application to @project.version@
-description: Migrates `Camel Spring Boot` application to @project.version@
+displayName: Migrate to Apache Camel Spring Boot @camel-version@
+description: >- 
+  Migrate applications to Apache Camel Spring Boot @camel-version@ and Spring Boot @spring-boot-version@
 recipeList:
   - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 # Update once SB 3_4 is released
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
@@ -30,12 +31,37 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
-      newVersion: @project.version@
+      newVersion: @camel-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'spring-boot'
-      newVersion: @project.version@
+      newVersion: @camel-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'camel-spring-boot-dependencies'
-      newVersion: @project.version@
+      newVersion: @camel-version@
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel.springboot'
+      artifactId: 'camel-spring-boot-dependencies'
+      newVersion: @camel-version@
+  # Remove Spring upgrades once org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_4 is released
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework.boot
+      artifactId: "*"
+      newVersion: @spring-boot-version@
+      overrideManagedVersion: false
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-maven-plugin
+      newVersion: @spring-boot-version@
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: org.springframework
+      artifactId: "*"
+      newVersion: @springframework-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-parent
+      newVersion: @spring-boot-version@
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: org.springframework.boot
+      newVersion: @spring-boot-version@
