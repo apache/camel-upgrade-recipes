@@ -31,3 +31,62 @@ Libraries are not packed into the installed jar.
 Project installs also test classes into a `test-jar` artifact.
 This allows other projects (like https://github.com/quarkusio/quarkus-updates/[quarkus-updates]) to ruse the tests.
 
+== Releasing
+
+This project is released as standard Apache Camel module.
+
+Check that everything is alright and run:
+
+```bash
+./mvnw release:prepare -Prelease \
+  -DreleaseVersion=<CAMEL_UPGRADE_RECIPES_RELEASE_VERSION> \
+  -DdevelopmentVersion=<next_snapshot> \
+  -Dtag=$<CAMEL_UPGRADE_RECIPES_RELEASE_VERSION>
+  -Dusername=<asf_username>
+  -Dpassword=<asf_password>
+```
+
+Then perform the release:
+
+```bash
+./mvnw release:perform -Prelease
+```
+
+Go to https://repository.apache.org/ and close the staging repository.
+
+A URL will be generated for the repository, like: https://repository.apache.org/content/repositories/orgapachecamel-xxxx. The URL needs to be communicated during the voting process.
+
+Now run:
+
+```bash
+cd release-utils/scripts/
+./upload-source.sh $CAMEL_UPGRADE_RECIPES_VERSION $CAMEL_UPGRADE_RECIPES_VERSION
+```
+
+You'll be requested to insert the password to unlock the secret key to sign the artifacts and after uploading to nexus dev repository.
+
+You could verify the result at the following URL:
+
+https://dist.apache.org/repos/dist/dev/camel/camel-upgrade-recipes/<$CAMEL_UPGRADE_RECIPES_VERSION> 
+
+Send an email to dev mailing list to start the vote.
+
+## Post Release
+
+Once the vote for the release has been completed, you need to send the Vote Result mail to mailing list.
+
+Now, you'll need to release the artifacts from Apache staging repositories to Apache releases repository.
+
+To do this you'll need to access the Apache Nexus Server.
+
+You'll need then to promote the release from dist/dev location to dist/release location.
+
+There is an handy script for this:
+
+Now run:
+
+```bash
+cd release-utils/scripts/
+./promote-release.sh $CAMEL_UPGRADE_RECIPES_VERSION 
+```
+
