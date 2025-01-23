@@ -99,7 +99,9 @@
         <camel4.6-version>4.6.0</camel4.6-version>
         <camel4.8-version>4.8.0</camel4.8-version>
 
-        <rewrite-recipe-bom.version>2.21.1</rewrite-recipe-bom.version>
+        <camel-version>${project.version}</camel-version>
+
+        <rewrite-recipe-bom.version>2.23.1</rewrite-recipe-bom.version>
 
         <lombok.version>1.18.34</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>

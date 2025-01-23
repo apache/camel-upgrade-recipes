@@ -16,11 +16,11 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel49.CamelSpringBootMigrationRecipe
-displayName: Migrates `Camel Spring Boot` application to `Camel Spring Boot 4.9`
-description: Migrates `Camel Spring Boot` application to `Camel Spring Boot 4.9`
+name: org.apache.camel.upgrade.CamelMigrationRecipe
+displayName: Migrate to @camel-version@
+description: Migrates Apache Camel application to @camel-version@
 recipeList:
-  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3
+  - org.openrewrite.java.migrate.UpgradeToJava17
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
@@ -28,6 +28,14 @@ recipeList:
   - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
   - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: '*camel*'
-      artifactId: 'camel-spring-boot-bom'
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
       newVersion: @camel-version@

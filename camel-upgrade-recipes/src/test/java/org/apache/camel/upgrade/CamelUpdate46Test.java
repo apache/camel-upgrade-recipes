@@ -222,6 +222,7 @@ public class CamelUpdate46Test implements RewriteTest {
                         """,
                 """
                         import org.apache.camel.component.langchain4j.chat.LangChain4jChat;
+                        import org.apache.camel.component.langchain4j.chat.LangChain4jChatComponent;
                         import org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations;
                         import org.apache.camel.component.langchain4j.chat.LangChain4jChatProducer;
                         
@@ -272,7 +273,7 @@ public class CamelUpdate46Test implements RewriteTest {
                                 LangChain4jEmbeddingsConfiguration langChainEmbeddingsConfiguration;
                                 LangChain4jEmbeddingsConverter langChainEmbeddingsConverter;
                                 org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsEndpoint langChainEmbeddingsEndpoint;
-                                org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings langChainEmbeddings;
+                                org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsComponent langChainEmbeddings;
                                 org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsProducer langChainEmbeddingsProducer;
                             }
                         }

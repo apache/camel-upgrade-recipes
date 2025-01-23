@@ -254,18 +254,34 @@ public class CamelUpdate49Test implements RewriteTest {
                         }
                         """,
                 """
-                        import org.apache.camel.component.debezium.configuration.MongodbConnectorEmbeddedDebeziumConfiguration;
-                        import org.apache.camel.component.debezium.configuration.SqlserverConnectorEmbeddedDebeziumConfiguration;
                         import org.apache.camel.component.debezium.db2.*;
-                        import org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration;
+                        import org.apache.camel.component.debezium.configuration.MongodbConnectorEmbeddedDebeziumConfiguration;
                         import org.apache.camel.component.debezium.mongodb.*;
-                        import org.apache.camel.component.debezium.mysql.*;
+                        import org.apache.camel.component.debezium.mysql.DebeziumMySqlComponent;
+                        import org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpointUriFactory;
                         import org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
-                        import org.apache.camel.component.debezium.oracle.*;
+                        import org.apache.camel.component.debezium.oracle.DebeziumOracleComponent;
+                        import org.apache.camel.component.debezium.oracle.DebeziumOracleEndpointUriFactory;
                         import org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
-                        import org.apache.camel.component.debezium.postgres.*;
+                        import org.apache.camel.component.debezium.postgres.DebeziumPostgresComponent;
+                        import org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpointUriFactory;
                         import org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration;
-                        import org.apache.camel.component.debezium.sqlserver.*;
+                        import org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverComponent;
+                        import org.apache.camel.component.debezium.mysql.DebeziumMySqlComponentConfigurer;
+                        import org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpoint;
+                        import org.apache.camel.component.debezium.mysql.DebeziumMySqlEndpointConfigurer;
+                        import org.apache.camel.component.debezium.oracle.DebeziumOracleComponentConfigurer;
+                        import org.apache.camel.component.debezium.oracle.DebeziumOracleEndpoint;
+                        import org.apache.camel.component.debezium.oracle.DebeziumOracleEndpointConfigurer;
+                        import org.apache.camel.component.debezium.postgres.DebeziumPostgresComponentConfigurer;
+                        import org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpoint;
+                        import org.apache.camel.component.debezium.postgres.DebeziumPostgresEndpointConfigurer;
+                        import org.apache.camel.component.debezium.configuration.SqlserverConnectorEmbeddedDebeziumConfiguration;
+                        import org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration;
+                        import org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverComponentConfigurer;
+                        import org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpoint;
+                        import org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpointConfigurer;
+                        import org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverEndpointUriFactory;
                         
                         public class DebeziumTest {
                         
