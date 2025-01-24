@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.camel.upgrade</groupId>
         <artifactId>camel-parent-upgrade-recipes</artifactId>
-        <version>4.9.0</version>
+        <version>4.10.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-boot-upgrade-recipes</artifactId>
