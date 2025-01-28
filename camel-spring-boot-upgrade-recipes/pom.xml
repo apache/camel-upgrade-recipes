@@ -29,8 +29,8 @@
 
     <properties>
         <!-- Use same version as https://github.com/apache/camel-spring-boot/blob/${project.version}/pom.xml#L111C9-L111C57 -->
-        <spring-boot-version>3.4.0</spring-boot-version>
-        <springframework-version>6.2.0</springframework-version>
+        <spring-boot-version>3.4.2</spring-boot-version>
+        <springframework-version>6.2.2</springframework-version>
     </properties>
 
     <name>Camel Spring Boot Upgrades Recipes</name>
@@ -41,10 +41,6 @@
             <groupId>org.apache.camel.upgrade</groupId>
             <artifactId>camel-upgrade-recipes</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-spring</artifactId>
         </dependency>
     </dependencies>
 

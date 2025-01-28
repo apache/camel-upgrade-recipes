@@ -14,7 +14,7 @@ To apply recipes on a standalone Camel Project you can use maven plugin:
 
 ```
 
-mvn -U org.openrewrite.maven:rewrite-maven-plugin:5.42.2:run \
+mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.0.4:run \
 -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:4.8.0 \
 -DactiveRecipes=org.apache.camel.upgrade.camel44.CamelMigrationRecipe,org.apache.camel.upgrade.camel45.CamelMigrationRecipe
 ```

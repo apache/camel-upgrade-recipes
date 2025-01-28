@@ -21,7 +21,6 @@ displayName: Migrate to Apache Camel Spring Boot @camel-version@
 description: >- 
   Migrate applications to Apache Camel Spring Boot @camel-version@ and Spring Boot @spring-boot-version@
 recipeList:
-  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 # Update once SB 3_4 is released
   - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
@@ -29,6 +28,8 @@ recipeList:
   - org.apache.camel.upgrade.camel45.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
+  - org.apache.camel.upgrade.UpgradeToJava17
+  - org.apache.camel.upgrade.JavaVersion17
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
@@ -45,8 +46,7 @@ recipeList:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'camel-spring-boot-dependencies'
       newVersion: @camel-version@
-  # Remove Spring upgrades once org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_4 is released
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+  - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: org.springframework.boot
       artifactId: "*"
       newVersion: @spring-boot-version@
@@ -55,7 +55,7 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-maven-plugin
       newVersion: @spring-boot-version@
-  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+  - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: org.springframework
       artifactId: "*"
       newVersion: @springframework-version@
@@ -63,9 +63,6 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-parent
       newVersion: @spring-boot-version@
-  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
-      pluginIdPattern: org.springframework.boot
-      newVersion: @spring-boot-version@
   - org.openrewrite.maven.RemoveDependency:
-      groupId: org.apache.camel.springboot
-      artifactId: camel-k-starter
+       groupId: org.apache.camel.springboot
+       artifactId: camel-k-starter
