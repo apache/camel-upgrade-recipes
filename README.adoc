@@ -41,7 +41,7 @@ Check that everything is alright and run:
 ./mvnw release:prepare -Prelease \
   -DreleaseVersion=<CAMEL_UPGRADE_RECIPES_RELEASE_VERSION> \
   -DdevelopmentVersion=<next_snapshot> \
-  -Dtag=$<CAMEL_UPGRADE_RECIPES_RELEASE_VERSION>
+  -Dtag=<CAMEL_UPGRADE_RECIPES_RELEASE_VERSION>
   -Dusername=<asf_username>
   -Dpassword=<asf_password>
 ```
