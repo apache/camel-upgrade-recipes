@@ -20,13 +20,15 @@ name: org.apache.camel.upgrade.CamelMigrationRecipe
 displayName: Migrate to @camel-version@
 description: Migrates Apache Camel application to @camel-version@
 recipeList:
-  - org.openrewrite.java.migrate.UpgradeToJava17
+  - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel45.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
+  - org.apache.camel.upgrade.UpgradeToJava17
+  - org.apache.camel.upgrade.JavaVersion17
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'

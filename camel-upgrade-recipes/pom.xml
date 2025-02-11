@@ -59,8 +59,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-migrate-java</artifactId>
+            <groupId>org.openrewrite</groupId>
+            <artifactId>rewrite-java-21</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openrewrite</groupId>
+            <artifactId>rewrite-gradle</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openrewrite</groupId>

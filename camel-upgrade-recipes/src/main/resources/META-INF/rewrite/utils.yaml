@@ -1,0 +1,52 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.UpgradeToJava17
+displayName: Migrate to Java 17
+description: >
+  This recipe will apply changes commonly needed when migrating to Java 17. Specifically, for those
+  applications that are built on Java 8, this recipe will update and add dependencies on J2EE libraries that are no
+  longer directly bundled with the JDK. This recipe will also replace deprecated API with equivalents when there is a
+  clear migration strategy. Build files will also be updated to use Java 17 as the target/source and plugins will be
+  also be upgraded to versions that are compatible with Java 17.
+tags:
+  - java17
+recipeList:
+  - org.apache.camel.upgrade.SetupJavaUpgradeJavaVersion:
+      minimumJavaMajorVersion: 17
+  - org.openrewrite.java.RemoveMethodInvocations:
+      methodPattern: java.lang.Runtime traceInstructions(boolean)
+  - org.openrewrite.java.RemoveMethodInvocations:
+      methodPattern: java.lang.System traceMethodCalls(boolean)
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: org.apache.maven.plugins
+      artifactId: maven-checkstyle-plugin
+      newVersion: 3.x
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.JavaVersion17
+displayName: Change Maven Java version property values to 17
+description: Change maven.compiler.source and maven.compiler.target values to 17.
+tags:
+  - java17
+  - compiler
+recipeList:
+  - org.apache.camel.upgrade.UpgradeJavaVersion:
+      version: 17
+  - org.openrewrite.maven.UseMavenCompilerPluginReleaseConfiguration:
+      releaseVersion: 17

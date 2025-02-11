@@ -102,7 +102,7 @@
 
         <camel-version>${project.version}</camel-version>
 
-        <rewrite-recipe-bom.version>2.23.1</rewrite-recipe-bom.version>
+        <rewrite-recipe-bom.version>3.0.2</rewrite-recipe-bom.version>
 
         <lombok.version>1.18.34</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
