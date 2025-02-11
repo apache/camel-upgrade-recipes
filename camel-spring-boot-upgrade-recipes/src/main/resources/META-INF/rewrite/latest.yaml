@@ -22,6 +22,7 @@ description: >-
   Migrate applications to Apache Camel Spring Boot @camel-version@ and Spring Boot @spring-boot-version@
 recipeList:
   - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 # Update once SB 3_4 is released
+  - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
@@ -65,3 +66,6 @@ recipeList:
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: org.springframework.boot
       newVersion: @spring-boot-version@
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel.springboot
+      artifactId: camel-k-starter
