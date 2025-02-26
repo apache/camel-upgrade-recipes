@@ -24,6 +24,7 @@ import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.xml.Assertions.xml;
 
 public class CamelUpdate410Test implements RewriteTest {
@@ -171,6 +172,24 @@ public class CamelUpdate410Test implements RewriteTest {
                                  }
                              }
                         """));
+    }
+
+    @Test
+    void propertiesFile() {
+        rewriteRun(
+                properties(
+                        """
+                          camel.main.routeControllerSuperviseEnabled=true
+                          another.ignored.property=true
+                          camel.main.routeControllerBackOffMultiplier=5
+                          """,
+                        """
+                          camel.routecontroller.enabled=true
+                          another.ignored.property=true
+                          camel.routecontroller.backOffMultiplier=5
+                          """
+                )
+        );
     }
 
 }

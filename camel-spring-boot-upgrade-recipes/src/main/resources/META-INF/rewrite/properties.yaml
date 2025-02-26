@@ -1,0 +1,39 @@
+---
+# Let's keep it here, yaml recipes cannot be tested across modules
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.UpdateCamelSpringBootPropertiesAndYamlKeys
+displayName: Update Camel Spring Boot properties and yaml configurations file
+description: Update Camel Spring Boot properties and yaml configurations file.
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ChangePropertyKeyWithCaseChange:
+      oldPropertyKey: camel.springboot(.*)
+      newPrefix: camel.main
+      exclusions:
+        - camel.springboot.main-run-controller
+        - camel.springboot.include-non-singletons
+        - camel.springboot.warn-on-early-shutdown
+  - org.openrewrite.yaml.ChangeKey:
+      oldKeyPath: $.camel.springboot
+      newKey: main
+  - org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.springboot.routeControllerSuperviseEnabled
+      newPropertyKey: camel.routecontroller.enabled
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.include-non-singletons
+      newPropertyKey: camel.springboot.include-non-singletons
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.includeNonSingletons
+      newPropertyKey: camel.springboot.include-non-singletons
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.mainRunController
+      newPropertyKey: camel.springboot.main-run-controller
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.main-run-controller
+      newPropertyKey: camel.springboot.main-run-controller
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.warnOnEarlyShutdown
+      newPropertyKey: camel.springboot.warn-on-early-shutdown
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.warn-on-early-shutdown
+      newPropertyKey: camel.springboot.warn-on-early-shutdown

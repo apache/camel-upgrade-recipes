@@ -31,6 +31,7 @@ recipeList:
   - org.apache.camel.upgrade.camel410.XmlDsl410Recipe
   - org.apache.camel.upgrade.camel410.camelSmb
   - org.apache.camel.upgrade.camel410.camelAzureFiles
+  - org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys
 ---
 #https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#camel-azure-files
 type: specs.openrewrite.org/v1beta/recipe
@@ -51,3 +52,72 @@ recipeList:
   - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
       existingFullyQualifiedConstantName: org.apache.camel.component.smb.SmbConstants.SMB_FILE_PATH
       fullyQualifiedConstantName: org.apache.camel.component.smb.SmbConstants.FILE_PATH
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys
+displayName: Update properties and yaml configurations file
+description: Update properties and yaml configurations file.
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerInitialDelay
+      newPropertyKey: camel.routecontroller.initialDelay
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.backlogTracingTemplates
+      newPropertyKey: camel.trace.backlogTracingTemplates
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerThreadPoolSize
+      newPropertyKey: camel.routecontroller.threadPoolSize
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackOffMultiplier
+      newPropertyKey: camel.routecontroller.backOffMultiplier
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.backlogTracing
+      newPropertyKey: camel.trace.enabled
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerExcludeRoutes
+      newPropertyKey: camel.routecontroller.excludeRoutes
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackoffMultiplier
+      newPropertyKey: camel.routecontroller.backOffMultiplier
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.backlogTracingStandby
+      newPropertyKey: camel.trace.backlogTracingStandby
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackOffMaxAttempts
+      newPropertyKey: camel.routecontroller.backOffMaxAttempts
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerSuperviseEnabled
+      newPropertyKey: camel.routecontroller.enabled
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackOffMaxDelay
+      newPropertyKey: camel.routecontroller.backOffMaxDelay
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackOffDelay
+      newPropertyKey: camel.routecontroller.backOffDelay
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackoffMaxAttempts
+      newPropertyKey: camel.routecontroller.backOffMaxAttempts
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackoffDelay
+      newPropertyKey: camel.routecontroller.backOffDelay
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackOffMaxElapsedTime
+      newPropertyKey: camel.routecontroller.backOffMaxElapsedTime
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackoffMaxDelay
+      newPropertyKey: camel.routecontroller.backOffMaxDelay
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerIncludeRoutes
+      newPropertyKey: camel.routecontroller.includeRoutes
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.routeControllerBackoffMaxElapsedTime
+      newPropertyKey: camel.routecontroller.backOffMaxElapsedTime
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.backlogTracingTemplates
+      newPropertyKey: camel.trace.backlogTracingTemplates
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.backlogTracingStandby
+      newPropertyKey: camel.trace.backlogTracingStandby
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.main.backlogTracing
+      newPropertyKey: camel.trace.enabled
