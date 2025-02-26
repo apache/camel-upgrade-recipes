@@ -19,6 +19,9 @@ package org.apache.camel.upgrade;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RewriteTest;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
@@ -27,8 +30,15 @@ public class CamelPropertiesTest implements RewriteTest {
     @Test
     void propertiesFile() {
         rewriteRun(
-                recipeSpec -> recipeSpec.recipes(
-                        new CamelPropertiesAndYamlUpdate()),
+                recipeSpec -> {
+                    try {
+                        recipeSpec.recipe(
+                                new FileInputStream("src/main/resources/META-INF/rewrite/properties.yaml"),
+                                "org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys");
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
                 properties(
                         """
                           camel.main.routeControllerSuperviseEnabled=true
@@ -57,8 +67,15 @@ public class CamelPropertiesTest implements RewriteTest {
     @Test
     void yamlFile() {
         rewriteRun(
-                recipeSpec -> recipeSpec.recipes(
-                        new CamelPropertiesAndYamlUpdate()),
+                recipeSpec -> {
+                    try {
+                        recipeSpec.recipe(
+                                new FileInputStream("src/main/resources/META-INF/rewrite/properties.yaml"),
+                                "org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys");
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
                 yaml(
                         """
                           camel:
