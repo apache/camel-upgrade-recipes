@@ -27,6 +27,9 @@ import org.openrewrite.Recipe;
 import org.openrewrite.properties.PropertiesVisitor;
 import org.openrewrite.properties.tree.Properties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
  */
@@ -44,6 +47,11 @@ public class ChangePropertyKeyWithCaseChange extends Recipe {
             description = "The prefix to be replaced with.")
     String newPrefix;
 
+    @Option(displayName = "Exclusions",
+            description = "Regexp for exclusions",
+            example = "camel.springboot.main-run-controller")
+    List<String> exclusions = new ArrayList<>();
+
     @Override
     public String getDisplayName() {
         return "Change prefix of property with Camel case";
@@ -59,6 +67,12 @@ public class ChangePropertyKeyWithCaseChange extends Recipe {
         return new PropertiesVisitor<>() {
             @Override
             public Properties visitEntry(Properties.Entry entry, ExecutionContext p) {
+                for (String exclusion : exclusions) {
+                    if (entry.getKey().equals(exclusion)) {
+                        return super.visitEntry(entry, p);
+                    }
+                }
+
                 if (entry.getKey().matches(oldPropertyKey)) {
                     entry = entry.withKey(getKey(entry))
                             .withPrefix(entry.getPrefix());
