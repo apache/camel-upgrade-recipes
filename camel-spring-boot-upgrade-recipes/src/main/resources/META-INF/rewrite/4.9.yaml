@@ -30,4 +30,4 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
-      newVersion: @camel-version@
+      newVersion: @camel-spring-boot-version@

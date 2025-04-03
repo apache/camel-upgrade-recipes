@@ -101,6 +101,7 @@
         <camel4.9-version>4.9.0</camel4.9-version>
 
         <camel-version>${project.version}</camel-version>
+        <camel-spring-boot-version>${project.version}</camel-spring-boot-version>
 
         <rewrite-recipe-bom.version>3.0.2</rewrite-recipe-bom.version>
 

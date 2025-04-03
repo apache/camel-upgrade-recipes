@@ -34,19 +34,19 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
-      newVersion: @camel-version@
+      newVersion: @camel-spring-boot-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'spring-boot'
-      newVersion: @camel-version@
+      newVersion: @camel-spring-boot-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'camel-spring-boot-dependencies'
-      newVersion: @camel-version@
+      newVersion: @camel-spring-boot-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'camel-spring-boot-dependencies'
-      newVersion: @camel-version@
+      newVersion: @camel-spring-boot-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: org.springframework.boot
       artifactId: "*"
