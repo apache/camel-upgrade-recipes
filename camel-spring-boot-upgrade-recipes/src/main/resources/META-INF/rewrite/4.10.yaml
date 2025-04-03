@@ -32,7 +32,7 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
-      newVersion: @project.version@
+      newVersion: @camel-spring-boot-version@
   - org.openrewrite.maven.RemoveDependency:
         groupId: org.apache.camel.springboot
         artifactId: camel-k-starter
