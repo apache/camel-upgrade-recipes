@@ -408,6 +408,14 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
+                                <!-- 4.10 -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-platform-http</artifactId>
+                                    <version>${camel4.10-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
                                 <!-- Apache HTTP Client -->
                                 <artifactItem>
                                     <groupId>org.apache.httpcomponents</groupId>
