@@ -21,6 +21,7 @@ displayName: Migrate to Apache Camel Spring Boot @camel-version@
 description: >- 
   Migrate applications to Apache Camel Spring Boot @camel-version@ and Spring Boot @spring-boot-version@
 recipeList:
+  - org.apache.camel.upgrade.camel411.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
@@ -67,3 +68,6 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
        groupId: org.apache.camel.springboot
        artifactId: camel-k-starter
+  - org.openrewrite.maven.RemoveDependency:
+        groupId: org.apache.camel.springboot
+        artifactId: camel-etcd3-starter
