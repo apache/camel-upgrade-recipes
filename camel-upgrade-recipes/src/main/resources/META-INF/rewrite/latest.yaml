@@ -20,6 +20,7 @@ name: org.apache.camel.upgrade.CamelMigrationRecipe
 displayName: Migrate to @camel-version@
 description: Migrates Apache Camel application to @camel-version@
 recipeList:
+  - org.apache.camel.upgrade.camel411.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
