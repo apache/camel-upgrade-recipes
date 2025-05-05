@@ -90,3 +90,7 @@ cd release-utils/scripts/
 ./promote-release.sh $CAMEL_UPGRADE_RECIPES_VERSION 
 ```
 
+When done, release the staging repository.
+
+To do this you'll need to access https://repository.apache.org/#stagingRepositories.
+Select proper staging repository and click release.
