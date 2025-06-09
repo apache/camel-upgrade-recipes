@@ -1,0 +1,40 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_112.html
+#####
+
+#####
+# Update the Camel project from 4.11 to 4.12
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel413.CamelMigrationRecipe
+displayName: Migrates `camel 4.12` application to `camel 4.13`
+description: Migrates `camel 4.12` application to `camel 4.13`.
+recipeList:
+  - org.apache.camel.upgrade.camel413.emptyRecipe
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel413.emptyRecipe
+displayName: The package scan classes has moved from camel-base-engine to camel-support - java
+description: The package scan classes has moved from camel-base-engine to camel-support JAR and moved to a new package - java.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: fake.Class
+      newFullyQualifiedTypeName: fake.Class
