@@ -151,24 +151,55 @@ public class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
     @Test
-    public void testSearch() {
+    public void testElasticSearch() {
         //language=java
         rewriteRun(java(
                 """
+                            import org.apache.camel.component.es.aggregation.BulkRequestAggregationStrategy;
+                            
                             public class SearchTest {
                                  public void test() {
                              
-                                     org.apache.camel.component.es.aggregation.BulkRequestAggregationStrategy elasticAggregationStrategy = null;
-                                     org.apache.camel.component.opensearch.aggregation.BulkRequestAggregationStrategy openAggregationStrategy = null;
+                                     BulkRequestAggregationStrategy elasticAggregationStrategy = null;
                                  }
                             }
                         """,
                 """
+                            import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
+                            
                             public class SearchTest {
                                  public void test() {
                             
-                                     org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;
-                                     org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy openAggregationStrategy = null;
+                                     ElastichsearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;                                   
+                                 }
+                            }
+                        """));
+    }
+
+    /**
+     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
+     */
+    @Test
+    public void testOpenSearch() {
+        //language=java
+        rewriteRun(java(
+                """
+                            import org.apache.camel.component.opensearch.aggregation.BulkRequestAggregationStrategy;
+                            
+                            public class SearchTest {
+                                 public void test() {
+                             
+                                     BulkRequestAggregationStrategy elasticAggregationStrategy = null;
+                                 }
+                            }
+                        """,
+                """
+                            import org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy;
+                            
+                            public class SearchTest {
+                                 public void test() {
+                            
+                                     OpensearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;                                   
                                  }
                             }
                         """));
