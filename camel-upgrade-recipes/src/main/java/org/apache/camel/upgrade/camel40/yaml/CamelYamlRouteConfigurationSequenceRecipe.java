@@ -109,7 +109,7 @@ public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
                     }
                     Yaml.Mapping.Entry resultr = e.withValue(new Yaml.Mapping(
                             randomId(), sequenceToReplace.getMarkers(), sequenceToReplace.getOpeningBracketPrefix(), entries,
-                            null, null));
+                            null, null, null));
 
                     if (!indentRegistered) {
                         indentRegistered = true;
