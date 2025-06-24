@@ -27,7 +27,7 @@
     </parent>
 
     <groupId>org.apache.camel.upgrade</groupId>
-    <version>4.12.1</version>
+    <version>4.12.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <artifactId>camel-parent-upgrade-recipes</artifactId>
 
@@ -74,7 +74,7 @@
         <connection>scm:git:http://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel-upgrade-recipes.git</developerConnection>
         <url>https://github.com/apache/camel-upgrade-recipes</url>
-        <tag>4.12.1</tag>
+        <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>jira</system>

@@ -23,7 +23,7 @@
         <groupId>org.apache.camel.upgrade</groupId>
         <artifactId>camel-parent-upgrade-recipes</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>4.12.1</version>
+        <version>4.12.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-upgrade-recipes</artifactId>
