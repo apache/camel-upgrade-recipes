@@ -24,6 +24,7 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
@@ -46,6 +47,8 @@ import org.openrewrite.yaml.tree.Yaml;
 import static org.openrewrite.Tree.randomId;
 
 public class RecipesUtil {
+
+    private static Pattern kebabCasePattern =  Pattern.compile("-(.)");
 
     // ---------------- visitors
     public static TreeVisitor<?, ExecutionContext> newVisitor(AbstractCamelJavaVisitor visitor) {
@@ -297,6 +300,12 @@ public class RecipesUtil {
         public String getValue() {
             return this.value;
         }
+    }
+
+    public static String kebabCaseToCamelCase(String kebabCase) {
+        return kebabCasePattern
+                .matcher(kebabCase)
+                .replaceAll(mr -> mr.group(1).toUpperCase());
     }
 
 }

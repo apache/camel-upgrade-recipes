@@ -28,13 +28,60 @@ name: org.apache.camel.upgrade.camel413.CamelMigrationRecipe
 displayName: Migrates `camel 4.12` application to `camel 4.13`
 description: Migrates `camel 4.12` application to `camel 4.13`.
 recipeList:
-  - org.apache.camel.upgrade.camel413.emptyRecipe
+#   https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_yaml_dsl
+  - org.apache.camel.upgrade.camel413.YamlDsl413Recipe
+  - org.apache.camel.upgrade.camel413.authenticationHttpClientConfigurer
+  - org.apache.camel.upgrade.camel413.furyDependency
+  - org.apache.camel.upgrade.camel413.furyJava
+  - org.apache.camel.upgrade.camel413.furyDsl
 ---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_http
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel413.emptyRecipe
-displayName: The package scan classes has moved from camel-base-engine to camel-support - java
-description: The package scan classes has moved from camel-base-engine to camel-support JAR and moved to a new package - java.
+name: org.apache.camel.upgrade.camel413.authenticationHttpClientConfigurer
+displayName: Renamed BasicAuthenticationHttpClientConfigurer to  DefaultAuthenticationHttpClientConfigurer
+description: BasicAuthenticationHttpClientConfigurer is renamed to DefaultAuthenticationHttpClientConfigurer.
 recipeList:
   - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: fake.Class
-      newFullyQualifiedTypeName: fake.Class
+      oldFullyQualifiedTypeName: org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer
+      newFullyQualifiedTypeName: org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel413.furyDependency
+displayName: Change Maven dependency example
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-fury
+      newGroupId: org.apache.camel
+      newArtifactId: camel-fory
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel413.furyJava
+displayName: Renamed BasicAuthenticationHttpClientConfigurer to  DefaultAuthenticationHttpClientConfigurer
+description: BasicAuthenticationHttpClientConfigurer is renamed to DefaultAuthenticationHttpClientConfigurer.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.fury.FuryDataFormat
+      newFullyQualifiedTypeName: org.apache.camel.component.fory.ForyDataFormat
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel413.furyDsl
+displayName: Change dataformat fury to fury in xml/java dsl.
+recipeList:
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: dataFormats/fury
+      newName: fory
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: unmarshal/fury
+      newName: fory
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: marshal/fury
+      newName: fory
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.DataFormatClause fury(..)
+      newMethodName: fory
+
+

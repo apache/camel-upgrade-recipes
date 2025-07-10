@@ -100,6 +100,7 @@
         <camel4.8-version>4.8.0</camel4.8-version>
         <camel4.9-version>4.9.0</camel4.9-version>
         <camel4.10-version>4.10.0</camel4.10-version>
+        <camel4.12-version>4.12.0</camel4.12-version>
 
         <camel-version>${project.version}</camel-version>
         <camel-spring-boot-version>${project.version}</camel-spring-boot-version>

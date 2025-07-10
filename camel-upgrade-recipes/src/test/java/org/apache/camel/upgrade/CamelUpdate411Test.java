@@ -24,7 +24,6 @@ import org.openrewrite.test.TypeValidation;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.properties.Assertions.properties;
-import static org.openrewrite.xml.Assertions.xml;
 
 public class CamelUpdate411Test implements RewriteTest {
 

@@ -20,10 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
-import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.xml.Assertions.xml;
 
