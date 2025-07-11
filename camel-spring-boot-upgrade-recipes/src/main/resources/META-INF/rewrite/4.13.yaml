@@ -22,4 +22,8 @@ description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.12
 recipeList:
   - org.apache.camel.upgrade.camel412.CamelSpringBootMigrationRecipe
   - org.apache.camel.upgrade.camel413.CamelMigrationRecipe
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel-springboot
+      oldArtifactId: camel-fury-starter
+      newArtifactId: camel-fory-starter
 #  - any new CSB recipe for C4.13 goes here and to the latest.yaml
