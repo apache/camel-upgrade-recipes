@@ -1,0 +1,25 @@
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.UpdateCamelSpringBootPropertiesAndYamlKeys
+examples:
+- description: ''
+  sources:
+  - before: |
+      camel.main.routeControllerSuperviseEnabled=true
+      another.ignored.property=true
+      camel.springboot.name = Foo
+      camel.springboot.main-run-controller=Should be ignored!
+      camel.main.routeControllerBackOffMultiplier=5
+      camel.springboot.routeControllerInitialDelay = 5000
+      camel.springboot.routeControllerBackoffDelay = 5000
+      camel.springboot.routeControllerBackoffMaxAttempts = 10
+    after: |
+      camel.routecontroller.enabled=true
+      another.ignored.property=true
+      camel.main.name = Foo
+      camel.springboot.main-run-controller=Should be ignored!
+      camel.routecontroller.backOffMultiplier=5
+      camel.routecontroller.initialDelay = 5000
+      camel.routecontroller.backOffDelay = 5000
+      camel.routecontroller.backOffMaxAttempts = 10
+    language: properties
