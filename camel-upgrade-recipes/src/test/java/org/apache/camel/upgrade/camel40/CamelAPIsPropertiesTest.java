@@ -31,35 +31,35 @@ class CamelAPIsPropertiesTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_0)
-            .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true))
-            .typeValidationOptions(TypeValidation.none());
+          .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(true))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     @DocumentExample
     @Test
     void rejectedPolicyDiscardOldeste() {
         rewriteRun(properties(
-                """
-                #test
-                camel.threadpool.rejectedPolicy=DiscardOldest
-                """,
-                """
-                        #test
-                        camel.threadpool.rejectedPolicy=Abort #DiscardOldest has been removed, consider Abort
-                        """));
+          """
+            #test
+            camel.threadpool.rejectedPolicy=DiscardOldest
+            """,
+          """
+            #test
+            camel.threadpool.rejectedPolicy=Abort #DiscardOldest has been removed, consider Abort
+            """));
     }
 
     @Test
     void rejectedPolicyDiscard() {
         rewriteRun(properties(
-                """
-                #test
-                camel.threadpool.rejectedPolicy=Discard
-                """,
-                """
-                        #test
-                        camel.threadpool.rejectedPolicy=Abort #Discard has been removed, consider Abort
-                        """));
+          """
+            #test
+            camel.threadpool.rejectedPolicy=Discard
+            """,
+          """
+            #test
+            camel.threadpool.rejectedPolicy=Abort #Discard has been removed, consider Abort
+            """));
     }
 
 }

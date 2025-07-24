@@ -31,8 +31,8 @@ class CamelUpdate411Test implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_11)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_10, "camel-platform-http"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_10, "camel-platform-http"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
@@ -43,24 +43,24 @@ class CamelUpdate411Test implements RewriteTest {
     void platformHttpFilterStrategy() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.platform.http.PlatformHttpHeaderFilterStrategy;
-                        
-                        public class SmbTest {
-                            public void test() {
-                                   PlatformHttpHeaderFilterStrategy strategy = new PlatformHttpHeaderFilterStrategy();
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.http.base.HttpHeaderFilterStrategy;
-                        
-                        public class SmbTest {
-                            public void test() {
-                                   HttpHeaderFilterStrategy strategy = new HttpHeaderFilterStrategy();
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.platform.http.PlatformHttpHeaderFilterStrategy;
+
+            public class SmbTest {
+                public void test() {
+                       PlatformHttpHeaderFilterStrategy strategy = new PlatformHttpHeaderFilterStrategy();
+                }
+            }
+            """,
+          """
+            import org.apache.camel.http.base.HttpHeaderFilterStrategy;
+
+            public class SmbTest {
+                public void test() {
+                       HttpHeaderFilterStrategy strategy = new HttpHeaderFilterStrategy();
+                }
+            }
+            """));
     }
 
     /**
@@ -70,15 +70,15 @@ class CamelUpdate411Test implements RewriteTest {
     void lightweightRemoval() {
         //language=java
         rewriteRun(
-                properties(
-                        """
-                          camel.main.lightweight=true
-                          camel.main.other_properties=true
-                          """,
-                        """
-                          camel.main.other_properties=true
-                          """
-                )
+          properties(
+            """
+              camel.main.lightweight=true
+              camel.main.other_properties=true
+              """,
+            """
+              camel.main.other_properties=true
+              """
+          )
         );
     }
 
@@ -92,54 +92,54 @@ class CamelUpdate411Test implements RewriteTest {
     void removedDependencies() {
         //language=xml
         rewriteRun(pomXml(
-                """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
+          """
+            <project>
+               <modelVersion>4.0.0</modelVersion>
 
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
+               <artifactId>test</artifactId>
+               <groupId>org.apache.camel.test</groupId>
+               <version>1.0.0</version>
 
-                           <properties>
-                               <camel.version>4.10.0</camel.version>
-                           </properties>
+               <properties>
+                   <camel.version>4.10.0</camel.version>
+               </properties>
 
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-api</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-etcd3</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                            </dependencies>
+               <dependencies>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-api</artifactId>
+                       <version>${camel.version}</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-etcd3</artifactId>
+                       <version>${camel.version}</version>
+                   </dependency>
+                </dependencies>
 
-                        </project>
-                        """,
-                """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
+            </project>
+            """,
+          """
+            <project>
+               <modelVersion>4.0.0</modelVersion>
 
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
+               <artifactId>test</artifactId>
+               <groupId>org.apache.camel.test</groupId>
+               <version>1.0.0</version>
 
-                           <properties>
-                               <camel.version>4.10.0</camel.version>
-                           </properties>
+               <properties>
+                   <camel.version>4.10.0</camel.version>
+               </properties>
 
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-api</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                            </dependencies>
+               <dependencies>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-api</artifactId>
+                       <version>${camel.version}</version>
+                   </dependency>
+                </dependencies>
 
-                        </project>
-                        """));
+            </project>
+            """));
     }
 }

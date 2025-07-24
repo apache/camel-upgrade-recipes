@@ -30,9 +30,9 @@ class CamelEIPRecipeTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_0)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v3_18,
-                        "camel-api", "camel-activemq", "camel-core-model", "jaxb-api"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v3_18,
+            "camel-api", "camel-activemq", "camel-core-model", "jaxb-api"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     @DocumentExample
@@ -40,33 +40,33 @@ class CamelEIPRecipeTest implements RewriteTest {
     void removedEIPInOptionalOut() {
         //language=java
         rewriteRun(java(
-                """
-                import org.apache.camel.builder.RouteBuilder;
-                
-                public class MySimpleToDRoute extends RouteBuilder {
-                
-                    @Override
-                    public void configure() {
-                        from("direct:a")
-                        .inOut("activemq:queue:testqueue")
-                        .to("log:result_a");
-                    }
+          """
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class MySimpleToDRoute extends RouteBuilder {
+
+                @Override
+                public void configure() {
+                    from("direct:a")
+                    .inOut("activemq:queue:testqueue")
+                    .to("log:result_a");
                 }
-                """,
-                """
-                import org.apache.camel.ExchangePattern;
-                import org.apache.camel.builder.RouteBuilder;
-                
-                public class MySimpleToDRoute extends RouteBuilder {
-                
-                    @Override
-                    public void configure() {
-                        from("direct:a")
-                        .setExchangePattern(ExchangePattern.InOut).to("activemq:queue:testqueue")
-                        .to("log:result_a");
-                    }
+            }
+            """,
+          """
+            import org.apache.camel.ExchangePattern;
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class MySimpleToDRoute extends RouteBuilder {
+
+                @Override
+                public void configure() {
+                    from("direct:a")
+                    .setExchangePattern(ExchangePattern.InOut).to("activemq:queue:testqueue")
+                    .to("log:result_a");
                 }
-                """
+            }
+            """
 
         ));
     }
@@ -75,33 +75,33 @@ class CamelEIPRecipeTest implements RewriteTest {
     void removedEIPOutOptionalIn() {
         //language=java
         rewriteRun(java(
-                """
-                import org.apache.camel.builder.RouteBuilder;
-                
-                public class MySimpleToDRoute extends RouteBuilder {
-                
-                    @Override
-                    public void configure() {
-                        from("direct:a")
-                        .inOut("activemq:queue:testqueue")
-                        .to("log:result_a");
-                    }
+          """
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class MySimpleToDRoute extends RouteBuilder {
+
+                @Override
+                public void configure() {
+                    from("direct:a")
+                    .inOut("activemq:queue:testqueue")
+                    .to("log:result_a");
                 }
-                """,
-                """
-                import org.apache.camel.ExchangePattern;
-                import org.apache.camel.builder.RouteBuilder;
-                
-                public class MySimpleToDRoute extends RouteBuilder {
-                
-                    @Override
-                    public void configure() {
-                        from("direct:a")
-                        .setExchangePattern(ExchangePattern.InOut).to("activemq:queue:testqueue")
-                        .to("log:result_a");
-                    }
+            }
+            """,
+          """
+            import org.apache.camel.ExchangePattern;
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class MySimpleToDRoute extends RouteBuilder {
+
+                @Override
+                public void configure() {
+                    from("direct:a")
+                    .setExchangePattern(ExchangePattern.InOut).to("activemq:queue:testqueue")
+                    .to("log:result_a");
                 }
-                """
+            }
+            """
         ));
     }
 
@@ -109,20 +109,20 @@ class CamelEIPRecipeTest implements RewriteTest {
     void removedEIPOutIn() {
         //language=java
         rewriteRun(java(
-                """
-                import org.apache.camel.ExchangePattern;
-                import org.apache.camel.builder.RouteBuilder;
-                
-                public class MySimpleToDRoute extends RouteBuilder {
-                
-                    @Override
-                    public void configure() {
-                        from("direct:a")
-                        .setExchangePattern(ExchangePattern.InOut).to("activemq:queue:testqueue")
-                        .to("log:result_a");
-                    }
+          """
+            import org.apache.camel.ExchangePattern;
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class MySimpleToDRoute extends RouteBuilder {
+
+                @Override
+                public void configure() {
+                    from("direct:a")
+                    .setExchangePattern(ExchangePattern.InOut).to("activemq:queue:testqueue")
+                    .to("log:result_a");
                 }
-                """
+            }
+            """
         ));
     }
 

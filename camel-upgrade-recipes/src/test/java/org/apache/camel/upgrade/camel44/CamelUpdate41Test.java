@@ -32,9 +32,9 @@ class CamelUpdate41Test implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_4)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-api",
-                        "camel-core-model", "camel-tracing", "jakarta.xml.bind-api"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-api",
+            "camel-core-model", "camel-tracing", "jakarta.xml.bind-api"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
@@ -45,28 +45,28 @@ class CamelUpdate41Test implements RewriteTest {
     void aws2SnsQueueUrl() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.builder.RouteBuilder;
-                    
-                        public class Jsonpath2Test extends RouteBuilder {
-                            @Override
-                            public void configure()  {
-                                from("direct:start")
-                                  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxxx");
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.builder.RouteBuilder;
-                        
-                        public class Jsonpath2Test extends RouteBuilder {
-                            @Override
-                            public void configure()  {
-                                from("direct:start")
-                                  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:xxxxx");
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class Jsonpath2Test extends RouteBuilder {
+                @Override
+                public void configure()  {
+                    from("direct:start")
+                      .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxxx");
+                }
+            }
+            """,
+          """
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class Jsonpath2Test extends RouteBuilder {
+                @Override
+                public void configure()  {
+                    from("direct:start")
+                      .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:xxxxx");
+                }
+            }
+            """));
     }
 
     /**
@@ -76,26 +76,26 @@ class CamelUpdate41Test implements RewriteTest {
     void tracingTag() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.tracing.Tag;
-                        
-                        public class Test {
-                        
-                            public Tag test() {
-                                return Tag.URL_SCHEME;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.tracing.TagConstants;
-                        
-                        public class Test {
-                        
-                            public TagConstants test() {
-                                return TagConstants.URL_SCHEME;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.tracing.Tag;
+
+            public class Test {
+
+                public Tag test() {
+                    return Tag.URL_SCHEME;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.tracing.TagConstants;
+
+            public class Test {
+
+                public TagConstants test() {
+                    return TagConstants.URL_SCHEME;
+                }
+            }
+            """));
     }
 
     /**
@@ -105,22 +105,22 @@ class CamelUpdate41Test implements RewriteTest {
     void yamlDsl() {
         //language=yaml
         rewriteRun(yaml(
-                """
-                - beans:
-                  - name: "myClient"
-                    beanType: "com.foo.MyBean"
-                    type: "groovy"
-                    script: |
-                      # groovy script here
-                """,
-                """
-                - beans:
-                  - name: "myClient"
-                    type: "com.foo.MyBean"
-                    scriptLanguage: "groovy"
-                    script: |
-                      # groovy script here
-                """));
+          """
+            - beans:
+              - name: "myClient"
+                beanType: "com.foo.MyBean"
+                type: "groovy"
+                script: |
+                  # groovy script here
+            """,
+          """
+            - beans:
+              - name: "myClient"
+                type: "com.foo.MyBean"
+                scriptLanguage: "groovy"
+                script: |
+                  # groovy script here
+            """));
     }
 
     /**
@@ -130,47 +130,47 @@ class CamelUpdate41Test implements RewriteTest {
     void yamlDslNPE() {
         //language=yaml
         rewriteRun(yaml(
-                """
-                apiVersion: v1
-                kind: ServiceAccount
-                metadata:
-                  name: camel-leader-election
-                ---
-                apiVersion: rbac.authorization.k8s.io/v1
-                kind: Role
-                metadata:
-                  name: camel-leader-election
-                rules:
-                  - apiGroups:
-                      - ""
-                      - "coordination.k8s.io"
-                    resources:
-                      - configmaps
-                      - secrets
-                      - pods
-                      - leases
-                    verbs:
-                      - create
-                      - delete
-                      - deletecollection
-                      - get
-                      - list
-                      - patch
-                      - update
-                      - watch
-                ---
-                apiVersion: rbac.authorization.k8s.io/v1
-                kind: RoleBinding
-                metadata:
-                  name: camel-leader-election
-                subjects:
-                  - kind: ServiceAccount
-                    name: camel-leader-election
-                roleRef:
-                  kind: Role
-                  name: camel-leader-election
-                  apiGroup: rbac.authorization.k8s.io
-                """));
+          """
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+              name: camel-leader-election
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: Role
+            metadata:
+              name: camel-leader-election
+            rules:
+              - apiGroups:
+                  - ""
+                  - "coordination.k8s.io"
+                resources:
+                  - configmaps
+                  - secrets
+                  - pods
+                  - leases
+                verbs:
+                  - create
+                  - delete
+                  - deletecollection
+                  - get
+                  - list
+                  - patch
+                  - update
+                  - watch
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: camel-leader-election
+            subjects:
+              - kind: ServiceAccount
+                name: camel-leader-election
+            roleRef:
+              kind: Role
+              name: camel-leader-election
+              apiGroup: rbac.authorization.k8s.io
+            """));
     }
 
     /**
@@ -180,28 +180,28 @@ class CamelUpdate41Test implements RewriteTest {
     void xmlDsl() {
         //language=xml
         rewriteRun(xml(
-                """
-                <routes xmlns="http://camel.apache.org/schema/spring">
-                    <route id="myRoute">
-                        <bean name="myBean" type="groovy" beanType="com.foo.MyBean">
-                            <script>
-                              <!-- groovy code here to create the bean -->
-                            </script>
-                        </bean>
-                    </route>
-                </routes>
-                """,
-                """
-                <routes xmlns="http://camel.apache.org/schema/spring">
-                    <route id="myRoute">
-                        <bean name="myBean" type="com.foo.MyBean" scriptLanguage="groovy">
-                            <script>
-                              <!-- groovy code here to create the bean -->
-                            </script>
-                        </bean>
-                    </route>
-                </routes>
-                """));
+          """
+            <routes xmlns="http://camel.apache.org/schema/spring">
+                <route id="myRoute">
+                    <bean name="myBean" type="groovy" beanType="com.foo.MyBean">
+                        <script>
+                          <!-- groovy code here to create the bean -->
+                        </script>
+                    </bean>
+                </route>
+            </routes>
+            """,
+          """
+            <routes xmlns="http://camel.apache.org/schema/spring">
+                <route id="myRoute">
+                    <bean name="myBean" type="com.foo.MyBean" scriptLanguage="groovy">
+                        <script>
+                          <!-- groovy code here to create the bean -->
+                        </script>
+                    </bean>
+                </route>
+            </routes>
+            """));
     }
 
 }

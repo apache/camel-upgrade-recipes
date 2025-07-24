@@ -31,8 +31,8 @@ class CamelUpdate410Test implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_10)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_9, "camel-smb", "camel-azure-files"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_9, "camel-smb", "camel-azure-files"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
@@ -43,9 +43,9 @@ class CamelUpdate410Test implements RewriteTest {
     void intercept() {
         //language=xml
         rewriteRun(xml(
-                """
+          """
             <camelContext>
-            
+
               <intercept>
                   <when>
                     <simple>${body} contains 'Hello'</simple>
@@ -53,18 +53,18 @@ class CamelUpdate410Test implements RewriteTest {
                     <stop/> <!-- stop continue routing -->
                   </when>
               </intercept>
-            
+
               <route>
                 <from uri="jms:queue:order"/>
                 <to uri="bean:validateOrder"/>
                 <to uri="bean:processOrder"/>
               </route>
-            
+
             </camelContext>
-                """,
-                """
+            """,
+          """
             <camelContext>
-            
+
               <intercept>
                   <onWhen>
                     <simple>${body} contains 'Hello'</simple>
@@ -72,15 +72,15 @@ class CamelUpdate410Test implements RewriteTest {
                     <stop/> <!-- stop continue routing -->
                   </onWhen>
               </intercept>
-            
+
               <route>
                 <from uri="jms:queue:order"/>
                 <to uri="bean:validateOrder"/>
                 <to uri="bean:processOrder"/>
               </route>
-            
+
             </camelContext>
-                """));
+            """));
     }
 
     /**
@@ -90,40 +90,40 @@ class CamelUpdate410Test implements RewriteTest {
     void interceptSendToEndpoint() {
         //language=xml
         rewriteRun(xml(
-                """
+          """
             <camelContext>
-            
+
               <interceptSendToEndpoint uri="kafka*" skipSendToOriginalEndpoint="true">
                 <when><simple>${header.biztype} == 'TEST'</simple></when>
                 <log message="TEST message detected - is NOT send to kafka"/>
               </interceptSendToEndpoint>
-            
+
               <route>
                 <from uri="jms:queue:order"/>
                 <to uri="bean:validateOrder"/>
                 <to uri="bean:processOrder"/>
                 <to uri="kafka:order"/>
               </route>
-            
+
             </camelContext>
-                """,
-                """
+            """,
+          """
             <camelContext>
-            
+
               <interceptSendToEndpoint uri="kafka*" skipSendToOriginalEndpoint="true">
                 <onWhen><simple>${header.biztype} == 'TEST'</simple></onWhen>
                 <log message="TEST message detected - is NOT send to kafka"/>
               </interceptSendToEndpoint>
-            
+
               <route>
                 <from uri="jms:queue:order"/>
                 <to uri="bean:validateOrder"/>
                 <to uri="bean:processOrder"/>
                 <to uri="kafka:order"/>
               </route>
-            
+
             </camelContext>
-                """));
+            """));
     }
 
     /**
@@ -133,24 +133,24 @@ class CamelUpdate410Test implements RewriteTest {
     void smbChange() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.smb.SmbConstants;
-                        
-                        public class SmbTest {
-                            public void test() {
-                                   String s = SmbConstants.SMB_FILE_PATH;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.component.smb.SmbConstants;
-                        
-                        public class SmbTest {
-                            public void test() {
-                                   String s = SmbConstants.FILE_PATH;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.smb.SmbConstants;
+
+            public class SmbTest {
+                public void test() {
+                       String s = SmbConstants.SMB_FILE_PATH;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.smb.SmbConstants;
+
+            public class SmbTest {
+                public void test() {
+                       String s = SmbConstants.FILE_PATH;
+                }
+            }
+            """));
     }
 
     /**
@@ -160,41 +160,41 @@ class CamelUpdate410Test implements RewriteTest {
     void azureFiles() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.file.azure.FilesHeaders;
-                        
-                        public class SmbTest {
-                            public void test() {
-                                   String s = FilesHeaders.FILE_PATH;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.component.file.azure.FilesConstants;
-                        
-                        public class SmbTest {
-                            public void test() {
-                                   String s = FilesConstants.FILE_PATH;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.file.azure.FilesHeaders;
+
+            public class SmbTest {
+                public void test() {
+                       String s = FilesHeaders.FILE_PATH;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.file.azure.FilesConstants;
+
+            public class SmbTest {
+                public void test() {
+                       String s = FilesConstants.FILE_PATH;
+                }
+            }
+            """));
     }
 
     @Test
     void propertiesFile() {
         rewriteRun(
-                properties(
-                        """
-                          camel.main.routeControllerSuperviseEnabled=true
-                          another.ignored.property=true
-                          camel.main.routeControllerBackOffMultiplier=5
-                          """,
-                        """
-                          camel.routecontroller.enabled=true
-                          another.ignored.property=true
-                          camel.routecontroller.backOffMultiplier=5
-                          """
-                )
+          properties(
+            """
+              camel.main.routeControllerSuperviseEnabled=true
+              another.ignored.property=true
+              camel.main.routeControllerBackOffMultiplier=5
+              """,
+            """
+              camel.routecontroller.enabled=true
+              another.ignored.property=true
+              camel.routecontroller.backOffMultiplier=5
+              """
+          )
         );
     }
 
