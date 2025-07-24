@@ -18,13 +18,14 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-public class CamelBeanRecipeTest implements RewriteTest {
+class CamelBeanRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -34,130 +35,140 @@ public class CamelBeanRecipeTest implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none());
     }
 
+    @DocumentExample
     @Test
-    void testClassTypeAndInt() {
+    void classTypeAndInt() {
         //language=java
-        rewriteRun(java("""
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(com.foo.MyOrder, int)");
-                        }
+        rewriteRun(java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(com.foo.MyOrder, int)");
                     }
-                """, """
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(com.foo.MyOrder.class, int.class)");
-                        }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(com.foo.MyOrder.class, int.class)");
                     }
+                }
                 """
 
         ));
     }
 
     @Test
-    void testClassTypeAndBoolean() {
+    void classTypeAndBoolean() {
         //language=java
-        rewriteRun(java("""
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(com.foo.MyOrder, true)");
-                        }
+        rewriteRun(java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(com.foo.MyOrder, true)");
                     }
-                """, """
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(com.foo.MyOrder.class, true)");
-                        }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(com.foo.MyOrder.class, true)");
                     }
+                }
                 """
 
         ));
     }
 
     @Test
-    void testClassTypeAndFloat() {
+    void classTypeAndFloat() {
         //language=java
-        rewriteRun(java("""
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(com.foo.MyOrder, float)");
-                        }
+        rewriteRun(java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(com.foo.MyOrder, float)");
                     }
-                """, """
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(com.foo.MyOrder.class, float.class)");
-                        }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(com.foo.MyOrder.class, float.class)");
                     }
+                }
                 """
 
         ));
     }
 
     @Test
-    void testDoubleAndChar() {
+    void doubleAndChar() {
         //language=java
-        rewriteRun(java("""
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(double, char)");
-                        }
+        rewriteRun(java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(double, char)");
                     }
-                """, """
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(double.class, char.class)");
-                        }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(double.class, char.class)");
                     }
+                }
                 """
 
         ));
     }
 
     @Test
-    void testMultipleTo() {
+    void multipleTo() {
         //language=java
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
                 import org.apache.camel.builder.RouteBuilder;
                 
                 public class MySimpleToDRoute extends RouteBuilder {
@@ -169,18 +180,19 @@ public class CamelBeanRecipeTest implements RewriteTest {
                         .to("bean:myBean?method=bar(float, int)");
                     }
                 }
-                """, """
-                    import org.apache.camel.builder.RouteBuilder;
-                
-                    public class MySimpleToDRoute extends RouteBuilder {
-                
-                        @Override
-                        public void configure() {
-                            from("direct:a")
-                            .to("bean:myBean?method=foo(double.class, char.class)")
-                            .to("bean:myBean?method=bar(float.class, int.class)");
-                        }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+                        from("direct:a")
+                        .to("bean:myBean?method=foo(double.class, char.class)")
+                        .to("bean:myBean?method=bar(float.class, int.class)");
                     }
+                }
                 """
 
         ));

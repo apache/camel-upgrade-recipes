@@ -18,6 +18,7 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -25,7 +26,7 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.xml.Assertions.xml;
 
-public class CameXmlDslRecipeTest implements RewriteTest {
+class CameXmlDslRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -34,10 +35,12 @@ public class CameXmlDslRecipeTest implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none());
     }
 
+    @DocumentExample
     @Test
-    public void testDescription() {
+    void description() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
                 <routes xmlns="http://camel.apache.org/schema/spring">
                     <route id="myRoute">
                         <description>Something that this route do</description>
@@ -56,30 +59,32 @@ public class CameXmlDslRecipeTest implements RewriteTest {
                        <to uri="log:info"/>
                     </route>
                 </routes>
-                                                """, """
-                    <routes xmlns="http://camel.apache.org/schema/spring">
-                        <route id="myRoute" description="Something that this route do">
-                            <from uri="kafka:cheese"/>
-                            <setBody>
-                               <constant>Hello Camel K!</constant>
-                            </setBody>
-                           <to uri="log:info"/>
-                        </route>
-                        <route id="myRoute2" description="Something that this route2 do">
-                            <from uri="kafka:cheese"/>
-                            <setBody>
-                               <constant>Hello Camel K!</constant>
-                            </setBody>
-                           <to uri="log:info"/>
-                        </route>
-                    </routes>
+                                                """,
+                """
+                <routes xmlns="http://camel.apache.org/schema/spring">
+                    <route id="myRoute" description="Something that this route do">
+                        <from uri="kafka:cheese"/>
+                        <setBody>
+                           <constant>Hello Camel K!</constant>
+                        </setBody>
+                       <to uri="log:info"/>
+                    </route>
+                    <route id="myRoute2" description="Something that this route2 do">
+                        <from uri="kafka:cheese"/>
+                        <setBody>
+                           <constant>Hello Camel K!</constant>
+                        </setBody>
+                       <to uri="log:info"/>
+                    </route>
+                </routes>
                 """));
     }
 
     @Test
-    public void testCircuitBreakerFull() {
+    void circuitBreakerFull() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
                 <differentContext>
                     <circuitBreaker>
                         <resilience4jConfiguration>
@@ -105,9 +110,10 @@ public class CameXmlDslRecipeTest implements RewriteTest {
     }
 
     @Test
-    public void testCircuitBreaker() {
+    void circuitBreaker() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
                 <route>
                     <from uri="direct:start"/>
                     <circuitBreaker>
@@ -118,7 +124,8 @@ public class CameXmlDslRecipeTest implements RewriteTest {
                     </circuitBreaker>
                     <to uri="mock:result"/>
                 </route>
-                                                """, """
+                                                """,
+                """
                 <route>
                     <from uri="direct:start"/>
                     <circuitBreaker>

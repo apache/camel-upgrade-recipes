@@ -18,13 +18,15 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
-import org.openrewrite.properties.Assertions;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
-public class CamelAPIsPropertiesTest implements RewriteTest {
+import static org.openrewrite.properties.Assertions.properties;
+
+class CamelAPIsPropertiesTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -33,27 +35,30 @@ public class CamelAPIsPropertiesTest implements RewriteTest {
             .typeValidationOptions(TypeValidation.none());
     }
 
+    @DocumentExample
     @Test
-    public void testRejectedPolicyDiscardOldeste() {
-        rewriteRun(Assertions.properties("""
-                   #test
-                   camel.threadpool.rejectedPolicy=DiscardOldest
+    void rejectedPolicyDiscardOldeste() {
+        rewriteRun(properties(
+                """
+                #test
+                camel.threadpool.rejectedPolicy=DiscardOldest
                 """,
                 """
-                            #test
-                            camel.threadpool.rejectedPolicy=Abort #DiscardOldest has been removed, consider Abort
+                        #test
+                        camel.threadpool.rejectedPolicy=Abort #DiscardOldest has been removed, consider Abort
                         """));
     }
 
     @Test
-    public void testRejectedPolicyDiscard() {
-        rewriteRun(Assertions.properties("""
-                   #test
-                   camel.threadpool.rejectedPolicy=Discard
+    void rejectedPolicyDiscard() {
+        rewriteRun(properties(
+                """
+                #test
+                camel.threadpool.rejectedPolicy=Discard
                 """,
                 """
-                            #test
-                            camel.threadpool.rejectedPolicy=Abort #Discard has been removed, consider Abort
+                        #test
+                        camel.threadpool.rejectedPolicy=Abort #Discard has been removed, consider Abort
                         """));
     }
 

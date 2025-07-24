@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
@@ -54,7 +55,7 @@ import java.util.stream.Collectors;
  *          payload: "test-payload"
  * </pre>
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class YamlDsl46Recipe extends Recipe {
 
@@ -79,7 +80,7 @@ public class YamlDsl46Recipe extends Recipe {
             }
 
             @Override
-            public Yaml.Mapping.Entry doVisitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext ctx) {
+            public  Yaml.Mapping.@Nullable Entry doVisitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext ctx) {
                 Yaml.Mapping.Entry e = super.doVisitMappingEntry(entry, ctx);
                 //resolve path
                 String path = RecipesUtil.getProperty(getCursor());

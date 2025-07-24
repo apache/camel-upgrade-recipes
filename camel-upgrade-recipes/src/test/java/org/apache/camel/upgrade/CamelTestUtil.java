@@ -78,10 +78,6 @@ public class CamelTestUtil {
         }
     }
 
-    private static RecipeSpec recipe(RecipeSpec spec, CamelVersion to) {
-        return recipe(spec, to, to.getRecipe());
-    }
-
     public static RecipeSpec recipe(RecipeSpec spec, CamelVersion to, String... activeRecipes) {
         if (activeRecipes == null || activeRecipes.length == 0) {
             return spec.recipeFromResource(to.getYamlFile(), to.getRecipe());

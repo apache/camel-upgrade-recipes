@@ -19,14 +19,15 @@ package org.apache.camel.upgrade.camel44;
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.openrewrite.properties.Assertions;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.properties.Assertions.properties;
 
-public class CamelUpdate44Test implements RewriteTest {
+class CamelUpdate44Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -39,17 +40,19 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_main">doc</a>
      */
+    @DocumentExample
     @Test
-    public void testCamelMainRouteControllerProperty() {
-        rewriteRun(Assertions.properties("""
-                           #test
-                           camel.main.routeControllerBackOffDelay=1000
-                           camel.main.routeControllerSuperviseEnabled = true
+    void camelMainRouteControllerProperty() {
+        rewriteRun(properties(
+                """
+                        #test
+                        camel.main.routeControllerBackOffDelay=1000
+                        camel.main.routeControllerSuperviseEnabled = true
                         """,
                   """
-                            #test
-                            camel.routeController.backOffDelay=1000
-                            camel.routeController.enabled = true
+                        #test
+                        camel.routeController.backOffDelay=1000
+                        camel.routeController.enabled = true
                         """));
     }
 
@@ -57,16 +60,17 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_main">doc</a>
      */
     @Test
-    public void testCamelMainRouteControllerDashedProperty() {
-        rewriteRun(Assertions.properties("""
-                           #test
-                           camel.main.route-controller-back-off-max-attempts = 10
-                           camel.main.route-controller-supervise-enabled = true
+    void camelMainRouteControllerDashedProperty() {
+        rewriteRun(properties(
+                """
+                        #test
+                        camel.main.route-controller-back-off-max-attempts = 10
+                        camel.main.route-controller-supervise-enabled = true
                         """,
                 """
-                            #test
-                            camel.routeController.back-off-max-attempts = 10
-                            camel.routeController.enabled = true
+                        #test
+                        camel.routeController.back-off-max-attempts = 10
+                        camel.routeController.enabled = true
                         """));
     }
 
@@ -74,20 +78,20 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_json_validator">doc</a>
      */
     @Test
-    public void testJsonValidator() {
+    void jsonValidator() {
         //language=java
         rewriteRun(java(
                 """
-                            import org.apache.camel.component.jsonvalidator.DefaultJsonSchemaLoader;
-                        
-                            public class CustomJsonValidator extends DefaultJsonSchemaLoader {
-                            }
+                        import org.apache.camel.component.jsonvalidator.DefaultJsonSchemaLoader;
+                    
+                        public class CustomJsonValidator extends DefaultJsonSchemaLoader {
+                        }
                         """,
                 """
-                            import org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader;
-                        
-                            public class CustomJsonValidator extends DefaultJsonUriSchemaLoader {
-                            }
+                        import org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader;
+                    
+                        public class CustomJsonValidator extends DefaultJsonUriSchemaLoader {
+                        }
                         """));
     }
 
@@ -95,17 +99,18 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core">doc</a>
      */
     @Test
-    public void testStopWatchConstructor() {
+    void stopWatchConstructor() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.util.StopWatch;
-                        
-                            public class StopWatchTest {
-                        
-                                public void test() {
-                                   StopWatch sw = new StopWatch(Long.parseLong("1"));
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.util.StopWatch;
+                    
+                        public class StopWatchTest {
+                    
+                            public void test() {
+                               StopWatch sw = new StopWatch(Long.parseLong("1"));
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.util.StopWatch;
@@ -125,18 +130,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core">doc</a>
      */
     @Test
-    public void testExchangeGetCreated() {
+    void exchangeGetCreated() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.Exchange;
-                        
-                            public class ExchangeTest {
-                        
-                                public void test() {
-                                    Exchange ex = null;
-                                    ex.getCreated();
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.Exchange;
+                    
+                        public class ExchangeTest {
+                    
+                            public void test() {
+                                Exchange ex = null;
+                                ex.getCreated();
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.Exchange;
@@ -155,19 +161,20 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core">doc</a>
      */
     @Test
-    public void testPropertiesLookup() {
+    void propertiesLookup() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.component.properties.PropertiesLookup;
-                        
-                            public class PropertiesLookupTest  {
-                        
-                                public void test() throws Exception {
-                                    PropertiesLookup pl = null;
-                        
-                                    pl.lookup("test");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.component.properties.PropertiesLookup;
+                    
+                        public class PropertiesLookupTest  {
+                    
+                            public void test() throws Exception {
+                                PropertiesLookup pl = null;
+                    
+                                pl.lookup("test");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.component.properties.PropertiesLookup;
@@ -187,18 +194,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core">doc</a>
      */
     @Test
-    public void testJsonpath1() {
+    void jsonpath1() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Jsonpath1Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().jsonpath("something", true, Object.class, "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Jsonpath1Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().jsonpath("something", true, Object.class, "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -219,18 +227,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core">doc</a>
      */
     @Test
-    public void testJsonpath2() {
+    void jsonpath2() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Jsonpath2Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().jsonpathWriteAsString("something", true, "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Jsonpath2Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().jsonpathWriteAsString("something", true, "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -251,18 +260,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * Removed tokenize(String token, boolean regex, int group, String groupDelimiter, boolean skipFirst)
      */
     @Test
-    public void testTokenize1() {
+    void tokenize1() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Tokenize1Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().tokenize("token", true, 0, "groupDelimiter", true)
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Tokenize1Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().tokenize("token", true, 0, "groupDelimiter", true)
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -283,18 +293,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * Removed tokenize(String token, String headerName)
      */
     @Test
-    public void testTokenize2() {
+    void tokenize2() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Tokenize2Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().tokenize("token", "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Tokenize2Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().tokenize("token", "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -315,18 +326,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * Removed tokenize(String token, String headerName, boolean regex)
      */
     @Test
-    public void testTokenize3() {
+    void tokenize3() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Tokenize3Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().tokenize("token", "header", true)
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Tokenize3Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().tokenize("token", "header", true)
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -346,12 +358,13 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * Removed xpath(String text, String headerName)
      */
-    @Test
     @Disabled
+    @Test
     //https://github.com/quarkusio/quarkus-updates/issues/142
-    void testXpath1() {
+    void xpath1() {
         //language=java
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
                         import org.apache.camel.builder.RouteBuilder;
                         
                         public class Xpath1Test extends RouteBuilder {
@@ -380,21 +393,22 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * Removed xpath(String text, Class<?> resultType, String headerName)
      */
-    @Test
     @Disabled
+    @Test
     //https://github.com/quarkusio/quarkus-updates/issues/142
-    void testXpath2() {
+    void xpath2() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Xpath2Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().xpath("text", Object.class, "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Xpath2Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().xpath("text", Object.class, "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -415,18 +429,19 @@ public class CamelUpdate44Test implements RewriteTest {
      * Removed xpath(String text, Class<?> resultType, Namespaces namespaces, String headerName) {
      */
     @Test
-    public void testXpath3() {
+    void xpath3() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Xpath3Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().xpath("text", Object.class, null, "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Xpath3Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().xpath("text", Object.class, null, "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -446,21 +461,22 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * Removed xquery(String text, String headerName)
      */
-    @Test
     @Disabled
+    @Test
     //https://github.com/quarkusio/quarkus-updates/issues/142
-    void testXquery1() {
+    void xquery1() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Xquery1Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().xquery("text", "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Xquery1Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().xquery("text", "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -479,21 +495,22 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * Removed xquery(String text, Class<?> resultType, String headerName)
      */
-    @Test
     @Disabled
+    @Test
     //https://github.com/quarkusio/quarkus-updates/issues/142
-    void testXquery2() {
+    void xquery2() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Tokenize1Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                    from("direct:in").choice().when().xquery("text", Object.class, "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Tokenize1Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                from("direct:in").choice().when().xquery("text", Object.class, "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;
@@ -512,21 +529,22 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * Removed xquery(String text, Class<?> resultType, Namespaces namespaces, String headerName) {
      */
-    @Test
     @Disabled
+    @Test
     //https://github.com/quarkusio/quarkus-updates/issues/142
-    void testXquery3() {
+    void xquery3() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.builder.RouteBuilder;
-                        
-                            public class Tokenize1Test extends RouteBuilder {
-                                @Override
-                                public void configure()  {
-                                     from("direct:in").choice().when().xquery("text", Object.class, "namespace", "header")
-                                            .to("mock:premium");
-                                }
+        rewriteRun(java(
+                """
+                        import org.apache.camel.builder.RouteBuilder;
+                    
+                        public class Tokenize1Test extends RouteBuilder {
+                            @Override
+                            public void configure()  {
+                                 from("direct:in").choice().when().xquery("text", Object.class, "namespace", "header")
+                                        .to("mock:premium");
                             }
+                        }
                         """,
                 """
                         import org.apache.camel.builder.RouteBuilder;

@@ -39,8 +39,7 @@ public abstract class AbstractCamelYamlVisitor extends YamlIsoVisitor<ExecutionC
     @Override
     public final Yaml.Document visitDocument(Yaml.Document document, ExecutionContext o) {
         clearLocalCache();
-        Yaml.Document d = super.visitDocument(document, o);
-        return d;
+        return super.visitDocument(document, o);
     }
 
     @Override

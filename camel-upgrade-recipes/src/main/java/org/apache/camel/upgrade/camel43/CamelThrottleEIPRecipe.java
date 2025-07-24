@@ -31,14 +31,14 @@ import org.openrewrite.java.tree.J;
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core" >documentation</a>.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelThrottleEIPRecipe extends Recipe {
 
     private static final String M_THROTTLE_PRIMITIVE = "org.apache.camel.model.ProcessorDefinition throttle(long)";
     private static final String M_THROTTLE_TIME_PERIOD_MILLIS_PRIMITIVE
             = "org.apache.camel.model.ThrottleDefinition timePeriodMillis(long)";
-    private static String WARNING_COMMENT
+    private static final String WARNING_COMMENT
             = " Throttle now uses the number of concurrent requests as the throttling measure instead of the number of requests per period.";
 
     @Override
@@ -56,19 +56,18 @@ public class CamelThrottleEIPRecipe extends Recipe {
 
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
 
-                if (getMethodMatcher(M_THROTTLE_PRIMITIVE).matches(mi, false)
-                        && !RecipesUtil.isCommentBeforeElement(mi, WARNING_COMMENT)) {
+                if (getMethodMatcher(M_THROTTLE_PRIMITIVE).matches(mi, false) &&
+                        !RecipesUtil.isCommentBeforeElement(mi, WARNING_COMMENT)) {
                     mi = mi.withComments(Collections.singletonList(RecipesUtil.createMultinlineComment(WARNING_COMMENT)));
                     getCursor().putMessage("throttle-migrated", true);
                 } else if (getMethodMatcher(M_THROTTLE_TIME_PERIOD_MILLIS_PRIMITIVE).matches(mi, false)) {
                     if (mi.getSelect() instanceof J.MethodInvocation) {
                         return (J.MethodInvocation) mi.getSelect();
-                    } else {
-                        return null;
                     }
+                    return null;
                 }
 
                 return mi;

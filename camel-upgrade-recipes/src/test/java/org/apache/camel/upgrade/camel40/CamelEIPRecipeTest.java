@@ -18,13 +18,14 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-public class CamelEIPRecipeTest implements RewriteTest {
+class CamelEIPRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -34,10 +35,12 @@ public class CamelEIPRecipeTest implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none());
     }
 
+    @DocumentExample
     @Test
-    void testRemovedEIPInOptionalOut() {
+    void removedEIPInOptionalOut() {
         //language=java
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
                 import org.apache.camel.builder.RouteBuilder;
                 
                 public class MySimpleToDRoute extends RouteBuilder {
@@ -49,7 +52,8 @@ public class CamelEIPRecipeTest implements RewriteTest {
                         .to("log:result_a");
                     }
                 }
-                """, """
+                """,
+                """
                 import org.apache.camel.ExchangePattern;
                 import org.apache.camel.builder.RouteBuilder;
                 
@@ -68,9 +72,10 @@ public class CamelEIPRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testRemovedEIPOutOptionalIn() {
+    void removedEIPOutOptionalIn() {
         //language=java
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
                 import org.apache.camel.builder.RouteBuilder;
                 
                 public class MySimpleToDRoute extends RouteBuilder {
@@ -82,7 +87,8 @@ public class CamelEIPRecipeTest implements RewriteTest {
                         .to("log:result_a");
                     }
                 }
-                """, """
+                """,
+                """
                 import org.apache.camel.ExchangePattern;
                 import org.apache.camel.builder.RouteBuilder;
                 
@@ -100,9 +106,10 @@ public class CamelEIPRecipeTest implements RewriteTest {
     }
 
     @Test
-    void testRemovedEIPOutIn() {
+    void removedEIPOutIn() {
         //language=java
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
                 import org.apache.camel.ExchangePattern;
                 import org.apache.camel.builder.RouteBuilder;
                 

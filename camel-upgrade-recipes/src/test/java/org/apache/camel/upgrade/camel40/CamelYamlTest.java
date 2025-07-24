@@ -18,12 +18,14 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
-public class CamelYamlTest implements RewriteTest {
+import static org.openrewrite.yaml.Assertions.yaml;
+
+class CamelYamlTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -31,16 +33,19 @@ public class CamelYamlTest implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none());
     }
 
+    @DocumentExample
     @Test
-    public void testStepsToFrom1() {
+    void stepsToFrom1() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                   route:
                     from:
                       uri: "direct:info"
                     steps:
                       log: "message"
-                """, """
+                """,
+                """
                   route:
                     from:
                       uri: "direct:info"
@@ -50,14 +55,16 @@ public class CamelYamlTest implements RewriteTest {
     }
 
     @Test
-    public void testStepsToFrom2() {
+    void stepsToFrom2() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                     from:
                       uri: "direct:info"
                     steps:
                       log: "message"
-                """, """
+                """,
+                """
                     from:
                       uri: "direct:info"
                       steps:
@@ -66,9 +73,10 @@ public class CamelYamlTest implements RewriteTest {
     }
 
     @Test
-    public void testStepsToFrom3() {
+    void stepsToFrom3() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - from:
                     uri: "direct:start"
                   steps:
@@ -80,7 +88,8 @@ public class CamelYamlTest implements RewriteTest {
                             uri: "log:filtered"
                   - to:
                       uri: "log:original"
-                """, """
+                """,
+                """
                   - from:
                       uri: "direct:start"
                       steps:
@@ -96,9 +105,10 @@ public class CamelYamlTest implements RewriteTest {
     }
 
     @Test
-    public void testRouteConfigurationWithOnException() {
+    void routeConfigurationWithOnException() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route-configuration:
                     - id: "yamlRouteConfiguration"
                     - on-exception:
@@ -110,7 +120,8 @@ public class CamelYamlTest implements RewriteTest {
                           - set-body:
                               constant:
                                   expression: "onException has been triggered in yamlRouteConfiguration"
-                """, """
+                """,
+                """
                   - route-configuration:
                       id: "yamlRouteConfiguration"
                       on-exception:
@@ -127,21 +138,24 @@ public class CamelYamlTest implements RewriteTest {
     }
 
     @Test
-    public void testRouteConfigurationWithoutOnException() {
+    void routeConfigurationWithoutOnException() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route-configuration:
                     - id: "__id"
-                """, """
+                """,
+                """
                   - route-configuration:
                       id: "__id"
                 """));
     }
 
     @Test
-    public void testDoubleDocument() {
+    void doubleDocument() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route-configuration:
                     - id: "yamlRouteConfiguration1"
                     - on-exception:
@@ -165,7 +179,8 @@ public class CamelYamlTest implements RewriteTest {
                           - set-body:
                               constant:
                                   expression: "onException has been triggered in yamlRouteConfiguration"
-                """, """
+                """,
+                """
                   - route-configuration:
                       id: "yamlRouteConfiguration1"
                       on-exception:
@@ -195,15 +210,17 @@ public class CamelYamlTest implements RewriteTest {
     }
 
     @Test
-    public void testDoubleDocumentSimple() {
+    void doubleDocumentSimple() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route-configuration:
                     - id: "__id1"
                 ---
                 - route-configuration:
                     - id: "__id2"
-                """, """
+                """,
+                """
                   - route-configuration:
                       id: "__id1"
                   ---
@@ -213,9 +230,10 @@ public class CamelYamlTest implements RewriteTest {
     }
 
     @Test
-    public void testRouteConfigurationIdempotent() {
+    void routeConfigurationIdempotent() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                   - route-configuration:
                       id: "yamlRouteConfiguration"
                       on-exception:

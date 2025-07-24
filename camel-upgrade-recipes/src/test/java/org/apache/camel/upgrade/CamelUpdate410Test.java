@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -25,7 +26,7 @@ import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.xml.Assertions.xml;
 
-public class CamelUpdate410Test implements RewriteTest {
+class CamelUpdate410Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -37,10 +38,12 @@ public class CamelUpdate410Test implements RewriteTest {
     /**
      * <a href="https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#xml-dsl-changes">xml DSL changes</a>
      */
+    @DocumentExample
     @Test
-    public void testIntercept() {
+    void intercept() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
             <camelContext>
             
               <intercept>
@@ -58,7 +61,8 @@ public class CamelUpdate410Test implements RewriteTest {
               </route>
             
             </camelContext>
-                """, """
+                """,
+                """
             <camelContext>
             
               <intercept>
@@ -78,13 +82,15 @@ public class CamelUpdate410Test implements RewriteTest {
             </camelContext>
                 """));
     }
+
     /**
      * <a href="https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#xml-dsl-changes">xml DSL changes</a>
      */
     @Test
-    public void testInterceptSendToEndpoint() {
+    void interceptSendToEndpoint() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
             <camelContext>
             
               <interceptSendToEndpoint uri="kafka*" skipSendToOriginalEndpoint="true">
@@ -100,7 +106,8 @@ public class CamelUpdate410Test implements RewriteTest {
               </route>
             
             </camelContext>
-                """, """
+                """,
+                """
             <camelContext>
             
               <interceptSendToEndpoint uri="kafka*" skipSendToOriginalEndpoint="true">
@@ -123,52 +130,53 @@ public class CamelUpdate410Test implements RewriteTest {
      * <a href="https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#camel-smb">camel-smb</a>
      */
     @Test
-    public void testSmbChange() {
+    void smbChange() {
         //language=java
         rewriteRun(java(
                 """
-                             import org.apache.camel.component.smb.SmbConstants;
-                             
-                             public class SmbTest {
-                                 public void test() {
-                                        String s = SmbConstants.SMB_FILE_PATH;
-                                 }
-                             }
+                        import org.apache.camel.component.smb.SmbConstants;
+                        
+                        public class SmbTest {
+                            public void test() {
+                                   String s = SmbConstants.SMB_FILE_PATH;
+                            }
+                        }
                         """,
                 """
-                             import org.apache.camel.component.smb.SmbConstants;
-                             
-                             public class SmbTest {
-                                 public void test() {
-                                        String s = SmbConstants.FILE_PATH;
-                                 }
-                             }
+                        import org.apache.camel.component.smb.SmbConstants;
+                        
+                        public class SmbTest {
+                            public void test() {
+                                   String s = SmbConstants.FILE_PATH;
+                            }
+                        }
                         """));
     }
+
     /**
      * <a href="https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_10.adoc#camel-azure-files">camel-azure-files</a>
      */
     @Test
-    public void testAzureFiles() {
+    void azureFiles() {
         //language=java
         rewriteRun(java(
                 """
-                             import org.apache.camel.component.file.azure.FilesHeaders;
-                             
-                             public class SmbTest {
-                                 public void test() {
-                                        String s = FilesHeaders.FILE_PATH;
-                                 }
-                             }
+                        import org.apache.camel.component.file.azure.FilesHeaders;
+                        
+                        public class SmbTest {
+                            public void test() {
+                                   String s = FilesHeaders.FILE_PATH;
+                            }
+                        }
                         """,
                 """
-                             import org.apache.camel.component.file.azure.FilesConstants;
-                             
-                             public class SmbTest {
-                                 public void test() {
-                                        String s = FilesConstants.FILE_PATH;
-                                 }
-                             }
+                        import org.apache.camel.component.file.azure.FilesConstants;
+                        
+                        public class SmbTest {
+                            public void test() {
+                                   String s = FilesConstants.FILE_PATH;
+                            }
+                        }
                         """));
     }
 

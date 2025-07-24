@@ -37,13 +37,9 @@ import static org.openrewrite.Tree.randomId;
  * Camel API changes requires several changes in YAML route definition. Route-configuration children sequence is
  * replaced with mappingEntry (with special migration of "on-exception")
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
-
-    private static JsonPathMatcher MATCHER_ROUTE_CONFIGURATION = new JsonPathMatcher("$.route-configuration");
-    private static JsonPathMatcher MATCHER_ROUTE_CONFIGURATION_ON_EXCEPTION
-            = new JsonPathMatcher("$.route-configuration.on-exception");
 
     @Override
     public String getDisplayName() {
@@ -69,8 +65,8 @@ public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
             }
 
             @Override
-            public Yaml.Sequence doVisitSequence(Yaml.Sequence sequence, ExecutionContext context) {
-                Yaml.Sequence s = super.doVisitSequence(sequence, context);
+            public Yaml.Sequence doVisitSequence(Yaml.Sequence sequence, ExecutionContext ctx) {
+                Yaml.Sequence s = super.doVisitSequence(sequence, ctx);
 
                 //if there is a sequence in a route-configuration, it has to be replaced with mapping
                 if (new JsonPathMatcher("$.route-configuration").matches(getCursor().getParent())) {
@@ -80,8 +76,8 @@ public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
             }
 
             @Override
-            public Yaml.Mapping.Entry doVisitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext context) {
-                Yaml.Mapping.Entry e = super.doVisitMappingEntry(entry, context);
+            public Yaml.Mapping.Entry doVisitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext ctx) {
+                Yaml.Mapping.Entry e = super.doVisitMappingEntry(entry, ctx);
 
                 //if current mapping contains an entry with sequence belonging to route-configuration, remove the sequence
                 if (e.getValue() == sequenceToReplace) {

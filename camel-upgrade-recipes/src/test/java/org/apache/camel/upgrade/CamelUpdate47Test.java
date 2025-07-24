@@ -17,16 +17,17 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
-import static org.openrewrite.xml.Assertions.xml;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelUpdate47Test implements RewriteTest {
+class CamelUpdate47Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -39,21 +40,22 @@ public class CamelUpdate47Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_api_changes">API CHANGES</a>
      */
+    @DocumentExample
     @Test
-    public void testApiChanges() {
+    void apiChanges() {
         //language=java
         rewriteRun(java(
                 """
-                             import org.apache.camel.impl.engine.TransformerKey;
-                             import org.apache.camel.impl.engine.ValidatorKey;
-                             
-                             
-                             public class ApisTest {
-                                 public void test() {
-                                     TransformerKey transformerKey;
-                                     ValidatorKey validatorKey;
-                                 }
-                             }
+                        import org.apache.camel.impl.engine.TransformerKey;
+                        import org.apache.camel.impl.engine.ValidatorKey;
+                        
+                        
+                        public class ApisTest {
+                            public void test() {
+                                TransformerKey transformerKey;
+                                ValidatorKey validatorKey;
+                            }
+                        }
                         """,
                 """
                        
@@ -75,9 +77,10 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer failover</a>
      */
     @Test
-    public void testXmlDslLoadBalanceFailover() {
+    void xmlDslLoadBalanceFailover() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
                 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
                     <jmxAgent id="agent" disabled="true"/>
             
@@ -93,7 +96,8 @@ public class CamelUpdate47Test implements RewriteTest {
             
             
                 </camelContext>
-                """, """
+                """,
+                """
                 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
                     <jmxAgent id="agent" disabled="true"/>
             
@@ -116,9 +120,10 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer random</a>
      */
     @Test
-    public void testXmlDslLoadBalanceRandom() {
+    void xmlDslLoadBalanceRandom() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
             <route>
               <from uri="direct:start"/>
               <loadBalance>
@@ -128,7 +133,8 @@ public class CamelUpdate47Test implements RewriteTest {
                   <to uri="mock:z"/>
               </loadBalance>
             </route>
-                """, """
+                """,
+                """
             <route>
               <from uri="direct:start"/>
               <loadBalance>
@@ -145,10 +151,11 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer random</a>
      */
     @Test
-    public void testXmlDslLoadBalanceRandomKeep() {
+    void xmlDslLoadBalanceRandomKeep() {
         //language=xml
-        rewriteRun(xml("""
-                  <random/>
+        rewriteRun(xml(
+                """
+                <random/>
                 """));
     }
 
@@ -157,9 +164,10 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer the rest</a>
      */
     @Test
-    public void testXmlDslLoadBalanceTheRest() {
+    void xmlDslLoadBalanceTheRest() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
               <camelContext xmlns="http://camel.apache.org/schema/spring">
                 <jmxAgent id="jmx" disabled="true"/>
                 <route>
@@ -174,7 +182,8 @@ public class CamelUpdate47Test implements RewriteTest {
                   </loadBalance>
                 </route>
               </camelContext>
-                """, """
+                """,
+                """
               <camelContext xmlns="http://camel.apache.org/schema/spring">
                 <jmxAgent id="jmx" disabled="true"/>
                 <route>
@@ -196,9 +205,10 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer failover</a>
      */
     @Test
-    public void testYamlLoadBalanceFailover() {
+    void yamlLoadBalanceFailover() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route:
                     id: loadbalance-failover-route
                     from:
@@ -217,7 +227,8 @@ public class CamelUpdate47Test implements RewriteTest {
                               - to:
                                   id: to2
                                   uri: "direct:failover-2"
-                """, """
+                """,
+                """
                 - route:
                     id: loadbalance-failover-route
                     from:
@@ -243,9 +254,10 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer the rest</a>
      */
     @Test
-    public void testYamlLoadBalanceTheRest() {
+    void yamlLoadBalanceTheRest() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route:
                     id: loadbalance-failover-route
                     from:
@@ -259,7 +271,8 @@ public class CamelUpdate47Test implements RewriteTest {
                             sticky: ccc
                             topic: ddd
                             weighted: eee
-                """, """
+                """,
+                """
                 - route:
                     id: loadbalance-failover-route
                     from:
@@ -280,7 +293,7 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_api_changes">API CHANGES</a>
      */
     @Test
-    public void testHttp() {
+    void http() {
         //language=java
         rewriteRun(java(
                 """
@@ -317,7 +330,7 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_camel_cloudevents">CAMEL-CLOUDEVENTS</a>
      */
     @Test
-    public void testCloudEvents() {
+    void cloudEvents() {
         //language=xml
         rewriteRun(pomXml(
                 """

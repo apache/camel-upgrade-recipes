@@ -19,16 +19,17 @@ package org.apache.camel.upgrade;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.*;
 import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelUpdate412Test implements RewriteTest {
+class CamelUpdate412Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -38,6 +39,63 @@ public class CamelUpdate412Test implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none());
     }
 
+    /**
+     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_java_dsl">Java DSL</a>
+     */
+    @DocumentExample
+    @Test
+    void javaDslChoice() {
+        //language=java
+        rewriteRun(java(
+                """
+                import org.apache.camel.ExchangePattern;
+                import org.apache.camel.builder.RouteBuilder;
+            
+                public class MySimpleToDRoute extends RouteBuilder {
+            
+                    @Override
+                    public void configure() {
+            
+                        from("direct:start")
+                            .choice()
+                                .when(header("foo").isGreaterThan(1))
+                                    .choice()
+                                        .when(header("foo").isGreaterThan(5))
+                                            .to("mock:big")
+                                        .otherwise()
+                                            .to("mock:med")
+                                    .endChoice()
+                                .otherwise()
+                                    .to("mock:low")
+                                .end();
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.ExchangePattern;
+                import org.apache.camel.builder.RouteBuilder;
+                
+                public class MySimpleToDRoute extends RouteBuilder {
+                
+                    @Override
+                    public void configure() {
+                        
+                        from("direct:start")
+                            .choice()
+                                .when(header("foo").isGreaterThan(1))
+                                    .choice()
+                                        .when(header("foo").isGreaterThan(5))
+                                            .to("mock:big")
+                                        .otherwise()
+                                            .to("mock:med")
+                                    .end().endChoice()
+                                .otherwise()
+                                    .to("mock:low")
+                                .end();
+                    }
+                }
+                """));
+    }
 
 
     /**
@@ -45,16 +103,16 @@ public class CamelUpdate412Test implements RewriteTest {
      *
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_core">Moved scan classes</a>
      */
-    @ParameterizedTest
     @CsvSource({"DefaultPackageScanClassResolver,org.apache.camel.impl.engine,org.apache.camel.support.scan",
-                "DefaultPackageScanResourceResolver,org.apache.camel.impl.engine,org.apache.camel.support.scan",
-                "WebSpherePackageScanClassResolver,org.apache.camel.impl.engine, org.apache.camel.support.scan",
-                "AnnotatedWithAnyPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
-                "AnnotatedWithPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
-                "AssignableToPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
-                "CompositePackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
-                "InvertingPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan"})
-    public void testMovedScanClasses(String className, String originalImport, String expectedImport) {
+            "DefaultPackageScanResourceResolver,org.apache.camel.impl.engine,org.apache.camel.support.scan",
+            "WebSpherePackageScanClassResolver,org.apache.camel.impl.engine, org.apache.camel.support.scan",
+            "AnnotatedWithAnyPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
+            "AnnotatedWithPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
+            "AssignableToPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
+            "CompositePackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
+            "InvertingPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan"})
+    @ParameterizedTest
+    void movedScanClasses(String className, String originalImport, String expectedImport) {
         rewriteRun(
                 mavenProject("testMovedScanClasses",
                     sourceSet(java(
@@ -150,67 +208,13 @@ public class CamelUpdate412Test implements RewriteTest {
     }
 
     /**
-     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_java_dsl">Java DSL</a>
-     */
-    @Test
-    void testJavaDslChoice() {
-        //language=java
-        rewriteRun(java("""
-                import org.apache.camel.ExchangePattern;
-                import org.apache.camel.builder.RouteBuilder;
-            
-                public class MySimpleToDRoute extends RouteBuilder {
-            
-                    @Override
-                    public void configure() {
-            
-                        from("direct:start")
-                            .choice()
-                                .when(header("foo").isGreaterThan(1))
-                                    .choice()
-                                        .when(header("foo").isGreaterThan(5))
-                                            .to("mock:big")
-                                        .otherwise()
-                                            .to("mock:med")
-                                    .endChoice()
-                                .otherwise()
-                                    .to("mock:low")
-                                .end();
-                    }
-                }
-                """, """
-                import org.apache.camel.ExchangePattern;
-                import org.apache.camel.builder.RouteBuilder;
-                
-                public class MySimpleToDRoute extends RouteBuilder {
-                
-                    @Override
-                    public void configure() {
-                        
-                        from("direct:start")
-                            .choice()
-                                .when(header("foo").isGreaterThan(1))
-                                    .choice()
-                                        .when(header("foo").isGreaterThan(5))
-                                            .to("mock:big")
-                                        .otherwise()
-                                            .to("mock:med")
-                                    .end().endChoice()
-                                .otherwise()
-                                    .to("mock:low")
-                                .end();
-                    }
-                }
-                """));
-    }
-
-    /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_rest_dsl">Rest DSL</a>
      */
     @Test
-    public void testXmlDslBearer() {
+    void xmlDslBearer() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
                 <camelContext xmlns="http://camel.apache.org/schema/spring">
                     <rest path="/user" description="User rest service" consumes="application/json" produces="application/json">
                         <securityDefinitions>
@@ -227,7 +231,8 @@ public class CamelUpdate412Test implements RewriteTest {
                         </post>
                     </rest>
                 </camelContext>
-                """, """
+                """,
+                """
                 <camelContext xmlns="http://camel.apache.org/schema/spring">
                     <rest path="/user" description="User rest service" consumes="application/json" produces="application/json">
                         <securityDefinitions>
@@ -250,9 +255,10 @@ public class CamelUpdate412Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_rest_dsl">Rest DSL</a>
      */
     @Test
-    public void testYamlDslBearer() {
+    void yamlDslBearer() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                     - rest:
                         path: "/user"
                         description: "User rest service"
@@ -277,7 +283,8 @@ public class CamelUpdate412Test implements RewriteTest {
                           steps:
                             - log:
                                 message: "Processing message start: ${body}"                    
-                """, """
+                """,
+                """
                     - rest:
                         path: "/user"
                         description: "User rest service"

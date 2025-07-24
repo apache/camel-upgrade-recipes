@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.openrewrite.NlsRewrite;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.properties.ChangePropertyKey;
@@ -17,21 +16,21 @@ import java.util.List;
 @Setter
 public class PropertiesAndYamlKeyUpdate extends Recipe {
 
-    @Option(displayName = "Old configuration key",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "Old configuration key",
             description = "The configuration key to rename.")
     String oldPropertyKey;
 
-    @Option(displayName = "New configuration key",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "New configuration key",
             description = "The configuration to be replaced with.")
     String newPropertyKey;
 
     @Override
-    public @NlsRewrite.DisplayName String getDisplayName() {
+    public String getDisplayName() {
         return "Update Apache Camel configurations keys";
     }
 
     @Override
-    public @NlsRewrite.Description String getDescription() {
+    public String getDescription() {
         return "Update Apache Camel configurations keys";
     }
 

@@ -17,16 +17,17 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelUpdate413Test implements RewriteTest {
+class CamelUpdate413Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -39,10 +40,12 @@ public class CamelUpdate413Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_yaml_dsl">camel-yaml-dsl</a>
      */
+    @DocumentExample
     @Test
-    public void testYamlDsl() {
+    void yamlDsl() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - route:
                     id: "yaml-routeConfiguration"
                     on-exception:
@@ -55,7 +58,8 @@ public class CamelUpdate413Test implements RewriteTest {
                             - set-body:
                                 constant:
                                   expression: "onException has been triggered in yamlRouteConfiguration"
-                """, """
+                """,
+                """
                   - route:
                       id: "yaml-routeConfiguration"
                       onException:
@@ -75,26 +79,26 @@ public class CamelUpdate413Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_http">camel-http</a>
      */
     @Test
-    public void testCamelHttp() {
+    void camelHttp() {
         //language=java
         rewriteRun(java(
                 """
-                             import org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer;
-                             
-                             public class HttpTest {
-                                 public void test() {
-                                        BasicAuthenticationHttpClientConfigurer configurer = null;
-                                 }
-                             }
+                        import org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer;
+                        
+                        public class HttpTest {
+                            public void test() {
+                                   BasicAuthenticationHttpClientConfigurer configurer = null;
+                            }
+                        }
                         """,
                 """
-                             import org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer;
-                             
-                             public class HttpTest {
-                                 public void test() {
-                                        DefaultAuthenticationHttpClientConfigurer configurer = null;
-                                 }
-                             }
+                        import org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer;
+                        
+                        public class HttpTest {
+                            public void test() {
+                                   DefaultAuthenticationHttpClientConfigurer configurer = null;
+                            }
+                        }
                         """));
     }
 
@@ -105,7 +109,7 @@ public class CamelUpdate413Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury">camel-fury</a>
      */
     @Test
-    public void testFuryDependency() {
+    void furyDependency() {
         //language=xml
         rewriteRun(pomXml(
                 """
@@ -171,26 +175,26 @@ public class CamelUpdate413Test implements RewriteTest {
      * <a href="#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury">camel-fury</a>
      */
     @Test
-    public void testFuryJavaType() {
+    void furyJavaType() {
         //language=java
         rewriteRun(java(
                 """
-                             import org.apache.camel.component.fury.FuryDataFormat;
-                             
-                             public class FuryTest {
-                                 public void test() {
-                                        FuryDataFormat fury = new FuryDataFormat();
-                                 }
-                             }
+                        import org.apache.camel.component.fury.FuryDataFormat;
+                        
+                        public class FuryTest {
+                            public void test() {
+                                   FuryDataFormat fury = new FuryDataFormat();
+                            }
+                        }
                         """,
                 """
-                             import org.apache.camel.component.fory.ForyDataFormat;
-                             
-                             public class FuryTest {
-                                 public void test() {
-                                        ForyDataFormat fury = new ForyDataFormat();
-                                 }
-                             }
+                        import org.apache.camel.component.fory.ForyDataFormat;
+                        
+                        public class FuryTest {
+                            public void test() {
+                                   ForyDataFormat fury = new ForyDataFormat();
+                            }
+                        }
                         """));
     }
 
@@ -200,9 +204,10 @@ public class CamelUpdate413Test implements RewriteTest {
      * <a href="#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury">camel-fury</a>
      */
     @Test
-    public void testFuryYamlDsl() {
+    void furyYamlDsl() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - from:
                     uri: file:inbox/xml
                     steps:
@@ -214,7 +219,8 @@ public class CamelUpdate413Test implements RewriteTest {
                           fury: {}
                       - to:
                           uri: jms:queue:order
-                """, """
+                """,
+                """
                 - from:
                     uri: file:inbox/xml
                     steps:
@@ -236,9 +242,10 @@ public class CamelUpdate413Test implements RewriteTest {
      * <a href="#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury">camel-fury</a>
      */
     @Test
-    public void testFuryXmlDsl() {
+    void furyXmlDsl() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
             <camelContext>
             
               <!-- Define the Fury data format -->
@@ -261,7 +268,8 @@ public class CamelUpdate413Test implements RewriteTest {
               </route>
             
             </camelContext>
-                """, """
+                """,
+                """
             <camelContext>
             
               <!-- Define the Fury data format -->
@@ -293,7 +301,7 @@ public class CamelUpdate413Test implements RewriteTest {
      * <a href="#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury">camel-fury</a>
      */
     @Test
-    public void testFuryJavaDsl() {
+    void furyJavaDsl() {
         //language=java
         rewriteRun(java(
                 """

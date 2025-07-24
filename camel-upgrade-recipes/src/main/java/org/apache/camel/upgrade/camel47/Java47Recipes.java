@@ -24,19 +24,13 @@ import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.java.AddImport;
 import org.openrewrite.java.JavaTemplate;
-import org.openrewrite.java.MethodMatcher;
-import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
@@ -66,12 +60,12 @@ public class Java47Recipes extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
 
                 //get all mi starts with Exchange.getIn()
-                if (mi.getSelect() instanceof J.MethodInvocation
-                        && getMethodMatcher(MATCHER_GET_IN).matches((J.MethodInvocation) mi.getSelect(), false)) {
+                if (mi.getSelect() instanceof J.MethodInvocation &&
+                        getMethodMatcher(MATCHER_GET_IN).matches((J.MethodInvocation) mi.getSelect(), false)) {
                     //apply map of transformations
                     Optional<J.MethodInvocation> result = HEADERS_MAP.stream()
                             .filter(triplet ->

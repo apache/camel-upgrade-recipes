@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade.springboot;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -24,7 +25,7 @@ import org.openrewrite.test.RewriteTest;
 import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelSpringBootPropertiesTest implements RewriteTest {
+class CamelSpringBootPropertiesTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -34,6 +35,7 @@ public class CamelSpringBootPropertiesTest implements RewriteTest {
                 .activateRecipes("org.apache.camel.upgrade.UpdateCamelSpringBootPropertiesAndYamlKeys"));
     }
 
+    @DocumentExample
     @Test
     void propertiesFile() {
         rewriteRun(

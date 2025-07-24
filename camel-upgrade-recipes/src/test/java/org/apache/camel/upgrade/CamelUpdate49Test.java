@@ -17,16 +17,15 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.maven.Assertions.pomXml;
-import static org.openrewrite.xml.Assertions.xml;
 
-public class CamelUpdate49Test implements RewriteTest {
+class CamelUpdate49Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -39,33 +38,34 @@ public class CamelUpdate49Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_api">camel-api</a>
      */
+    @DocumentExample
     @Test
-    public void testApiChanges() {
+    void apiChanges() {
         //language=java
         rewriteRun(java(
                 """
-                             import org.apache.camel.Exchange;
-                             import org.apache.camel.ExchangePropertyKey;
-                             
-                             public class ApisTest {
-                                 public void test() {
-                                     var s1 = Exchange.ACTIVE_SPAN;
-                                     var s2 = ExchangePropertyKey.ACTIVE_SPAN.name();
-                                     System.out.println(s1 + ":" + s2);
-                                 }
-                             }
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.ExchangePropertyKey;
+                        
+                        public class ApisTest {
+                            public void test() {
+                                var s1 = Exchange.ACTIVE_SPAN;
+                                var s2 = ExchangePropertyKey.ACTIVE_SPAN.name();
+                                System.out.println(s1 + ":" + s2);
+                            }
+                        }
                         """,
                 """
-                             import org.apache.camel.Exchange;
-                             import org.apache.camel.ExchangePropertyKey;
-                            
-                             public class ApisTest {
-                                 public void test() {
-                                     var s1 = Exchange.OTEL_ACTIVE_SPAN;
-                                     var s2 = ExchangePropertyKey.OTEL_ACTIVE_SPAN.name();
-                                     System.out.println(s1 + ":" + s2);
-                                 }
-                             }
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.ExchangePropertyKey;
+                       
+                        public class ApisTest {
+                            public void test() {
+                                var s1 = Exchange.OTEL_ACTIVE_SPAN;
+                                var s2 = ExchangePropertyKey.OTEL_ACTIVE_SPAN.name();
+                                System.out.println(s1 + ":" + s2);
+                            }
+                        }
                         """));
     }
 
@@ -76,7 +76,7 @@ public class CamelUpdate49Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_azure_key_vault_properties_function">camel-azure-key-vault properties function</a>
      */
     @Test
-    public void testSecretFieldSyntax() {
+    void secretFieldSyntax() {
         //language=java
         rewriteRun(java(
                 """
@@ -108,39 +108,40 @@ public class CamelUpdate49Test implements RewriteTest {
                         }
                         """,
                 """
-                           import org.apache.camel.builder.RouteBuilder;
+                       import org.apache.camel.builder.RouteBuilder;
        
-                           public class SecretFieldRoute extends RouteBuilder {
+                       public class SecretFieldRoute extends RouteBuilder {
        
-                               @Override
-                               public void configure() {
-                                   from("direct:a")
-                                       .inOut("{{hashicorp:secret:db#user}}")
-                                       .to("log:result_hashicorp:secret");
-                                   from("direct:a")
-                                       .inOut("{{aws:436etrt#Sheldon}}")
-                                       .to("log:result_aws");
-                                   from("direct:a")
-                                       .inOut("{{gcp:3ee4ff#Leonard}}")
-                                       .to("log:result_aws");
-                                   from("direct:a")
-                                       .inOut("{{azure:de43e56e6d6#Vilma}}")
-                                       .to("log:result_azure");
-                                   from("direct:a")
-                                       .inOut("{{azure:something/wrong/JoeD}}")
-                                       .to("log:result_azure");
-                                   from("direct:a")
-                                       .inOut("{{wrong:de43e56e6d6/JoeD}}")
-                                       .to("log:result_azure");
-                               }
+                           @Override
+                           public void configure() {
+                               from("direct:a")
+                                   .inOut("{{hashicorp:secret:db#user}}")
+                                   .to("log:result_hashicorp:secret");
+                               from("direct:a")
+                                   .inOut("{{aws:436etrt#Sheldon}}")
+                                   .to("log:result_aws");
+                               from("direct:a")
+                                   .inOut("{{gcp:3ee4ff#Leonard}}")
+                                   .to("log:result_aws");
+                               from("direct:a")
+                                   .inOut("{{azure:de43e56e6d6#Vilma}}")
+                                   .to("log:result_azure");
+                               from("direct:a")
+                                   .inOut("{{azure:something/wrong/JoeD}}")
+                                   .to("log:result_azure");
+                               from("direct:a")
+                                   .inOut("{{wrong:de43e56e6d6/JoeD}}")
+                                   .to("log:result_azure");
                            }
+                       }
                        """));
     }
+
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_debezium">camel-debezium</a>
      */
     @Test
-    public void testDebezium() {
+    void debezium() {
         //language=java
         rewriteRun(java(
                 """
@@ -335,7 +336,7 @@ public class CamelUpdate49Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_api">Removed API</a>
      */
     @Test
-    public void testRemovedDependencies() {
+    void removedDependencies() {
         //language=xml
         rewriteRun(pomXml(
                 """

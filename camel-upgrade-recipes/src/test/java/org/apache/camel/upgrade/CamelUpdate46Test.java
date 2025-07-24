@@ -17,15 +17,17 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelUpdate46Test implements RewriteTest {
+class CamelUpdate46Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -39,42 +41,45 @@ public class CamelUpdate46Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_elasticsearch">CAMEL-ELASTICSEARCH</a>
      */
+    @DocumentExample
     @Test
-    public void testSearch() {
+    void search() {
         //language=java
         rewriteRun(java(
                 """
-                            import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                public void test() {
-                                    ElastichsearchBulkRequestAggregationStrategy str = null;
-                                }
+                        import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
+                        
+                        public class SearchTest {
+                            public void test() {
+                                ElastichsearchBulkRequestAggregationStrategy str = null;
                             }
+                        }
                         """,
                 """
-                            import org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                public void test() {
-                                    ElasticsearchBulkRequestAggregationStrategy str = null;
-                                }
+                        import org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy;
+                        
+                        public class SearchTest {
+                            public void test() {
+                                ElasticsearchBulkRequestAggregationStrategy str = null;
                             }
+                        }
                         """));
     }
 
 
     @Test
-    public void testBeanPropertyToProperties() {
+    void beanPropertyToProperties() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 beans:
                   - name: "myProcessor"
                     type: "#class:com.foo.MyClass"
                     property:
                       - key: "payload"
                         value: "test-payload"
-                """, """
+                """,
+                """
                 beans:
                   - name: "myProcessor"
                     type: "#class:com.foo.MyClass"
@@ -84,16 +89,18 @@ public class CamelUpdate46Test implements RewriteTest {
     }
 
     @Test
-    public void testYamlStreamCaching() {
+    void yamlStreamCaching() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
             route:
               streamCaching: false
               from:
                 uri: "direct:foo"
                 steps:
                   - to: "mock:bar"
-                """, """
+                """,
+                """
             route:
               streamCache: false
               from:
@@ -104,9 +111,10 @@ public class CamelUpdate46Test implements RewriteTest {
     }
 
     @Test
-    public void testYamlBeanPropertyToProperties2() {
+    void yamlBeanPropertyToProperties2() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+                """
                 - beans:
                   - name: beanFromMap
                     type: com.acme.MyBean
@@ -115,7 +123,8 @@ public class CamelUpdate46Test implements RewriteTest {
                         value: bar
                       - key: foo2
                         value: bar2
-                """, """
+                """,
+                """
                 - beans:
                   - name: beanFromMap
                     type: com.acme.MyBean
@@ -126,14 +135,16 @@ public class CamelUpdate46Test implements RewriteTest {
     }
 
     @Test
-    public void testXmlProperties() {
+    void xmlProperties() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+                """
                 <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
                    <property name="msg1" value="messageString1"/>
                    <property name="msg2" value="messageString2"/>
                 </bean>
-                """, """
+                """,
+                """
                 <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
                    <properties>
                      <property name="msg1" value="messageString1"/>
@@ -145,9 +156,9 @@ public class CamelUpdate46Test implements RewriteTest {
 
 
     @Test
-    public void testRenamedDependencies() {
+    void renamedDependencies() {
         //language=xml
-        rewriteRun(org.openrewrite.maven.Assertions.pomXml(
+        rewriteRun(pomXml(
                 """
                         <project>
                            <modelVersion>4.0.0</modelVersion>
@@ -201,7 +212,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    public void testLangchainChat() {
+    void langchainChat() {
         //language=java
         rewriteRun(java(
                 """
@@ -236,7 +247,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    public void testLangchainChat2() {
+    void langchainChat2() {
         //language=java
         rewriteRun(java(
                 """
@@ -271,7 +282,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    public void testLangchainEmbeddings() {
+    void langchainEmbeddings() {
         //language=java
         rewriteRun(java(
                 """
@@ -306,7 +317,7 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    public void testLangchainEmbeddings2() {
+    void langchainEmbeddings2() {
         //language=java
         rewriteRun(java(
                 """

@@ -19,17 +19,13 @@ package org.apache.camel.upgrade.camel47;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
-import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.yaml.JsonPathMatcher;
 import org.openrewrite.yaml.tree.Yaml;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -37,7 +33,7 @@ import java.util.stream.Collectors;
  * </p>
  * The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class YamlDsl47Recipe extends Recipe {
 

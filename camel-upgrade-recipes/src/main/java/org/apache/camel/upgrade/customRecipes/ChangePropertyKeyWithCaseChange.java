@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.Value;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -39,11 +38,11 @@ import java.util.List;
 @Setter
 public class ChangePropertyKeyWithCaseChange extends Recipe {
 
-    @Option(displayName = "Old property key",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "Old property key",
             description = "The property key to rename.")
     String oldPropertyKey;
 
-    @Option(displayName = "New prefix before any group",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "New prefix before any group",
             description = "The prefix to be replaced with.")
     String newPrefix;
 
@@ -66,10 +65,10 @@ public class ChangePropertyKeyWithCaseChange extends Recipe {
     public PropertiesVisitor<ExecutionContext> getVisitor() {
         return new PropertiesVisitor<>() {
             @Override
-            public Properties visitEntry(Properties.Entry entry, ExecutionContext p) {
+            public Properties visitEntry(Properties.Entry entry, ExecutionContext ctx) {
                 for (String exclusion : exclusions) {
                     if (entry.getKey().equals(exclusion)) {
-                        return super.visitEntry(entry, p);
+                        return super.visitEntry(entry, ctx);
                     }
                 }
 
@@ -77,13 +76,13 @@ public class ChangePropertyKeyWithCaseChange extends Recipe {
                     entry = entry.withKey(getKey(entry))
                             .withPrefix(entry.getPrefix());
                 }
-                return super.visitEntry(entry, p);
+                return super.visitEntry(entry, ctx);
             }
 
             //replace key
             private String getKey(Properties.Entry entry) {
-                return newPrefix + entry.getKey().replaceFirst(oldPropertyKey, "$1").substring(0, 1).toLowerCase()
-                       + entry.getKey().replaceFirst(oldPropertyKey, "$1").substring(1);
+                return newPrefix + entry.getKey().replaceFirst(oldPropertyKey, "$1").substring(0, 1).toLowerCase() +
+                       entry.getKey().replaceFirst(oldPropertyKey, "$1").substring(1);
 
             }
         };

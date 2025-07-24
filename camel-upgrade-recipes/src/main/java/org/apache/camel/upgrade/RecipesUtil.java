@@ -16,30 +16,13 @@
  */
 package org.apache.camel.upgrade;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import org.openrewrite.Cursor;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Preconditions;
-import org.openrewrite.Tree;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
 import org.openrewrite.java.search.UsesType;
-import org.openrewrite.java.tree.Comment;
-import org.openrewrite.java.tree.Expression;
-import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JContainer;
-import org.openrewrite.java.tree.JRightPadded;
-import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.Space;
-import org.openrewrite.java.tree.TextComment;
+import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.tree.Xml;
 import org.openrewrite.yaml.tree.Yaml;

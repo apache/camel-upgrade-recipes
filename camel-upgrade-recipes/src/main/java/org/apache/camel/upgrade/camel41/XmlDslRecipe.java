@@ -85,8 +85,8 @@ public class XmlDslRecipe extends Recipe {
                     Optional<Xml.Attribute> beanTypeAttr
                             = t.getAttributes().stream().filter(a -> "beanType".equals(a.getKeyAsString())).findAny();
                     //if values are not empty, migrate tag
-                    if (typeAttr.isPresent() && !typeAttr.get().getValueAsString().isEmpty() && beanTypeAttr.isPresent()
-                            && !beanTypeAttr.get().getValueAsString().isEmpty()) {
+                    if (typeAttr.isPresent() && !typeAttr.get().getValueAsString().isEmpty() && beanTypeAttr.isPresent() &&
+                            !beanTypeAttr.get().getValueAsString().isEmpty()) {
                         // gather attributes
                         List<Xml.Attribute> attrs = new ArrayList<>(t.getAttributes());
                         attrs.remove(typeAttr.get());

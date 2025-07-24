@@ -18,13 +18,14 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-public class CamelJmxTest implements RewriteTest {
+class CamelJmxTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -35,37 +36,38 @@ public class CamelJmxTest implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none());
     }
 
+    @DocumentExample
     @Test
-    public void testRenamedMethods() {
+    void renamedMethods() {
         //language=java
         rewriteRun(java(
                 """
-                            import org.apache.camel.api.management.mbean.ManagedChoiceMBean;
-                            import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
+                        import org.apache.camel.api.management.mbean.ManagedChoiceMBean;
+                        import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
 
-                            public class Test {
+                        public class Test {
 
-                                void test() {
-                                    ManagedChoiceMBean mbean = null;
-                                    mbean.choiceStatistics();
-                                    ManagedFailoverLoadBalancerMBean mbean2 = null;
-                                    mbean2.exceptionStatistics();
-                                }
+                            void test() {
+                                ManagedChoiceMBean mbean = null;
+                                mbean.choiceStatistics();
+                                ManagedFailoverLoadBalancerMBean mbean2 = null;
+                                mbean2.exceptionStatistics();
                             }
+                        }
                         """,
                 """
-                            import org.apache.camel.api.management.mbean.ManagedChoiceMBean;
-                            import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
+                        import org.apache.camel.api.management.mbean.ManagedChoiceMBean;
+                        import org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean;
 
-                            public class Test {
+                        public class Test {
 
-                                void test() {
-                                    ManagedChoiceMBean mbean = null;
-                                    mbean.extendedInformation();
-                                    ManagedFailoverLoadBalancerMBean mbean2 = null;
-                                    mbean2.extendedInformation();
-                                }
+                            void test() {
+                                ManagedChoiceMBean mbean = null;
+                                mbean.extendedInformation();
+                                ManagedFailoverLoadBalancerMBean mbean2 = null;
+                                mbean2.extendedInformation();
                             }
+                        }
                         """));
     }
 }
