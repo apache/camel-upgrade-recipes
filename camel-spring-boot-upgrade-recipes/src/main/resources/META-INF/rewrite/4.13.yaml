@@ -17,8 +17,8 @@
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel413.CamelSpringBootMigrationRecipe
-displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.12
-description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.12
+displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.13
+description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.13.
 recipeList:
   - org.apache.camel.upgrade.camel412.CamelSpringBootMigrationRecipe
   - org.apache.camel.upgrade.camel413.CamelMigrationRecipe
@@ -26,4 +26,12 @@ recipeList:
       oldGroupId: org.apache.camel-springboot
       oldArtifactId: camel-fury-starter
       newArtifactId: camel-fory-starter
-#  - any new CSB recipe for C4.13 goes here and to the latest.yaml
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.springboot.main-run-controller
+      newPropertyKey: camel.main.run-controller
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.springboot.include-non-singletons
+      newPropertyKey: camel.main.include-non-singletons
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.springboot.warn-on-early-shutdown
+      newPropertyKey: camel.main.warn-on-early-shutdown
