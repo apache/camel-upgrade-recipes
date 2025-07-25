@@ -19,7 +19,6 @@ package org.apache.camel.upgrade.customRecipes;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -29,11 +28,7 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Replaces literal matching pattern and replacing it with a replacement (regexp groups are supported)
@@ -43,11 +38,11 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class LiteralRegexpConverterRecipe extends Recipe {
 
-    @Option(displayName = "Literal regexp name",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "Literal regexp name",
             description = "Regexp for matching a literal.")
     public String regexp;
 
-    @Option(displayName = "Replacement to use",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "Replacement to use",
             description = "Replacement to use.")
     public String replacement;
 
@@ -66,8 +61,8 @@ public class LiteralRegexpConverterRecipe extends Recipe {
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
 
             @Override
-            protected J.Literal doVisitLiteral(J.Literal literal, ExecutionContext context) {
-                J.Literal l  =  super.doVisitLiteral(literal, context);
+            protected J.Literal doVisitLiteral(J.Literal literal, ExecutionContext ctx) {
+                J.Literal l  =  super.doVisitLiteral(literal, ctx);
 
                 // Only handle String literals
                 if (TypeUtils.isString(literal.getType()) && literal.getValue() != null) {

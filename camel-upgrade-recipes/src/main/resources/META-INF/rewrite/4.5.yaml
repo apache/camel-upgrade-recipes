@@ -34,7 +34,7 @@ recipeList:
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel45.UseExtendedCamelContextGetters
-displayName: Replace context.${method}(*) with context.getCamelContextExtension().${method}(*)
+displayName: Replace `context.${method}(*)` with `context.getCamelContextExtension().${method}(*)`
 recipeList:
   - org.apache.camel.upgrade.customRecipes.MoveGetterToExtendedCamelContext:
       oldMethodName: setTypeConverter

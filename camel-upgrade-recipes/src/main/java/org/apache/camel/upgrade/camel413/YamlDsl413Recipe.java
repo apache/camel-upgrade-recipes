@@ -23,7 +23,6 @@ import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.yaml.JsonPathMatcher;
 import org.openrewrite.yaml.tree.Yaml;
 
 /**
@@ -32,7 +31,7 @@ import org.openrewrite.yaml.tree.Yaml;
  * </p>
  * Kebab-case is changed to camelCase.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class YamlDsl413Recipe extends Recipe {
 
@@ -45,8 +44,6 @@ public class YamlDsl413Recipe extends Recipe {
     public String getDescription() {
         return "Apache Camel YML DSL migration from version 4.12 o 4.13.";
     }
-
-    private static JsonPathMatcher FURY_MARSHALL_PATH = new JsonPathMatcher("$..marshal.fury");
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

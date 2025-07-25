@@ -57,11 +57,11 @@ import org.openrewrite.yaml.tree.Yaml;
  *         # groovy script here
  * </pre>
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class YamlDslRecipe extends Recipe {
 
-    private static JsonPathMatcher MATCHER_WITHOUT_ROUTE = new JsonPathMatcher("$.beans");
+    private static final JsonPathMatcher MATCHER_WITHOUT_ROUTE = new JsonPathMatcher("$.beans");
 
     @Override
     public String getDisplayName() {
@@ -92,8 +92,8 @@ public class YamlDslRecipe extends Recipe {
                 Cursor parent4 = getCursor().getParent(4);
                 //check that this mapping entry is currently under "beans" sequence
                 //parent(2) has to be mapping (represents the bean)
-                if (parent4 != null && parent4.getParent() != null && MATCHER_WITHOUT_ROUTE.matches(parent4)
-                        && getCursor().getParent().getValue() instanceof Yaml.Mapping) {
+                if (parent4 != null && parent4.getParent() != null && MATCHER_WITHOUT_ROUTE.matches(parent4) &&
+                        getCursor().getParent().getValue() instanceof Yaml.Mapping) {
                     //get entries
                     Yaml.Mapping m = getCursor().getParent().getValue();
                     List<Yaml.Mapping.Entry> entries = m.getEntries();
@@ -102,10 +102,10 @@ public class YamlDslRecipe extends Recipe {
                     Optional<Yaml.Mapping.Entry> beanTypeEntry
                             = entries.stream().filter(me -> "beanType".equals(me.getKey().getValue())).findAny();
 
-                    if (typeEntry.isPresent() && typeEntry.get().getValue() instanceof Yaml.Scalar
-                            && !((Yaml.Scalar) typeEntry.get().getValue()).getValue().isEmpty()
-                            && beanTypeEntry.isPresent() && beanTypeEntry.get().getValue() instanceof Yaml.Scalar
-                            && !((Yaml.Scalar) beanTypeEntry.get().getValue()).getValue().isEmpty()) {
+                    if (typeEntry.isPresent() && typeEntry.get().getValue() instanceof Yaml.Scalar &&
+                            !((Yaml.Scalar) typeEntry.get().getValue()).getValue().isEmpty() &&
+                            beanTypeEntry.isPresent() && beanTypeEntry.get().getValue() instanceof Yaml.Scalar &&
+                            !((Yaml.Scalar) beanTypeEntry.get().getValue()).getValue().isEmpty()) {
 
                         //modify the current entry
                         if ("type".equals(e.getKey().getValue())) {

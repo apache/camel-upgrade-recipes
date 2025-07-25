@@ -49,8 +49,8 @@ public class Java412Recipes extends Recipe {
 
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
 
                 if (getMethodMatcher(M_END_CHOICE).matches(mi, false)) {
                     return mi.withName(mi.getName().withSimpleName("end().endChoice"));

@@ -20,15 +20,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.lang.Nullable;
 import org.openrewrite.java.ChangeType;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.tree.J;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelHttpRecipe extends Recipe {
 
@@ -50,7 +50,7 @@ public class CamelHttpRecipe extends Recipe {
 
         return RecipesUtil.newVisitor("org.apache.http..*", new AbstractCamelJavaVisitor() {
             @Override
-            protected J.Import doVisitImport(J.Import _import, ExecutionContext context) {
+            protected J.Import doVisitImport(J.Import _import, ExecutionContext ctx) {
                 doAfterVisit(
                         new ChangeType(
                                 "org.apache.http.HttpHost",
@@ -88,12 +88,12 @@ public class CamelHttpRecipe extends Recipe {
                                 "org.apache.http.conn.ssl.NoopHostnameVerifier",
                                 "org.apache.hc.client5.http.conn.ssl.NoopHostnameVerifier", true).getVisitor());
 
-                return super.doVisitImport(_import, context);
+                return super.doVisitImport(_import, ctx);
             }
 
             @Override
-            protected J.FieldAccess doVisitFieldAccess(J.FieldAccess fieldAccess, ExecutionContext context) {
-                J.FieldAccess f = super.doVisitFieldAccess(fieldAccess, context);
+            protected J.FieldAccess doVisitFieldAccess(J.FieldAccess fieldAccess, ExecutionContext ctx) {
+                J.FieldAccess f = super.doVisitFieldAccess(fieldAccess, ctx);
 
                 //The component has been upgraded to use Apache HttpComponents v5
                 //AuthScope.ANY -> new AuthScope(null, -1)
@@ -108,8 +108,8 @@ public class CamelHttpRecipe extends Recipe {
             }
 
             @Override
-            public @Nullable J postVisit(J tree, ExecutionContext context) {
-                J j = super.postVisit(tree, context);
+            public @Nullable J postVisit(J tree, ExecutionContext ctx) {
+                J j = super.postVisit(tree, ctx);
 
                 //use a new class instead of original element
                 J.NewClass newClass = getCursor().getMessage("authScopeNewClass");

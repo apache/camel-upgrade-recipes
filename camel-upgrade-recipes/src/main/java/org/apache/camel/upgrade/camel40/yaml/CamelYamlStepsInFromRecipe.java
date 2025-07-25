@@ -23,6 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
@@ -57,13 +58,13 @@ import org.openrewrite.yaml.tree.Yaml;
  *       - log: "message"
  * </pre>
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelYamlStepsInFromRecipe extends Recipe {
 
-    private static String[] PATHS_TO_PRE_CHECK = new String[] { "route.from" };
-    private static JsonPathMatcher MATCHER_WITHOUT_ROUTE = new JsonPathMatcher("$.steps");
-    private static JsonPathMatcher MATCHER_WITH_ROUTE = new JsonPathMatcher("$.route.steps");
+    private static final String[] PATHS_TO_PRE_CHECK = new String[] { "route.from" };
+    private static final JsonPathMatcher MATCHER_WITHOUT_ROUTE = new JsonPathMatcher("$.steps");
+    private static final JsonPathMatcher MATCHER_WITH_ROUTE = new JsonPathMatcher("$.route.steps");
 
     @Override
     public String getDisplayName() {
@@ -89,8 +90,8 @@ public class CamelYamlStepsInFromRecipe extends Recipe {
             }
 
             @Override
-            public Yaml.Mapping.Entry doVisitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext context) {
-                Yaml.Mapping.Entry e = super.doVisitMappingEntry(entry, context);
+            public  Yaml.Mapping.@Nullable Entry doVisitMappingEntry(Yaml.Mapping.Entry entry, ExecutionContext ctx) {
+                Yaml.Mapping.Entry e = super.doVisitMappingEntry(entry, ctx);
 
                 if (steps == null && (MATCHER_WITH_ROUTE.matches(getCursor()) || MATCHER_WITHOUT_ROUTE.matches(getCursor()))) {
                     steps = e;
@@ -104,8 +105,8 @@ public class CamelYamlStepsInFromRecipe extends Recipe {
             }
 
             @Override
-            public Yaml.Mapping doVisitMapping(Yaml.Mapping mapping, ExecutionContext context) {
-                Yaml.Mapping m = super.doVisitMapping(mapping, context);
+            public Yaml.Mapping doVisitMapping(Yaml.Mapping mapping, ExecutionContext ctx) {
+                Yaml.Mapping m = super.doVisitMapping(mapping, ctx);
 
                 String prop = RecipesUtil.getProperty(getCursor());
                 if (("route.from".equals(prop) || "from".equals(prop)) && from == null) {
@@ -122,8 +123,8 @@ public class CamelYamlStepsInFromRecipe extends Recipe {
                 doAfterVisit(new YamlIsoVisitor<ExecutionContext>() {
 
                     @Override
-                    public Yaml.Mapping visitMapping(Yaml.Mapping mapping, ExecutionContext c) {
-                        Yaml.Mapping m = super.visitMapping(mapping, c);
+                    public Yaml.Mapping visitMapping(Yaml.Mapping mapping, ExecutionContext ctx) {
+                        Yaml.Mapping m = super.visitMapping(mapping, ctx);
 
                         if (m == from) {
                             List<Yaml.Mapping.Entry> entries = new ArrayList<>(m.getEntries());

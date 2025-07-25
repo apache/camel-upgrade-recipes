@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.Tree;
@@ -103,7 +104,7 @@ public class CircuitBreakerXmlDslRecipe extends Recipe {
         return new AbstractCamelXmlVisitor() {
 
             @Override
-            public Xml.Tag doVisitTag(final Xml.Tag tag, final ExecutionContext ctx) {
+            public  Xml.@Nullable Tag doVisitTag(final Xml.Tag tag, final ExecutionContext ctx) {
                 Xml.Tag t = super.doVisitTag(tag, ctx);
 
                 if (RESILIENCE4J_MATCHER.matches(getCursor())) {

@@ -35,7 +35,7 @@ import org.openrewrite.java.tree.Space;
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core" >documentation</a>.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelCoreRecipe extends Recipe {
 
@@ -83,14 +83,14 @@ public class CamelCoreRecipe extends Recipe {
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
 
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
 
                 if (getMethodMatcher(M_EXCHANGE_GET_CREATED).matches(mi, false)) {
                     //add call to getClock before call of getCreated
                     mi = mi.withName(mi.getName().withSimpleName("getClock().getCreated"));
-                } else if (getMethodMatcher(M_PROPERTIES_LOOKUP_LOOKUP).matches(mi, false)
-                        && mi.getArguments().size() == 1) { //without the condition, the recipes is applied again
+                } else if (getMethodMatcher(M_PROPERTIES_LOOKUP_LOOKUP).matches(mi, false) &&
+                        mi.getArguments().size() == 1) { //without the condition, the recipes is applied again
                     //add default value null
                     List<Expression> arguments = new ArrayList<>(mi.getArguments());
                     arguments.add(RecipesUtil.createNullExpression());
@@ -109,8 +109,7 @@ public class CamelCoreRecipe extends Recipe {
                     mi = mi.withName(
                             RecipesUtil.createIdentifier(Space.EMPTY, "removed_" + mi.getSimpleName(), mi.getType().toString()))
                             .withComments(Collections.singletonList(RecipesUtil.createMultinlineComment(
-                                    "Some Java DSL for tokenize, xmlTokenize, xpath, xquery and jsonpath has been removed as part of making the DSL model consistent.\n"
-                                                                                                        +
+                                    "Some Java DSL for tokenize, xmlTokenize, xpath, xquery and jsonpath has been removed as part of making the DSL model consistent.\n" +
                                                                                                         "See https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core for more details.\n")));
                 }
 
@@ -118,17 +117,16 @@ public class CamelCoreRecipe extends Recipe {
             }
 
             @Override
-            protected J.NewClass doVisitNewClass(J.NewClass newClass, ExecutionContext context) {
-                J.NewClass nc = super.doVisitNewClass(newClass, context);
+            protected J.NewClass doVisitNewClass(J.NewClass newClass, ExecutionContext ctx) {
+                J.NewClass nc = super.doVisitNewClass(newClass, ctx);
 
                 //can not use org.openrewrite.java.DeleteMethodArgument, because it doesn't modify calls of constructors
-                if ((getMethodMatcher(CONST_STOP_WATCH_LONG01).matches(nc)
-                        || getMethodMatcher(CONST_STOP_WATCH_LONG02).matches(nc))
-                        && nc.getArguments().size() == 1) { //without the condition, the recipes is applied againorg.openrewrite.properties.ChangePropertyKey
+                if ((getMethodMatcher(CONST_STOP_WATCH_LONG01).matches(nc) ||
+                        getMethodMatcher(CONST_STOP_WATCH_LONG02).matches(nc)) &&
+                        nc.getArguments().size() == 1) { //without the condition, the recipes is applied againorg.openrewrite.properties.ChangePropertyKey
                     nc = nc.withArguments(Collections.emptyList()).withComments(Collections.singletonList(RecipesUtil
                             .createMultinlineComment(
-                                    "Removed the deprecated constructor from the internal class org.apache.camel.util.StopWatch.\n"
-                                                     +
+                                    "Removed the deprecated constructor from the internal class org.apache.camel.util.StopWatch.\n" +
                                                      "Users of this class are advised to use the default constructor if necessary.Changed exception thrown from IOException to Exception.\n")));
 
                 }

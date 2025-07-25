@@ -17,183 +17,194 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelUpdate46Test implements RewriteTest {
+class CamelUpdate46Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_6)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_5,
-                        "camel-api", "camel-base-engine", "camel-spring-redis", "camel-opensearch",
-                        "camel-elasticsearch", "camel-langchain-chat", "camel-langchain-embeddings"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_5,
+            "camel-api", "camel-base-engine", "camel-spring-redis", "camel-opensearch",
+            "camel-elasticsearch", "camel-langchain-chat", "camel-langchain-embeddings"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_elasticsearch">CAMEL-ELASTICSEARCH</a>
      */
+    @DocumentExample
     @Test
-    public void testSearch() {
+    void search() {
         //language=java
         rewriteRun(java(
-                """
-                            import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                public void test() {
-                                    ElastichsearchBulkRequestAggregationStrategy str = null;
-                                }
-                            }
-                        """,
-                """
-                            import org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                public void test() {
-                                    ElasticsearchBulkRequestAggregationStrategy str = null;
-                                }
-                            }
-                        """));
+          """
+            import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
+
+            public class SearchTest {
+                public void test() {
+                    ElastichsearchBulkRequestAggregationStrategy str = null;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy;
+
+            public class SearchTest {
+                public void test() {
+                    ElasticsearchBulkRequestAggregationStrategy str = null;
+                }
+            }
+            """));
     }
 
 
     @Test
-    public void testBeanPropertyToProperties() {
+    void beanPropertyToProperties() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
-                beans:
-                  - name: "myProcessor"
-                    type: "#class:com.foo.MyClass"
-                    property:
-                      - key: "payload"
-                        value: "test-payload"
-                """, """
-                beans:
-                  - name: "myProcessor"
-                    type: "#class:com.foo.MyClass"
-                    properties:
-                      payload: "test-payload"
-                """));
+        rewriteRun(yaml(
+          """
+            beans:
+              - name: "myProcessor"
+                type: "#class:com.foo.MyClass"
+                property:
+                  - key: "payload"
+                    value: "test-payload"
+            """,
+          """
+            beans:
+              - name: "myProcessor"
+                type: "#class:com.foo.MyClass"
+                properties:
+                  payload: "test-payload"
+            """));
     }
 
     @Test
-    public void testYamlStreamCaching() {
+    void yamlStreamCaching() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
+        rewriteRun(yaml(
+          """
             route:
               streamCaching: false
               from:
                 uri: "direct:foo"
                 steps:
                   - to: "mock:bar"
-                """, """
+            """,
+          """
             route:
               streamCache: false
               from:
                 uri: "direct:foo"
                 steps:
                   - to: "mock:bar"
-                """));
+            """));
     }
 
     @Test
-    public void testYamlBeanPropertyToProperties2() {
+    void yamlBeanPropertyToProperties2() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
-                - beans:
-                  - name: beanFromMap
-                    type: com.acme.MyBean
-                    property:
-                      - key: foo
-                        value: bar
-                      - key: foo2
-                        value: bar2
-                """, """
-                - beans:
-                  - name: beanFromMap
-                    type: com.acme.MyBean
-                    properties:
-                      foo: bar
-                      foo2: bar2
-                """));
+        rewriteRun(yaml(
+          """
+            - beans:
+              - name: beanFromMap
+                type: com.acme.MyBean
+                property:
+                  - key: foo
+                    value: bar
+                  - key: foo2
+                    value: bar2
+            """,
+          """
+            - beans:
+              - name: beanFromMap
+                type: com.acme.MyBean
+                properties:
+                  foo: bar
+                  foo2: bar2
+            """));
     }
 
     @Test
-    public void testXmlProperties() {
+    void xmlProperties() {
         //language=xml
-        rewriteRun(xml("""
-                <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
-                   <property name="msg1" value="messageString1"/>
-                   <property name="msg2" value="messageString2"/>
-                </bean>
-                """, """
-                <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
-                   <properties>
-                     <property name="msg1" value="messageString1"/>
-                     <property name="msg2" value="messageString2"/>
-                   </properties>
-                </bean>
-                """));
+        rewriteRun(xml(
+          """
+            <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
+               <property name="msg1" value="messageString1"/>
+               <property name="msg2" value="messageString2"/>
+            </bean>
+            """,
+          """
+            <bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
+               <properties>
+                 <property name="msg1" value="messageString1"/>
+                 <property name="msg2" value="messageString2"/>
+               </properties>
+            </bean>
+            """));
     }
 
 
     @Test
-    public void testRenamedDependencies() {
+    void renamedDependencies() {
         //language=xml
-        rewriteRun(org.openrewrite.maven.Assertions.pomXml(
-                """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
+        rewriteRun(pomXml(
+          """
+            <project>
+               <modelVersion>4.0.0</modelVersion>
 
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
+               <artifactId>test</artifactId>
+               <groupId>org.apache.camel.test</groupId>
+               <version>1.0.0</version>
 
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-langchain-chat</artifactId>
-                                   <version>4.5.0</version>
-                               </dependency>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-langchain-embeddings</artifactId>
-                                   <version>4.5.0</version>
-                               </dependency>
-                           </dependencies>
+               <dependencies>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-langchain-chat</artifactId>
+                       <version>4.5.0</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-langchain-embeddings</artifactId>
+                       <version>4.5.0</version>
+                   </dependency>
+               </dependencies>
 
-                        </project>
-                        """,
-                """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
+            </project>
+            """,
+          """
+            <project>
+               <modelVersion>4.0.0</modelVersion>
 
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
+               <artifactId>test</artifactId>
+               <groupId>org.apache.camel.test</groupId>
+               <version>1.0.0</version>
 
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-langchain4j-chat</artifactId>
-                                   <version>4.6.0</version>
-                               </dependency>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-langchain4j-embeddings</artifactId>
-                                   <version>4.6.0</version>
-                               </dependency>
-                           </dependencies>
+               <dependencies>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-langchain4j-chat</artifactId>
+                       <version>4.6.0</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-langchain4j-embeddings</artifactId>
+                       <version>4.6.0</version>
+                   </dependency>
+               </dependencies>
 
-                        </project>
-                        """));
+            </project>
+            """));
     }
 
 
@@ -201,139 +212,139 @@ public class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    public void testLangchainChat() {
+    void langchainChat() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.chat.LangChainChat;
-                        import org.apache.camel.component.chat.LangChainChatOperations;
-                        import org.apache.camel.component.chat.LangChainChatProducer;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChainChat langChainChat;
-                                LangChainChatOperations langChainChatOperations;
-                                LangChainChatProducer langChainChatProducer;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.component.langchain4j.chat.LangChain4jChat;
-                        import org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations;
-                        import org.apache.camel.component.langchain4j.chat.LangChain4jChatProducer;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChain4jChat langChainChat;
-                                LangChain4jChatOperations langChainChatOperations;
-                                LangChain4jChatProducer langChainChatProducer;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.chat.LangChainChat;
+            import org.apache.camel.component.chat.LangChainChatOperations;
+            import org.apache.camel.component.chat.LangChainChatProducer;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChainChat langChainChat;
+                    LangChainChatOperations langChainChatOperations;
+                    LangChainChatProducer langChainChatProducer;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.langchain4j.chat.LangChain4jChat;
+            import org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations;
+            import org.apache.camel.component.langchain4j.chat.LangChain4jChatProducer;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChain4jChat langChainChat;
+                    LangChain4jChatOperations langChainChatOperations;
+                    LangChain4jChatProducer langChainChatProducer;
+                }
+            }
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    public void testLangchainChat2() {
+    void langchainChat2() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.chat.LangChainChatComponent;
-                        import org.apache.camel.component.chat.LangChainChatConfiguration;
-                        import org.apache.camel.component.chat.LangChainChatEndpoint;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChainChatComponent langChainChatComponent;
-                                LangChainChatConfiguration  langChainChatConfiguration;
-                                LangChainChatEndpoint langChainChatEndpoint;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.component.langchain4j.chat.LangChain4jChatComponent;
-                        import org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration;
-                        import org.apache.camel.component.langchain4j.chat.LangChain4jChatEndpoint;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChain4jChatComponent langChainChatComponent;
-                                LangChain4jChatConfiguration  langChainChatConfiguration;
-                                LangChain4jChatEndpoint langChainChatEndpoint;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.chat.LangChainChatComponent;
+            import org.apache.camel.component.chat.LangChainChatConfiguration;
+            import org.apache.camel.component.chat.LangChainChatEndpoint;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChainChatComponent langChainChatComponent;
+                    LangChainChatConfiguration  langChainChatConfiguration;
+                    LangChainChatEndpoint langChainChatEndpoint;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.langchain4j.chat.LangChain4jChatComponent;
+            import org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration;
+            import org.apache.camel.component.langchain4j.chat.LangChain4jChatEndpoint;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChain4jChatComponent langChainChatComponent;
+                    LangChain4jChatConfiguration  langChainChatConfiguration;
+                    LangChain4jChatEndpoint langChainChatEndpoint;
+                }
+            }
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    public void testLangchainEmbeddings() {
+    void langchainEmbeddings() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsComponent;
-                        import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConfiguration;
-                        import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConverter;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChainEmbeddingsComponent langChainEmbeddingsComponent;
-                                LangChainEmbeddingsConfiguration langChainEmbeddingsConfiguration;
-                                LangChainEmbeddingsConverter langChainEmbeddingsConverter;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsComponent;
-                        import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration;
-                        import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChain4jEmbeddingsComponent langChainEmbeddingsComponent;
-                                LangChain4jEmbeddingsConfiguration langChainEmbeddingsConfiguration;
-                                LangChain4jEmbeddingsConverter langChainEmbeddingsConverter;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsComponent;
+            import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConfiguration;
+            import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsConverter;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChainEmbeddingsComponent langChainEmbeddingsComponent;
+                    LangChainEmbeddingsConfiguration langChainEmbeddingsConfiguration;
+                    LangChainEmbeddingsConverter langChainEmbeddingsConverter;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsComponent;
+            import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration;
+            import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChain4jEmbeddingsComponent langChainEmbeddingsComponent;
+                    LangChain4jEmbeddingsConfiguration langChainEmbeddingsConfiguration;
+                    LangChain4jEmbeddingsConverter langChainEmbeddingsConverter;
+                }
+            }
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    public void testLangchainEmbeddings2() {
+    void langchainEmbeddings2() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsEndpoint;
-                        import org.apache.camel.component.langchain.embeddings.LangChainEmbeddings;
-                        import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsProducer;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChainEmbeddingsEndpoint langChainEmbeddingsEndpoint;
-                                LangChainEmbeddings langChainEmbeddings;
-                                LangChainEmbeddingsProducer langChainEmbeddingsProducer;
-                            }
-                        }
-                        """,
-                """
-                        import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings;
-                        import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsEndpoint;
-                        import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsProducer;
-                        
-                        public class LangchainTest {
-                            public void test() {
-                                LangChain4jEmbeddingsEndpoint langChainEmbeddingsEndpoint;
-                                LangChain4jEmbeddings langChainEmbeddings;
-                                LangChain4jEmbeddingsProducer langChainEmbeddingsProducer;
-                            }
-                        }
-                        """));
+          """
+            import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsEndpoint;
+            import org.apache.camel.component.langchain.embeddings.LangChainEmbeddings;
+            import org.apache.camel.component.langchain.embeddings.LangChainEmbeddingsProducer;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChainEmbeddingsEndpoint langChainEmbeddingsEndpoint;
+                    LangChainEmbeddings langChainEmbeddings;
+                    LangChainEmbeddingsProducer langChainEmbeddingsProducer;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings;
+            import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsEndpoint;
+            import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsProducer;
+
+            public class LangchainTest {
+                public void test() {
+                    LangChain4jEmbeddingsEndpoint langChainEmbeddingsEndpoint;
+                    LangChain4jEmbeddings langChainEmbeddings;
+                    LangChain4jEmbeddingsProducer langChainEmbeddingsProducer;
+                }
+            }
+            """));
     }
 }

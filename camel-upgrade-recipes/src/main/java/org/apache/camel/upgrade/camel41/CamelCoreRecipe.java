@@ -32,7 +32,7 @@ import org.openrewrite.java.tree.JavaType;
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core" >documentation</a>.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelCoreRecipe extends Recipe {
 
@@ -56,12 +56,12 @@ public class CamelCoreRecipe extends Recipe {
 
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            public J.Literal doVisitLiteral(J.Literal literal, ExecutionContext context) {
-                J.Literal l = super.doVisitLiteral(literal, context);
+            public J.Literal doVisitLiteral(J.Literal literal, ExecutionContext ctx) {
+                J.Literal l = super.doVisitLiteral(literal, ctx);
 
                 //is it possible to precondition that aws2 is present?
-                if (JavaType.Primitive.String.equals(l.getType())
-                        && AWS2_URL_WITH_QUEUE_URL.matcher((String) l.getValue()).matches()) {
+                if (JavaType.Primitive.String == l.getType() &&
+                        AWS2_URL_WITH_QUEUE_URL.matcher((String) l.getValue()).matches()) {
                     String newUrl
                             = ((String) l.getValue()).replaceFirst(AWS2_URL_WITH_QUEUE_REGEXP, "$1queueArn=arn:aws:sqs:$2");
                     l = RecipesUtil.createStringLiteral(newUrl);

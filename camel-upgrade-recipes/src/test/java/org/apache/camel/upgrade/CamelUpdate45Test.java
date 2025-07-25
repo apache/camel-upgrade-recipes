@@ -17,192 +17,195 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
-import org.openrewrite.properties.Assertions;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.properties.Assertions.properties;
 
-public class CamelUpdate45Test implements RewriteTest {
+class CamelUpdate45Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_5)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_4,
-                        "camel-api", "camel-base-engine", "camel-spring-redis", "camel-opensearch", "camel-elasticsearch"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_4,
+            "camel-api", "camel-base-engine", "camel-spring-redis", "camel-opensearch", "camel-elasticsearch"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_core">CAMEL_CORE</a>
      */
+    @DocumentExample
     @Test
-    public void testCamelCore() {
+    void camelCore() {
         //language=java
         rewriteRun(java(
-                """
-                        import org.apache.camel.impl.engine.AbstractCamelContext;
-                        
-                        public class Test {
-                        
-                            AbstractCamelContext context = null;
-                        
-                            public void test() {
-                                context.setTypeConverter(null);
-                                context.getOrCreateTypeConverter();
-                                context.setManagementMBeanAssembler(null);
-                                context.getRestRegistryFactory();
-                                context.setRestRegistryFactory(null);
-                                context.setTransformerRegistry(null);
-                                context.setValidatorRegistry(null);
-                                context.setName("name");
-                                context.setDescription("description");
-                                context.getBootstrapFactoryFinder();
-                                context.getFactoryFinder("something");
-                                context.addInterceptStrategy(null);
-                                context.getStartupStepRecorder();
-                                context.setStartupStepRecorder(null);
-                                context.resolvePropertyPlaceholders("", false);
-                                context.getBasePackageScan();
-                                context.setBasePackageScan("something");
-                            }
-                        }
-                        """,
-                """
-                            import org.apache.camel.impl.engine.AbstractCamelContext;
-                            
-                            public class Test {
-                            
-                                AbstractCamelContext context = null;
-                            
-                                public void test() {
-                                    context.getCamelContextExtension().setTypeConverter(null);
-                                    context.getCamelContextExtension().getOrCreateTypeConverter();
-                                    context.getCamelContextExtension().setManagementMBeanAssembler(null);
-                                    context.getCamelContextExtension().getRestRegistryFactory();
-                                    context.getCamelContextExtension().setRestRegistryFactory(null);
-                                    context.getCamelContextExtension().setTransformerRegistry(null);
-                                    context.getCamelContextExtension().setValidatorRegistry(null);
-                                    context.getCamelContextExtension().setName("name");
-                                    context.getCamelContextExtension().setDescription("description");
-                                    context.getCamelContextExtension().getBootstrapFactoryFinder();
-                                    context.getCamelContextExtension().getFactoryFinder("something");
-                                    context.getCamelContextExtension().addInterceptStrategy(null);
-                                    context.getCamelContextExtension().getStartupStepRecorder();
-                                    context.getCamelContextExtension().setStartupStepRecorder(null);
-                                    context.getCamelContextExtension().resolvePropertyPlaceholders("", false);
-                                    context.getCamelContextExtension().getBasePackageScan();
-                                    context.getCamelContextExtension().setBasePackageScan("something");
-                                }
-                            }
-                        """));
+          """
+            import org.apache.camel.impl.engine.AbstractCamelContext;
+
+            public class Test {
+
+                AbstractCamelContext context = null;
+
+                public void test() {
+                    context.setTypeConverter(null);
+                    context.getOrCreateTypeConverter();
+                    context.setManagementMBeanAssembler(null);
+                    context.getRestRegistryFactory();
+                    context.setRestRegistryFactory(null);
+                    context.setTransformerRegistry(null);
+                    context.setValidatorRegistry(null);
+                    context.setName("name");
+                    context.setDescription("description");
+                    context.getBootstrapFactoryFinder();
+                    context.getFactoryFinder("something");
+                    context.addInterceptStrategy(null);
+                    context.getStartupStepRecorder();
+                    context.setStartupStepRecorder(null);
+                    context.resolvePropertyPlaceholders("", false);
+                    context.getBasePackageScan();
+                    context.setBasePackageScan("something");
+                }
+            }
+            """,
+          """
+            import org.apache.camel.impl.engine.AbstractCamelContext;
+
+            public class Test {
+
+                AbstractCamelContext context = null;
+
+                public void test() {
+                    context.getCamelContextExtension().setTypeConverter(null);
+                    context.getCamelContextExtension().getOrCreateTypeConverter();
+                    context.getCamelContextExtension().setManagementMBeanAssembler(null);
+                    context.getCamelContextExtension().getRestRegistryFactory();
+                    context.getCamelContextExtension().setRestRegistryFactory(null);
+                    context.getCamelContextExtension().setTransformerRegistry(null);
+                    context.getCamelContextExtension().setValidatorRegistry(null);
+                    context.getCamelContextExtension().setName("name");
+                    context.getCamelContextExtension().setDescription("description");
+                    context.getCamelContextExtension().getBootstrapFactoryFinder();
+                    context.getCamelContextExtension().getFactoryFinder("something");
+                    context.getCamelContextExtension().addInterceptStrategy(null);
+                    context.getCamelContextExtension().getStartupStepRecorder();
+                    context.getCamelContextExtension().setStartupStepRecorder(null);
+                    context.getCamelContextExtension().resolvePropertyPlaceholders("", false);
+                    context.getCamelContextExtension().getBasePackageScan();
+                    context.getCamelContextExtension().setBasePackageScan("something");
+                }
+            }
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_main">CAMEL-MAIN</a>
      */
     @Test
-    public void testCamelMain() {
-        rewriteRun(Assertions.properties("""
-                   #test
-                   camel.main.backlogTracing=true
-                """,
-                """
-                            #test
-                            camel.trace.enabled=true
-                        """));
+    void camelMain() {
+        rewriteRun(properties(
+          """
+            #test
+            camel.main.backlogTracing=true
+            """,
+          """
+            #test
+            camel.trace.enabled=true
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_spring_redis">CAMEL-SPRING-REDIS</a>
      */
     @Test
-    public void testSpringRedis() {
+    void springRedis() {
         //language=java
         rewriteRun(java(
-                """
-                            import org.apache.camel.component.redis.processor.idempotent.RedisIdempotentRepository;
-                            import org.apache.camel.component.redis.processor.idempotent.RedisStringIdempotentRepository;
-                            
-                            public class RedisTest {
-                                public void test() {
-                            
-                                    RedisIdempotentRepository redisIdempotentRepository = null;
-                                    RedisStringIdempotentRepository redisStringIdempotentRepository = null;
-                                }
-                            }
-                        """,
-                """
-                            import org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository;
-                            import org.apache.camel.component.redis.processor.idempotent.SpringRedisStringIdempotentRepository;
-                            
-                            public class RedisTest {
-                                public void test() {
-                            
-                                    SpringRedisIdempotentRepository redisIdempotentRepository = null;
-                                    SpringRedisStringIdempotentRepository redisStringIdempotentRepository = null;
-                                }
-                            }
-                        """));
+          """
+            import org.apache.camel.component.redis.processor.idempotent.RedisIdempotentRepository;
+            import org.apache.camel.component.redis.processor.idempotent.RedisStringIdempotentRepository;
+
+            public class RedisTest {
+                public void test() {
+
+                    RedisIdempotentRepository redisIdempotentRepository = null;
+                    RedisStringIdempotentRepository redisStringIdempotentRepository = null;
+                }
+            }
+            """,
+          """
+            import org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository;
+            import org.apache.camel.component.redis.processor.idempotent.SpringRedisStringIdempotentRepository;
+
+            public class RedisTest {
+                public void test() {
+
+                    SpringRedisIdempotentRepository redisIdempotentRepository = null;
+                    SpringRedisStringIdempotentRepository redisStringIdempotentRepository = null;
+                }
+            }
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
     @Test
-    public void testElasticSearch() {
+    void elasticSearch() {
         //language=java
         rewriteRun(java(
-                """
-                            import org.apache.camel.component.es.aggregation.BulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                 public void test() {
-                             
-                                     BulkRequestAggregationStrategy elasticAggregationStrategy = null;
-                                 }
-                            }
-                        """,
-                """
-                            import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                 public void test() {
-                            
-                                     ElastichsearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;                                   
-                                 }
-                            }
-                        """));
+          """
+            import org.apache.camel.component.es.aggregation.BulkRequestAggregationStrategy;
+
+            public class SearchTest {
+                 public void test() {
+
+                     BulkRequestAggregationStrategy elasticAggregationStrategy = null;
+                 }
+            }
+            """,
+          """
+            import org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy;
+
+            public class SearchTest {
+                 public void test() {
+
+                     ElastichsearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;
+                 }
+            }
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
     @Test
-    public void testOpenSearch() {
+    void openSearch() {
         //language=java
         rewriteRun(java(
-                """
-                            import org.apache.camel.component.opensearch.aggregation.BulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                 public void test() {
-                             
-                                     BulkRequestAggregationStrategy elasticAggregationStrategy = null;
-                                 }
-                            }
-                        """,
-                """
-                            import org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy;
-                            
-                            public class SearchTest {
-                                 public void test() {
-                            
-                                     OpensearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;                                   
-                                 }
-                            }
-                        """));
+          """
+            import org.apache.camel.component.opensearch.aggregation.BulkRequestAggregationStrategy;
+
+            public class SearchTest {
+                 public void test() {
+
+                     BulkRequestAggregationStrategy elasticAggregationStrategy = null;
+                 }
+            }
+            """,
+          """
+            import org.apache.camel.component.opensearch.aggregation.OpensearchBulkRequestAggregationStrategy;
+
+            public class SearchTest {
+                 public void test() {
+
+                     OpensearchBulkRequestAggregationStrategy elasticAggregationStrategy = null;
+                 }
+            }
+            """));
     }
 
 }

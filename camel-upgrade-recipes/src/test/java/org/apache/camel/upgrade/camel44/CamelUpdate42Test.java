@@ -18,39 +18,42 @@ package org.apache.camel.upgrade.camel44;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
-import org.openrewrite.properties.Assertions;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.properties.Assertions.properties;
 
-public class CamelUpdate42Test implements RewriteTest {
+class CamelUpdate42Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_4)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-api",
-                        "camel-core-model", "camel-json-validator", "camel-support", "camel-saga", "jakarta.xml.bind-api"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_0, "camel-api",
+            "camel-core-model", "camel-json-validator", "camel-support", "camel-saga", "jakarta.xml.bind-api"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
      * The option camel.main.debugger has been renamed to camel.debug.enabled.
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_2.html#_camel_main">The documentation</a>
      */
+    @DocumentExample
     @Test
-    void testCamelMainDebugger() {
-        rewriteRun(Assertions.properties("""
-                           #test
-                           quarkus.camel.main.debugger=true
-                           camel.main.debugger=true
-                        """,
-                """
-                            #test
-                            quarkus.camel.debug.enabled=true
-                            camel.debug.enabled=true
-                        """));
+    void camelMainDebugger() {
+        rewriteRun(properties(
+          """
+            #test
+            quarkus.camel.main.debugger=true
+            camel.main.debugger=true
+            """,
+          """
+            #test
+            quarkus.camel.debug.enabled=true
+            camel.debug.enabled=true
+            """));
     }
 
     /**
@@ -70,68 +73,69 @@ public class CamelUpdate42Test implements RewriteTest {
      * documentation</a>
      */
     @Test
-    void testAddedExchangeIntoSaga() {
+    void addedExchangeIntoSaga() {
         //language=java
-        rewriteRun(java("""
-                            import org.apache.camel.CamelContext;
-                            import org.apache.camel.builder.RouteBuilder;
-                            import org.apache.camel.saga.CamelSagaCoordinator;
-                            import org.apache.camel.saga.InMemorySagaCoordinator;
-                            import org.apache.camel.saga.InMemorySagaService;
-                            import java.util.concurrent.CompletableFuture;
-                        
-                            public class Saga01Test extends RouteBuilder {
-                        
-                                CamelContext camelContext;
-                        
-                                @Override
-                                public void configure()  {
-                                    InMemorySagaService sagaService = new InMemorySagaService();
-                                    CompletableFuture<CamelSagaCoordinator> s = sagaService.newSaga();
-                                    try {
-                                        getContext().addService(sagaService);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                        
-                                    String uuid = camelContext.getUuidGenerator().generateUuid();
-                        
-                                    CamelSagaCoordinator coordinator = new InMemorySagaCoordinator(camelContext, sagaService, uuid);
-                                    coordinator.compensate();
-                                    coordinator.complete();
-                                }
-                            }
-                        """,
-                """
-                        import org.apache.camel.CamelContext;
-                        import org.apache.camel.builder.RouteBuilder;
-                        import org.apache.camel.saga.CamelSagaCoordinator;
-                        import org.apache.camel.saga.InMemorySagaCoordinator;
-                        import org.apache.camel.saga.InMemorySagaService;
-                        import java.util.concurrent.CompletableFuture;
-                        
-                        public class Saga01Test extends RouteBuilder {
-                        
-                            CamelContext camelContext;
-                        
-                            @Override
-                            public void configure()  {
-                                InMemorySagaService sagaService = new InMemorySagaService();
-                                CompletableFuture<CamelSagaCoordinator> s = sagaService.newSaga(/*Exchange parameter was added.*/(Exchange) null);
-                                try {
-                                    getContext().addService(sagaService);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                        
-                                String uuid = camelContext.getUuidGenerator().generateUuid();
-                        
-                                CamelSagaCoordinator coordinator = new InMemorySagaCoordinator(camelContext, sagaService, uuid);
-                                coordinator.compensate(/*Exchange parameter was added.*/(Exchange) null);
-                                coordinator.complete(/*Exchange parameter was added.*/(Exchange) null);
-                            }
-                        }
-                        """));
+        rewriteRun(java(
+          """
+            import org.apache.camel.CamelContext;
+            import org.apache.camel.builder.RouteBuilder;
+            import org.apache.camel.saga.CamelSagaCoordinator;
+            import org.apache.camel.saga.InMemorySagaCoordinator;
+            import org.apache.camel.saga.InMemorySagaService;
+            import java.util.concurrent.CompletableFuture;
+
+            public class Saga01Test extends RouteBuilder {
+
+                CamelContext camelContext;
+
+                @Override
+                public void configure()  {
+                    InMemorySagaService sagaService = new InMemorySagaService();
+                    CompletableFuture<CamelSagaCoordinator> s = sagaService.newSaga();
+                    try {
+                        getContext().addService(sagaService);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    String uuid = camelContext.getUuidGenerator().generateUuid();
+
+                    CamelSagaCoordinator coordinator = new InMemorySagaCoordinator(camelContext, sagaService, uuid);
+                    coordinator.compensate();
+                    coordinator.complete();
+                }
+            }
+            """,
+          """
+            import org.apache.camel.CamelContext;
+            import org.apache.camel.builder.RouteBuilder;
+            import org.apache.camel.saga.CamelSagaCoordinator;
+            import org.apache.camel.saga.InMemorySagaCoordinator;
+            import org.apache.camel.saga.InMemorySagaService;
+            import java.util.concurrent.CompletableFuture;
+
+            public class Saga01Test extends RouteBuilder {
+
+                CamelContext camelContext;
+
+                @Override
+                public void configure()  {
+                    InMemorySagaService sagaService = new InMemorySagaService();
+                    CompletableFuture<CamelSagaCoordinator> s = sagaService.newSaga(/*Exchange parameter was added.*/(Exchange) null);
+                    try {
+                        getContext().addService(sagaService);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    String uuid = camelContext.getUuidGenerator().generateUuid();
+
+                    CamelSagaCoordinator coordinator = new InMemorySagaCoordinator(camelContext, sagaService, uuid);
+                    coordinator.compensate(/*Exchange parameter was added.*/(Exchange) null);
+                    coordinator.complete(/*Exchange parameter was added.*/(Exchange) null);
+                }
+            }
+            """));
     }
 
 }

@@ -78,10 +78,6 @@ public class CamelTestUtil {
         }
     }
 
-    private static RecipeSpec recipe(RecipeSpec spec, CamelVersion to) {
-        return recipe(spec, to, to.getRecipe());
-    }
-
     public static RecipeSpec recipe(RecipeSpec spec, CamelVersion to, String... activeRecipes) {
         if (activeRecipes == null || activeRecipes.length == 0) {
             return spec.recipeFromResource(to.getYamlFile(), to.getRecipe());
@@ -91,32 +87,32 @@ public class CamelTestUtil {
 
     public static Parser.Builder parserFromClasspath(CamelVersion from, String... classpath) {
         List<String> resources = Arrays.stream(classpath).map(cl -> {
-                    if (cl.startsWith("camel-")) {
-                        String maxVersion = cl + "-" + from.getVersion();
-                        //find the highest version lesser or equals the required one
-                        Path path = Paths.get("target", "test-classes", "META-INF", "rewrite", "classpath");
-                        Optional<String> dependency = Arrays.stream(path.toFile().listFiles())
-                                .filter(f -> f.getName().startsWith(cl))
-                                .map(f -> f.getName().substring(0, f.getName().lastIndexOf(".")))
-                                //filter out or higher version the requested
-                                .filter(f -> f.compareTo(maxVersion) <= 0)
-                                .sorted(Comparator.reverseOrder())
-                                .findFirst();
+              if (cl.startsWith("camel-")) {
+                  String maxVersion = cl + "-" + from.getVersion();
+                  //find the highest version lesser or equals the required one
+                  Path path = Paths.get("target", "test-classes", "META-INF", "rewrite", "classpath");
+                  Optional<String> dependency = Arrays.stream(path.toFile().listFiles())
+                    .filter(f -> f.getName().startsWith(cl))
+                    .map(f -> f.getName().substring(0, f.getName().lastIndexOf(".")))
+                    //filter out or higher version the requested
+                    .filter(f -> f.compareTo(maxVersion) <= 0)
+                    .sorted(Comparator.reverseOrder())
+                    .findFirst();
 
-                        if (dependency.isEmpty()) {
-                            LOGGER.warn("Dependency not found in classpath: {}", cl);
-                        }
+                  if (dependency.isEmpty()) {
+                      LOGGER.warn("Dependency not found in classpath: {}", cl);
+                  }
 
-                        return dependency.orElse(null);
-                    }
-                    return cl;
-                })
-                .filter(Objects::nonNull)
-                .toList();
+                  return dependency.orElse(null);
+              }
+              return cl;
+          })
+          .filter(Objects::nonNull)
+          .toList();
 
         return JavaParser.fromJavaVersion()
-                .logCompilationWarningsAndErrors(true)
-                .classpathFromResources(new InMemoryExecutionContext(), resources.toArray(new String[0]));
+          .logCompilationWarningsAndErrors(true)
+          .classpathFromResources(new InMemoryExecutionContext(), resources.toArray(new String[0]));
     }
 
 }

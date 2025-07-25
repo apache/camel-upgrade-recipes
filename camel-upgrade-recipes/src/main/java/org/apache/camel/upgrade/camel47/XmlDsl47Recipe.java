@@ -23,10 +23,7 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * <p>

@@ -17,24 +17,16 @@
 package org.apache.camel.upgrade.camel46;
 
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
-import org.apache.camel.upgrade.RecipesUtil;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
-import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.internal.ListUtils;
-import org.openrewrite.internal.lang.Nullable;
-import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Content;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * <p>
@@ -62,7 +54,7 @@ public class XmlDsl46Recipe extends Recipe {
         return new AbstractCamelXmlVisitor() {
 
             @Override
-            public Xml.Tag doVisitTag(final Xml.Tag tag, final ExecutionContext ctx) {
+            public  Xml.@Nullable Tag doVisitTag(final Xml.Tag tag, final ExecutionContext ctx) {
                 Xml.Tag t = super.doVisitTag(tag, ctx);
 
                 //save all properties into a list placed to the bean tag

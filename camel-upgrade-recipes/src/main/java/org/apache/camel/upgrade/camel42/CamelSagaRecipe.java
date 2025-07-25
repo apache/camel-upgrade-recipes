@@ -32,7 +32,7 @@ import org.openrewrite.java.tree.Space;
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core" >documentation</a>.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class CamelSagaRecipe extends Recipe {
 
@@ -55,13 +55,13 @@ public class CamelSagaRecipe extends Recipe {
 
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
 
-                if ((getMethodMatcher(M_NEW_SAGA).matches(mi, false)
-                        || getMethodMatcher(M_SAGA_COORDINATOR_COMPENSATE).matches(mi, false)
-                        || getMethodMatcher(M_SAGA_COORDINATOR_COMPLETE).matches(mi, false))
-                        && RecipesUtil.methodInvocationAreArgumentEmpty(mi)) {
+                if ((getMethodMatcher(M_NEW_SAGA).matches(mi, false) ||
+                        getMethodMatcher(M_SAGA_COORDINATOR_COMPENSATE).matches(mi, false) ||
+                        getMethodMatcher(M_SAGA_COORDINATOR_COMPLETE).matches(mi, false)) &&
+                        RecipesUtil.methodInvocationAreArgumentEmpty(mi)) {
                     J.Identifier type
                             = RecipesUtil.createIdentifier(Space.EMPTY, "Exchange", "import org.apache.camel.Exchange");
                     J.TypeCast cp = (J.TypeCast) RecipesUtil.createTypeCast(type, RecipesUtil.createNullExpression());

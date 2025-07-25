@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -47,7 +46,7 @@ public class MoveGetterToPluginHelper extends Recipe {
     private static final Pattern EXTERNAL_CONTEXT_TYPE = Pattern.compile("org.apache.camel.ExtendedCamelContext");
     private static final String MATCHER_CONTEXT_GET_EXT = "org.apache.camel.CamelContext getExtension(java.lang.Class)";
 
-    @Option(displayName = "Method name",
+    @Option(example = "TODO Provide a usage example for the docs", displayName = "Method name",
             description = "Name of the method on external camel context.")
     public String oldMethodName;
 
@@ -65,8 +64,8 @@ public class MoveGetterToPluginHelper extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
 
                 // extendedContext.getModelJAXBContextFactory() -> PluginHelper.getModelJAXBContextFactory(extendedContext)
                 if (getMethodMatcher(getOldMethodMatcher()).matches(mi, false)) {

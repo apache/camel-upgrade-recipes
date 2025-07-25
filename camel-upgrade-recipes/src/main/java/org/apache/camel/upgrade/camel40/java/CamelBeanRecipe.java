@@ -52,8 +52,8 @@ public class CamelBeanRecipe extends Recipe {
         return RecipesUtil.newVisitor(new AbstractCamelJavaVisitor() {
 
             @Override
-            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext context) {
-                J.MethodInvocation mi = super.doVisitMethodInvocation(method, context);
+            protected J.MethodInvocation doVisitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
+                J.MethodInvocation mi = super.doVisitMethodInvocation(method, ctx);
                 Pattern findMethodPattern = Pattern.compile("method=.*");
 
                 if (mi.getSimpleName().equals("to")) {
@@ -61,9 +61,9 @@ public class CamelBeanRecipe extends Recipe {
 
                     for (int i = 0; i < arguments.size(); i++) {
                         Expression argument = arguments.get(i);
-                        if (argument instanceof J.Literal
-                                && ((J.Literal) argument).getType().getClassName().equals("java.lang.String")
-                                && findMethodPattern
+                        if (argument instanceof J.Literal &&
+                                ((J.Literal) argument).getType().getClassName().equals("java.lang.String") &&
+                                findMethodPattern
                                         .matcher((String) (((J.Literal) method.getArguments().get(i)).getValue()))
                                         .find()) {
 
@@ -84,8 +84,8 @@ public class CamelBeanRecipe extends Recipe {
                                     methodNameAndArgs.indexOf("(") + 1,
                                     methodNameAndArgs.indexOf(")"));
 
-                            String updatedArg = uriWithoutMethod + "=" + methodName + "(" + updateMethodArgument(actualArgs)
-                                                + ")";
+                            String updatedArg = uriWithoutMethod + "=" + methodName + "(" + updateMethodArgument(actualArgs) +
+                                                ")";
 
                             doAfterVisit(new ChangeLiteral<>(argument, p -> updatedArg));
 
@@ -112,12 +112,10 @@ public class CamelBeanRecipe extends Recipe {
         // Check if the string matches the method call pattern
         if (matcher.matches()) {
             // Extract the method name from the matched group
-            String methodName = matcher.group(1);
-            return methodName;
-        } else {
-            // Return null if the string doesn't match the method call pattern
-            return null;
+            return matcher.group(1);
         }
+        // Return null if the string doesn't match the method call pattern
+        return null;
     }
 
     private String updateMethodArgument(String argument) {
@@ -126,7 +124,7 @@ public class CamelBeanRecipe extends Recipe {
         Pattern fullyQualifiedPattern = Pattern
                 .compile("^([a-zA-Z_$][a-zA-Z0-9_$]*\\.)*[a-zA-Z_$][a-zA-Z0-9_$]*$");
 
-        String updatedArgs = Arrays.asList(argument.split(",")).stream().map(arg -> {
+        return Arrays.asList(argument.split(",")).stream().map(arg -> {
             if (arg.endsWith(".class")) {
                 return arg;
             }
@@ -152,8 +150,6 @@ public class CamelBeanRecipe extends Recipe {
             return arg + ".class";
 
         }).collect(Collectors.joining(","));
-
-        return updatedArgs;
 
     }
 

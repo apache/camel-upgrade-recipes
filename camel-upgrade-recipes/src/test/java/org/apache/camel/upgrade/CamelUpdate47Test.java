@@ -17,57 +17,59 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-import org.openrewrite.yaml.Assertions;
 
 import static org.openrewrite.java.Assertions.java;
-import static org.openrewrite.xml.Assertions.xml;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-public class CamelUpdate47Test implements RewriteTest {
+class CamelUpdate47Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_7)
-                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_6,
-                        "camel-base-engine", "camel-api", "http-common", "camel-undertow", "jakarta.servlet-api-6.0.0"))
-                .typeValidationOptions(TypeValidation.none());
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_6,
+            "camel-base-engine", "camel-api", "http-common", "camel-undertow", "jakarta.servlet-api-6.0.0"))
+          .typeValidationOptions(TypeValidation.none());
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_api_changes">API CHANGES</a>
      */
+    @DocumentExample
     @Test
-    public void testApiChanges() {
+    void apiChanges() {
         //language=java
         rewriteRun(java(
-                """
-                             import org.apache.camel.impl.engine.TransformerKey;
-                             import org.apache.camel.impl.engine.ValidatorKey;
-                             
-                             
-                             public class ApisTest {
-                                 public void test() {
-                                     TransformerKey transformerKey;
-                                     ValidatorKey validatorKey;
-                                 }
-                             }
-                        """,
-                """
-                       
-                           import org.apache.camel.spi.TransformerKey;
-                           import org.apache.camel.spi.ValidatorKey;
-                      
-                         
-                           public class ApisTest {
-                               public void test() {
-                                   TransformerKey transformerKey;
-                                   ValidatorKey validatorKey;
-                               }
-                           }
-                        """));
+          """
+            import org.apache.camel.impl.engine.TransformerKey;
+            import org.apache.camel.impl.engine.ValidatorKey;
+
+
+            public class ApisTest {
+                public void test() {
+                    TransformerKey transformerKey;
+                    ValidatorKey validatorKey;
+                }
+            }
+            """,
+          """
+
+               import org.apache.camel.spi.TransformerKey;
+               import org.apache.camel.spi.ValidatorKey;
+
+
+               public class ApisTest {
+                   public void test() {
+                       TransformerKey transformerKey;
+                       ValidatorKey validatorKey;
+                   }
+               }
+            """));
     }
 
 
@@ -75,50 +77,53 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer failover</a>
      */
     @Test
-    public void testXmlDslLoadBalanceFailover() {
+    void xmlDslLoadBalanceFailover() {
         //language=xml
-        rewriteRun(xml("""
-                <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-                    <jmxAgent id="agent" disabled="true"/>
-            
-                    <route>
-                        <from uri="direct:start"/>
-                        <loadBalance>
-                            <failover/>
-                            <to uri="jms:queue:foo?transferException=true"/>
-                            <to uri="jms:queue:bar?transferException=true"/>
-                        </loadBalance>
-                        <to uri="mock:result"/>
-                    </route>
-            
-            
-                </camelContext>
-                """, """
-                <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-                    <jmxAgent id="agent" disabled="true"/>
-            
-                    <route>
-                        <from uri="direct:start"/>
-                        <loadBalance>
-                            <failoverLoadBalancer/>
-                            <to uri="jms:queue:foo?transferException=true"/>
-                            <to uri="jms:queue:bar?transferException=true"/>
-                        </loadBalance>
-                        <to uri="mock:result"/>
-                    </route>
-            
-            
-                </camelContext>
-                """));
+        rewriteRun(xml(
+          """
+            <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+                <jmxAgent id="agent" disabled="true"/>
+
+                <route>
+                    <from uri="direct:start"/>
+                    <loadBalance>
+                        <failover/>
+                        <to uri="jms:queue:foo?transferException=true"/>
+                        <to uri="jms:queue:bar?transferException=true"/>
+                    </loadBalance>
+                    <to uri="mock:result"/>
+                </route>
+
+
+            </camelContext>
+            """,
+          """
+            <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+                <jmxAgent id="agent" disabled="true"/>
+
+                <route>
+                    <from uri="direct:start"/>
+                    <loadBalance>
+                        <failoverLoadBalancer/>
+                        <to uri="jms:queue:foo?transferException=true"/>
+                        <to uri="jms:queue:bar?transferException=true"/>
+                    </loadBalance>
+                    <to uri="mock:result"/>
+                </route>
+
+
+            </camelContext>
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer random</a>
      */
     @Test
-    public void testXmlDslLoadBalanceRandom() {
+    void xmlDslLoadBalanceRandom() {
         //language=xml
-        rewriteRun(xml("""
+        rewriteRun(xml(
+          """
             <route>
               <from uri="direct:start"/>
               <loadBalance>
@@ -128,7 +133,8 @@ public class CamelUpdate47Test implements RewriteTest {
                   <to uri="mock:z"/>
               </loadBalance>
             </route>
-                """, """
+            """,
+          """
             <route>
               <from uri="direct:start"/>
               <loadBalance>
@@ -138,18 +144,19 @@ public class CamelUpdate47Test implements RewriteTest {
                   <to uri="mock:z"/>
               </loadBalance>
             </route>
-                """));
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer random</a>
      */
     @Test
-    public void testXmlDslLoadBalanceRandomKeep() {
+    void xmlDslLoadBalanceRandomKeep() {
         //language=xml
-        rewriteRun(xml("""
-                  <random/>
-                """));
+        rewriteRun(xml(
+          """
+            <random/>
+            """));
     }
 
 
@@ -157,159 +164,165 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer the rest</a>
      */
     @Test
-    public void testXmlDslLoadBalanceTheRest() {
+    void xmlDslLoadBalanceTheRest() {
         //language=xml
-        rewriteRun(xml("""
-              <camelContext xmlns="http://camel.apache.org/schema/spring">
-                <jmxAgent id="jmx" disabled="true"/>
-                <route>
-                  <from uri="direct:start"/>
-                  <loadBalance>
-                      <roundRobinLoadBalancer/>
-                      <sticky>
-                          <correlationExpression><header>foo</header></correlationExpression>
-                      </sticky>
-                      <topic/>
-                      <weighted roundRobin="false" distributionRatio="4, 2, 1" />
-                  </loadBalance>
-                </route>
-              </camelContext>
-                """, """
-              <camelContext xmlns="http://camel.apache.org/schema/spring">
-                <jmxAgent id="jmx" disabled="true"/>
-                <route>
-                  <from uri="direct:start"/>
-                  <loadBalance>
-                      <roundRobinLoadBalancer/>
-                      <stickyLoadBalancer>
-                          <correlationExpression><header>foo</header></correlationExpression>
-                      </stickyLoadBalancer>
-                      <topicLoadBalancer/>
-                      <weightedLoadBalancer roundRobin="false" distributionRatio="4, 2, 1" />
-                  </loadBalance>
-                </route>
-              </camelContext>
-                """));
+        rewriteRun(xml(
+          """
+            <camelContext xmlns="http://camel.apache.org/schema/spring">
+              <jmxAgent id="jmx" disabled="true"/>
+              <route>
+                <from uri="direct:start"/>
+                <loadBalance>
+                    <roundRobinLoadBalancer/>
+                    <sticky>
+                        <correlationExpression><header>foo</header></correlationExpression>
+                    </sticky>
+                    <topic/>
+                    <weighted roundRobin="false" distributionRatio="4, 2, 1" />
+                </loadBalance>
+              </route>
+            </camelContext>
+            """,
+          """
+            <camelContext xmlns="http://camel.apache.org/schema/spring">
+              <jmxAgent id="jmx" disabled="true"/>
+              <route>
+                <from uri="direct:start"/>
+                <loadBalance>
+                    <roundRobinLoadBalancer/>
+                    <stickyLoadBalancer>
+                        <correlationExpression><header>foo</header></correlationExpression>
+                    </stickyLoadBalancer>
+                    <topicLoadBalancer/>
+                    <weightedLoadBalancer roundRobin="false" distributionRatio="4, 2, 1" />
+                </loadBalance>
+              </route>
+            </camelContext>
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer failover</a>
      */
     @Test
-    public void testYamlLoadBalanceFailover() {
+    void yamlLoadBalanceFailover() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
-                - route:
-                    id: loadbalance-failover-route
-                    from:
-                      uri: "direct://loadbalance-failover"
-                      steps:
-                        - log:
-                            message: "Processing message start: ${body}"
-                        - loadBalance:
-                            failover:
-                              exception:
-                                - "org.apache.camel.quarkus.main.MyException"
-                            steps:
-                              - to:
-                                  id: to1
-                                  uri: "direct:failover-1"
-                              - to:
-                                  id: to2
-                                  uri: "direct:failover-2"
-                """, """
-                - route:
-                    id: loadbalance-failover-route
-                    from:
-                      uri: "direct://loadbalance-failover"
-                      steps:
-                        - log:
-                            message: "Processing message start: ${body}"
-                        - loadBalance:
-                            failoverLoadBalancer:
-                              exception:
-                                - "org.apache.camel.quarkus.main.MyException"
-                            steps:
-                              - to:
-                                  id: to1
-                                  uri: "direct:failover-1"
-                              - to:
-                                  id: to2
-                                  uri: "direct:failover-2"
-                """));
+        rewriteRun(yaml(
+          """
+            - route:
+                id: loadbalance-failover-route
+                from:
+                  uri: "direct://loadbalance-failover"
+                  steps:
+                    - log:
+                        message: "Processing message start: ${body}"
+                    - loadBalance:
+                        failover:
+                          exception:
+                            - "org.apache.camel.quarkus.main.MyException"
+                        steps:
+                          - to:
+                              id: to1
+                              uri: "direct:failover-1"
+                          - to:
+                              id: to2
+                              uri: "direct:failover-2"
+            """,
+          """
+            - route:
+                id: loadbalance-failover-route
+                from:
+                  uri: "direct://loadbalance-failover"
+                  steps:
+                    - log:
+                        message: "Processing message start: ${body}"
+                    - loadBalance:
+                        failoverLoadBalancer:
+                          exception:
+                            - "org.apache.camel.quarkus.main.MyException"
+                        steps:
+                          - to:
+                              id: to1
+                              uri: "direct:failover-1"
+                          - to:
+                              id: to2
+                              uri: "direct:failover-2"
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_dsl">xml DSL loadbalancer the rest</a>
      */
     @Test
-    public void testYamlLoadBalanceTheRest() {
+    void yamlLoadBalanceTheRest() {
         //language=yaml
-        rewriteRun(Assertions.yaml("""
-                - route:
-                    id: loadbalance-failover-route
-                    from:
-                      uri: "direct://loadbalance-failover"
-                      steps:
-                        - log:
-                            message: "Processing message start: ${body}"
-                        - loadBalance:
-                            failover: aaa
-                            roundRobinLoadBalancer: bbb 
-                            sticky: ccc
-                            topic: ddd
-                            weighted: eee
-                """, """
-                - route:
-                    id: loadbalance-failover-route
-                    from:
-                      uri: "direct://loadbalance-failover"
-                      steps:
-                        - log:
-                            message: "Processing message start: ${body}"
-                        - loadBalance:
-                            failoverLoadBalancer: aaa
-                            roundRobinLoadBalancer: bbb
-                            stickyLoadBalancer: ccc
-                            topicLoadBalancer: ddd
-                            weightedLoadBalancer: eee
-                """));
+        rewriteRun(yaml(
+          """
+            - route:
+                id: loadbalance-failover-route
+                from:
+                  uri: "direct://loadbalance-failover"
+                  steps:
+                    - log:
+                        message: "Processing message start: ${body}"
+                    - loadBalance:
+                        failover: aaa
+                        roundRobinLoadBalancer: bbb
+                        sticky: ccc
+                        topic: ddd
+                        weighted: eee
+            """,
+          """
+            - route:
+                id: loadbalance-failover-route
+                from:
+                  uri: "direct://loadbalance-failover"
+                  steps:
+                    - log:
+                        message: "Processing message start: ${body}"
+                    - loadBalance:
+                        failoverLoadBalancer: aaa
+                        roundRobinLoadBalancer: bbb
+                        stickyLoadBalancer: ccc
+                        topicLoadBalancer: ddd
+                        weightedLoadBalancer: eee
+            """));
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_api_changes">API CHANGES</a>
      */
     @Test
-    public void testHttp() {
+    void http() {
         //language=java
         rewriteRun(java(
-                """
-                        import jakarta.servlet.http.HttpServletRequest;
-                        import jakarta.servlet.http.HttpServletResponse;
-                        import org.apache.camel.Exchange;
-                        
-                        public class HttpTest {
-                        
-                            public void test(Exchange exchange) {
-                                HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
-                                HttpServletResponse response = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
-                            }
-                        }
-                        """,
-                """
-                        import jakarta.servlet.http.HttpServletRequest;
-                        import jakarta.servlet.http.HttpServletResponse;
-                        import org.apache.camel.Exchange;
-                        import org.apache.camel.http.common.HttpMessage;
-                        
-                        public class HttpTest {
-                        
-                            public void test(Exchange exchange) {
-                                HttpServletRequest request = exchange.getMessage(HttpMessage.class).getRequest();
-                                HttpServletResponse response = exchange.getMessage(HttpMessage.class).getResponse();
-                            }
-                        }
-                        """));
+          """
+            import jakarta.servlet.http.HttpServletRequest;
+            import jakarta.servlet.http.HttpServletResponse;
+            import org.apache.camel.Exchange;
+
+            public class HttpTest {
+
+                public void test(Exchange exchange) {
+                    HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
+                    HttpServletResponse response = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
+                }
+            }
+            """,
+          """
+            import jakarta.servlet.http.HttpServletRequest;
+            import jakarta.servlet.http.HttpServletResponse;
+            import org.apache.camel.Exchange;
+            import org.apache.camel.http.common.HttpMessage;
+
+            public class HttpTest {
+
+                public void test(Exchange exchange) {
+                    HttpServletRequest request = exchange.getMessage(HttpMessage.class).getRequest();
+                    HttpServletResponse response = exchange.getMessage(HttpMessage.class).getResponse();
+                }
+            }
+            """));
     }
 
 
@@ -317,61 +330,59 @@ public class CamelUpdate47Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_7.html#_camel_cloudevents">CAMEL-CLOUDEVENTS</a>
      */
     @Test
-    public void testCloudEvents() {
+    void cloudEvents() {
         //language=xml
         rewriteRun(pomXml(
-                """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
+          """
+            <project>
+               <modelVersion>4.0.0</modelVersion>
 
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
+               <artifactId>test</artifactId>
+               <groupId>org.apache.camel.test</groupId>
+               <version>1.0.0</version>
 
-                           <properties>
-                               <camel.version>4.6.0</camel.version>
-                           </properties>
+               <properties>
+                   <camel.version>4.6.0</camel.version>
+               </properties>
 
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-api</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-cloudevents</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                            </dependencies>
+               <dependencies>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-api</artifactId>
+                       <version>${camel.version}</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-cloudevents</artifactId>
+                       <version>${camel.version}</version>
+                   </dependency>
+                </dependencies>
 
-                        </project>
-                        """,
-                """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
+            </project>
+            """,
+          """
+            <project>
+               <modelVersion>4.0.0</modelVersion>
 
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
+               <artifactId>test</artifactId>
+               <groupId>org.apache.camel.test</groupId>
+               <version>1.0.0</version>
 
-                           <properties>
-                               <camel.version>4.6.0</camel.version>
-                           </properties>
+               <properties>
+                   <camel.version>4.6.0</camel.version>
+               </properties>
 
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-api</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                            </dependencies>
+               <dependencies>
+                   <dependency>
+                       <groupId>org.apache.camel</groupId>
+                       <artifactId>camel-api</artifactId>
+                       <version>${camel.version}</version>
+                   </dependency>
+                </dependencies>
 
-                        </project>
-                        """));
+            </project>
+            """));
     }
-
-
 
 
 }
