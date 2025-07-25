@@ -16,9 +16,6 @@
  */
 package org.apache.camel.upgrade.camel41;
 
-import java.util.List;
-import java.util.Optional;
-
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
@@ -28,6 +25,9 @@ import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.JsonPathMatcher;
 import org.openrewrite.yaml.tree.Yaml;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Fixes following yaml change.

@@ -16,16 +16,16 @@
  */
 package org.apache.camel.upgrade;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
 import org.openrewrite.*;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.tree.Xml;
 import org.openrewrite.yaml.tree.Yaml;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static org.openrewrite.Tree.randomId;
 

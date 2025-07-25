@@ -94,3 +94,13 @@ When done, release the staging repository.
 
 To do this you'll need to access https://repository.apache.org/#stagingRepositories.
 Select proper staging repository and click release.
+
+
+## Applying OpenRewrite best practices
+
+On pull requests, a GitHub Action is run to apply OpenRewrite best practices to the codebase.
+To minimize changes, you can run the following command locally to apply the same best practices:
+
+```
+mvn -Popenrewrite rewrite:run
+```

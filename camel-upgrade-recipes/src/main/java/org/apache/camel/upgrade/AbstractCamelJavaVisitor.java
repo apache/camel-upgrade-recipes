@@ -16,17 +16,17 @@
  */
 package org.apache.camel.upgrade;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.tree.J;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
  * Parent of Camel xml visitors, catches any exception, logs it and then continues.

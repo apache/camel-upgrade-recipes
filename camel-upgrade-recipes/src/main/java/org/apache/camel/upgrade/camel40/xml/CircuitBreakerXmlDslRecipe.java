@@ -16,12 +16,6 @@
  */
 package org.apache.camel.upgrade.camel40.xml;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
@@ -32,6 +26,12 @@ import org.openrewrite.internal.ListUtils;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>

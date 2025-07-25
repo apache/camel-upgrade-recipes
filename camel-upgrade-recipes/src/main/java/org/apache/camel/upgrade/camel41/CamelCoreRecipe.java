@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel41;
 
-import java.util.regex.Pattern;
-
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
@@ -27,6 +25,8 @@ import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
+
+import java.util.regex.Pattern;
 
 /**
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the

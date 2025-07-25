@@ -16,12 +16,6 @@
  */
 package org.apache.camel.upgrade.camel40.java;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -30,6 +24,12 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.ChangeLiteral;
 import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CamelBeanRecipe extends Recipe {
 
