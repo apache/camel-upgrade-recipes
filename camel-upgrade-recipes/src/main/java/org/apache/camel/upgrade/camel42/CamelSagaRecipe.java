@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel42;
 
-import java.util.Collections;
-
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
@@ -27,6 +25,8 @@ import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.Space;
+
+import java.util.Collections;
 
 /**
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the

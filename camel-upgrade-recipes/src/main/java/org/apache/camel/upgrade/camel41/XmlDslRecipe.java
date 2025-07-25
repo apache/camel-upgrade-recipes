@@ -16,10 +16,6 @@
  */
 package org.apache.camel.upgrade.camel41;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
@@ -28,6 +24,10 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>

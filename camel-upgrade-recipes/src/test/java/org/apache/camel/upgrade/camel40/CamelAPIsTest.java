@@ -370,7 +370,7 @@ class CamelAPIsTest implements RewriteTest {
                 }
 
             }
-            """));
+            """ ));
     }
 
     @Test
@@ -488,7 +488,7 @@ class CamelAPIsTest implements RewriteTest {
                     return /*Method 'adapt' was removed.*/c3.adapt(ModelCamelContext.class);
                 }
             }
-            """));
+            """ ));
     }
 
     @Test
@@ -522,7 +522,7 @@ class CamelAPIsTest implements RewriteTest {
                     /*Method 'adapt' was removed.*/context.adapt(ModelCamelContext.class);
                 }
             }
-            """));
+            """ ));
     }
 
     @Test
@@ -982,7 +982,7 @@ class CamelAPIsTest implements RewriteTest {
                     ThreadPoolRejectedPolicy policy4 = DiscardOldest;
                 }
             }
-            """));
+            """ ));
     }
 
     @Test
@@ -994,7 +994,7 @@ class CamelAPIsTest implements RewriteTest {
             """,
           """
             /*'java.beans.SimpleBeanInfo' has been removed, (class was used internally).*/import org.apache.camel.builder.SimpleBuilder;
-            """));
+            """ ));
     }
 
     @Test
@@ -1096,7 +1096,7 @@ class CamelAPIsTest implements RewriteTest {
                     String schema = /* Method 'archetypeCatalogAsXml' has been removed. */catalog.archetypeCatalogAsXml();
                 }
             }
-            """));
+            """ ));
     }
 
     @Test
@@ -1126,7 +1126,7 @@ class CamelAPIsTest implements RewriteTest {
                     //do something
                 }
             }
-            """));
+            """ ));
     }
 
     @Test
@@ -1152,7 +1152,7 @@ class CamelAPIsTest implements RewriteTest {
                     /* Method 'setDumpRoutes' accepts String parameter ('xml' or 'yaml' or 'false'). */context.setDumpRoutes(true);
                 }
             }
-            """));
+            """ ));
     }
 
     @Test

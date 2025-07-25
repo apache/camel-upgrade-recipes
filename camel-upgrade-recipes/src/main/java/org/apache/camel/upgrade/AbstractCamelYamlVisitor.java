@@ -16,13 +16,13 @@
  */
 package org.apache.camel.upgrade;
 
-import java.util.function.Supplier;
-
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.function.Supplier;
 
 /**
  * Parent of Camel yaml visitors, catches any exception, logs it and then continues.

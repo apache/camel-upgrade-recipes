@@ -16,10 +16,6 @@
  */
 package org.apache.camel.upgrade.camel44;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
@@ -30,6 +26,10 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.Space;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the

@@ -16,14 +16,6 @@
  */
 package org.apache.camel.upgrade.camel40.java;
 
-import java.beans.SimpleBeanInfo;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
@@ -38,6 +30,10 @@ import org.openrewrite.java.ImplementInterface;
 import org.openrewrite.java.RemoveImplements;
 import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
+
+import java.beans.SimpleBeanInfo;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Recipe migrating changes between Camel 3.x to 4.x, for more details see the

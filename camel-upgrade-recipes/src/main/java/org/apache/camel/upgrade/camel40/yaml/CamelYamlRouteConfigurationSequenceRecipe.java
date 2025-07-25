@@ -16,10 +16,6 @@
  */
 package org.apache.camel.upgrade.camel40.yaml;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
@@ -30,6 +26,10 @@ import org.openrewrite.yaml.JsonPathMatcher;
 import org.openrewrite.yaml.format.IndentsVisitor;
 import org.openrewrite.yaml.style.IndentsStyle;
 import org.openrewrite.yaml.tree.Yaml;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.openrewrite.Tree.randomId;
 

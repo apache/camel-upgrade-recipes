@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import java.util.regex.Pattern;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +28,8 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.AddImport;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.tree.J;
+
+import java.util.regex.Pattern;
 
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
