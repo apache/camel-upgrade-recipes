@@ -25,7 +25,8 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-class CamelBeanRecipeTest implements RewriteTest {
+//class has to stay public, because test is extended in project quarkus-updates
+public class CamelBeanRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {

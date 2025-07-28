@@ -25,7 +25,8 @@ import org.openrewrite.test.TypeValidation;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.properties.Assertions.properties;
 
-class CamelUpdate45Test implements RewriteTest {
+//class has to stay public, because test is extended in project quarkus-updates
+public class CamelUpdate45Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -154,7 +155,8 @@ class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
     @Test
-    void elasticSearch() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void elasticSearch() {
         //language=java
         rewriteRun(java(
           """
@@ -183,7 +185,8 @@ class CamelUpdate45Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
     @Test
-    void openSearch() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void openSearch() {
         //language=java
         rewriteRun(java(
           """

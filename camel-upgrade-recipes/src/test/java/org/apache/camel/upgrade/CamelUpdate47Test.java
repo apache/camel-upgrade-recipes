@@ -27,7 +27,8 @@ import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.xml.Assertions.xml;
 import static org.openrewrite.yaml.Assertions.yaml;
 
-class CamelUpdate47Test implements RewriteTest {
+//class has to stay public, because test is extended in project quarkus-updates
+public class CamelUpdate47Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {

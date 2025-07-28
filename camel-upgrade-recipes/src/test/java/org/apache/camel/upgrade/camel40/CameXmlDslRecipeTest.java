@@ -26,7 +26,8 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.xml.Assertions.xml;
 
-class CameXmlDslRecipeTest implements RewriteTest {
+//class has to stay public, because test is extended in project quarkus-updates
+public class CameXmlDslRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {

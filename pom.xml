@@ -178,6 +178,9 @@
                             <activeRecipes>
                                 <recipe>org.openrewrite.recipes.rewrite.OpenRewriteRecipeBestPractices</recipe>
                             </activeRecipes>
+                            <exclusions>
+                                <exclusion>*/src/test/java/**</exclusion>
+                            </exclusions>
                             <failOnDryRunResults>true</failOnDryRunResults>
                         </configuration>
                         <dependencies>
