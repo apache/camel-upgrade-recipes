@@ -27,7 +27,8 @@ import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.xml.Assertions.xml;
 import static org.openrewrite.yaml.Assertions.yaml;
 
-class CamelUpdate46Test implements RewriteTest {
+//class has to stay public, because test is extended in project quarkus-updates
+public class CamelUpdate46Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -43,7 +44,8 @@ class CamelUpdate46Test implements RewriteTest {
      */
     @DocumentExample
     @Test
-    void search() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void search() {
         //language=java
         rewriteRun(java(
           """
@@ -212,7 +214,8 @@ class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    void langchainChat() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void langchainChat() {
         //language=java
         rewriteRun(java(
           """
@@ -247,7 +250,8 @@ class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_chat">CAMEL-LANGCHAIN4J-CHAT</a>
      */
     @Test
-    void langchainChat2() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void langchainChat2() {
         //language=java
         rewriteRun(java(
           """
@@ -282,7 +286,8 @@ class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    void langchainEmbeddings() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void langchainEmbeddings() {
         //language=java
         rewriteRun(java(
           """
@@ -317,7 +322,8 @@ class CamelUpdate46Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_6.html#_camel_langchain4j_embeddingsat">CAMEL-LANGCHAIN4J-EMBEDDINGS</a>
      */
     @Test
-    void langchainEmbeddings2() {
+    //method has to stay public, because it is overridden by project quarkus-updates
+    public void langchainEmbeddings2() {
         //language=java
         rewriteRun(java(
           """
