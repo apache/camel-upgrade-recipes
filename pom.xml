@@ -176,11 +176,8 @@
                         <version>6.15.0</version>
                         <configuration>
                             <activeRecipes>
-                                <recipe>org.openrewrite.recipes.rewrite.OpenRewriteRecipeBestPractices</recipe>
+                                <recipe>org.apache.camel.upgrade.internal.OpenRewriteRecipeBestPractices</recipe>
                             </activeRecipes>
-                            <exclusions>
-                                <exclusion>*/src/test/java/**</exclusion>
-                            </exclusions>
                             <failOnDryRunResults>true</failOnDryRunResults>
                         </configuration>
                         <dependencies>

@@ -23,7 +23,6 @@ import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.properties.Assertions.properties;
-import static org.openrewrite.yaml.Assertions.yaml;
 
 //class has to stay public, because test is extended in project quarkus-updates
 public class CamelUpdate414Test implements RewriteTest {
@@ -43,28 +42,28 @@ public class CamelUpdate414Test implements RewriteTest {
     void httpBusinessVsManagementServicesSeparationPropertiesTest() {
         rewriteRun(properties(
                 """
-                          camel.server.devConsoleEnabled=true
-                          camel.server.healthCheckEnabled=true
-                          camel.server.jolokiaEnabled=true
-                          camel.server.metricsEnabled=true
-                          camel.server.uploadEnabled=true
-                          camel.server.uploadSourceDir=aaa
-                          camel.server.downloadEnabled=true
-                          camel.server.sendEnabled=true
-                          camel.server.healthPath=aaa
-                          camel.server.jolokiaPath=aaa
+                        camel.server.devConsoleEnabled=true
+                        camel.server.healthCheckEnabled=true
+                        camel.server.jolokiaEnabled=true
+                        camel.server.metricsEnabled=true
+                        camel.server.uploadEnabled=true
+                        camel.server.uploadSourceDir=aaa
+                        camel.server.downloadEnabled=true
+                        camel.server.sendEnabled=true
+                        camel.server.healthPath=aaa
+                        camel.server.jolokiaPath=aaa
                         """,
                 """
-                            camel.management.devConsoleEnabled=true
-                            camel.management.healthCheckEnabled=true
-                            camel.management.jolokiaEnabled=true
-                            camel.management.metricsEnabled=true
-                            camel.management.uploadEnabled=true
-                            camel.management.uploadSourceDir=aaa
-                            camel.management.downloadEnabled=true
-                            camel.management.sendEnabled=true
-                            camel.management.healthPath=aaa
-                            camel.management.jolokiaPath=aaa
+                        camel.management.devConsoleEnabled=true
+                        camel.management.healthCheckEnabled=true
+                        camel.management.jolokiaEnabled=true
+                        camel.management.metricsEnabled=true
+                        camel.management.uploadEnabled=true
+                        camel.management.uploadSourceDir=aaa
+                        camel.management.downloadEnabled=true
+                        camel.management.sendEnabled=true
+                        camel.management.healthPath=aaa
+                        camel.management.jolokiaPath=aaa
                         """));
     }
 }

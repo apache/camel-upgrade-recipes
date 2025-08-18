@@ -23,3 +23,18 @@ examples:
       camel.routecontroller.backOffDelay = 5000
       camel.routecontroller.backOffMaxAttempts = 10
     language: properties
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel413.CamelSpringBootMigrationRecipe
+examples:
+- description: ''
+  sources:
+  - before: |
+      camel.springboot.main-run-controller=something
+      camel.springboot.include-non-singletons=something
+      camel.springboot.warn-on-early-shutdown=something
+    after: |
+      camel.main.run-controller=something
+      camel.main.include-non-singletons=something
+      camel.main.warn-on-early-shutdown=something
+    language: properties
