@@ -35,6 +35,8 @@ This allows other projects (like https://github.com/quarkusio/quarkus-updates/[q
 
 This project is released as standard Apache Camel module.
 
+⚠️ Check that release notes are up-to-date!
+
 Check that everything is alright and run:
 
 ```bash
