@@ -20,6 +20,7 @@ name: org.apache.camel.upgrade.Camel410LTSMigrationRecipe
 displayName: Migrate to @camel4.10-lts-version@
 description: Migrates Apache Camel application to @camel4.10-lts-version@.
 recipeList:
+  - org.apache.camel.upgrade.camel410_4.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
@@ -30,10 +31,6 @@ recipeList:
   - org.apache.camel.upgrade.UpgradeToJava17
   - org.apache.camel.upgrade.JavaVersion17
   - org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys
-# 4.10.3 to 4.10.4 java dsl - https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_java_dsl
-  - org.apache.camel.upgrade.camel412.Java412Recipes
-  - org.apache.camel.upgrade.camel412.xmlDslBearer
-  - org.apache.camel.upgrade.camel412.yamlDslBearer
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'

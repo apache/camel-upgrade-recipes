@@ -45,6 +45,7 @@ public class CamelTestUtil {
         v4_8(4, 8, 0),
         v4_9(4, 9, 0),
         v4_10(4, 10, 0),
+        v4_10_4(4, 10, 4, true),
         v4_11(4, 11, 0),
         v4_12(4, 12, 0),
         v4_13(4, 13, 0),
@@ -53,27 +54,40 @@ public class CamelTestUtil {
         private int major;
         private int minor;
         private int patch;
+        private boolean lts;
 
         CamelVersion(int major, int minor, int patch) {
+            this(major, minor, patch, false);
+        }
+
+        CamelVersion(int major, int minor, int patch, boolean lts) {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
+            this.lts = lts;
         }
 
         public String getVersion() {
-            return getMajorMinor() + "." + patch;
+            return getRecipeFile() + "." + patch;
         }
 
-        public String getMajorMinor() {
+        private String getRecipeFile() {
+            if(lts) {
+                return major + "." + minor + "." + patch;
+            }
             return major + "." + minor;
         }
 
         public String getYamlFile() {
-            return "/META-INF/rewrite/" + getMajorMinor() + ".yaml";
+            return "/META-INF/rewrite/" + getRecipeFile() + ".yaml";
         }
 
         public String getRecipe() {
+            if(lts) {
+                return "org.apache.camel.upgrade.camel" + major + minor + "_" + patch + ".CamelMigrationRecipe";
+            }
             return "org.apache.camel.upgrade.camel" + major + minor + ".CamelMigrationRecipe";
+
         }
 
     }
