@@ -1,16 +1,192 @@
-= Release notes
+= Camel Upgrade Recipes - Release notes
 
+== 4.14.0
 
+=== Summary
+
+This is a release supporting Camel and Camel Spring Boot 4.14.0 LTS with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
 
 [%autowidth,stripes=hover]
 |===
-| from | to | chapter
+| Migration | Coverage | Comment
 
-| 4.8.0 | 4.9.0 | <<_4_9_0>>
-
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel_core[camel-core] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel_main[camel-main] | ⚠️ Partial | Separation of management services and business services is covered, whilst the default HTTP endpoint are untouched.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-jbang[camel-jbang] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-google[camel-google] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-consul[camel-consul] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-dapr[camel-dapr] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-huawei-dms[camel-huawei-dms] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_ccamel-weather[camel-weather] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-web3j[camel-web3j] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_14.html#_camel-spring-batch[camel-spring-batch] | ❌ None | Not supported by the migration tool.
 |===
 
-=== 4.9.0
+=== Full changelog
+
+https://github.com/apache/camel-upgrade-recipes/compare/4.13.0..4.14.0
+
+== 4.13.0
+
+=== Summary
+
+This is a release supporting Camel and Camel Spring Boot 4.13.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_core[camel-core] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_file_camel_ftp_camel_smb_camel_azure_files[camel-file / camel-ftp / camel-smb / camel-azure-files] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_http[camel-http] | ✅ Full    | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_language[camel_language] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel-salesforce[camel-salesforce] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel-yaml-dsl[camel-yaml-dsl] | ✅ Full    | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_template_components[template components] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_spring_boot[Camel Spring Boot] | ✅ Full    | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel-fury[camel-fury] | ✅ Full    | Automatically migrated.
+|===
+
+=== Full changelog
+
+https://github.com/apache/camel-upgrade-recipes/compare/4.12.1..4.13.0
+
+== 4.12.1
+
+=== Summary
+
+This is a release containing upgrade of OpenRewrite framework to 3.9.0.
+
+=== Full changelog
+
+https://github.com/apache/camel-upgrade-recipes/compare/4.12.0..4.12.1
+
+== 4.12.0
+
+=== Summary
+
+This is a release supporting Camel and Camel Spring Boot 4.12.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_core[camel-core] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_header_filter_strategy[header filter strategy] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_propagating_variables_in_eips_in_sedakamelet_components[propagating variables in eips in seda kamelet components] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_type_converters[type converters] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_java_dsl[java DSL] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_rest_dsl[rest DSL] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_xml_io_dsl[xml io DSL] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_as2[camel-as2] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_dsl_modeline[camel-dsl-modeline] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_jackson_camel_jacksonxml[camel_jackson / camel_jacksonxml] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_jbang[camel-jbang] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_micrometer[camel-micrometer] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_main[camel-main] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_observability_services[camel-observability-services] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_microprofile_fault_tolerance[camel-microprofile-fault-tolerance] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_smb[camel-smb] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_component_verifier_extensions_and_metadata_extension[component verifier extensions and metadata extension] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_spring_boot[camel-spring-boot] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_langchain4j_tokenizer[camel_langchain4j_tokenizer] | ❌ None | Not supported by the migration tool.
+|===
+
+=== Full changelog
+
+https://github.com/apache/camel-upgrade-recipes/compare/4.11.0..4.12.0
+
+== 4.11.0
+
+=== Summary
+
+This is a release supporting Camel and Camel Spring Boot 4.11.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_eips[EIPs] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_api[camel-api] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_attachments[camel-attachments] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_bean[camel-bean] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_main[camel-main] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_file_based_components[file based components] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel-ftp[camel-ftp] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel-kafka[camel-kafka] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel-sql[camel-sql] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_platform_http[camel-platform-http] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_as2[camel-as2] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_jbang[camel-jbang] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_etcd3[camel-etcd3] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_undertow[camel-undertow] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_metrics[camel-metrics] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_observability_services[camel-observability-services] | ❌ None | Not supported by the migration tool.
+|===
+
+=== Full changelog
+
+https://github.com/apache/camel-upgrade-recipes/compare/4.10.0..4.11.0
+
+== 4.10.0
+
+=== Summary
+
+This is a release supporting Camel and Camel Spring Boot 4.10.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_xml_dsl_changes[XML DSL changes] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_kamelet[camel-kamelet] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_azure_files[camel-azure-files] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_aws2_s3[camel-aws2-s3] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_file[camel-file] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_google_storage[camel-google-storage] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_jgroups[camel-jgroups] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_jbang[camel-jbang] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_micrometer[camel-micrometer] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_mina[camel-mina] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_minio[camel-minio] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_google_pubsub_lite[camel-google-pubsub-lite] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_tracing[camel-tracing] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_langchain4j_chat[camel-langchain4j-chat] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_smb[camel-smb] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_solr[camel-solr] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_test_infra[camel-test-infra] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_10.html#_camel_spring_boot[camel-spring-boot] | ✅ Full | Automatically migrated.
+|===
+
+=== Full changelog
+
+https://github.com/apache/camel-upgrade-recipes/compare/4.9.0..4.10.0
+
+
+
+== 4.9.0
 
 Upgrading Camel 4.8 to 4.9 (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html[guide])
 
