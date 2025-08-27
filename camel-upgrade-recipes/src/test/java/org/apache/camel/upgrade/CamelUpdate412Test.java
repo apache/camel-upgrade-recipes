@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openrewrite.DocumentExample;
@@ -99,11 +100,6 @@ public class CamelUpdate412Test implements RewriteTest {
     }
 
 
-    /**
-     * The package scan classes has moved from camel-base-engine to camel-support
-     *
-     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_core">Moved scan classes</a>
-     */
     @CsvSource({"DefaultPackageScanClassResolver,org.apache.camel.impl.engine,org.apache.camel.support.scan",
       "DefaultPackageScanResourceResolver,org.apache.camel.impl.engine,org.apache.camel.support.scan",
       "WebSpherePackageScanClassResolver,org.apache.camel.impl.engine, org.apache.camel.support.scan",
@@ -112,6 +108,12 @@ public class CamelUpdate412Test implements RewriteTest {
       "AssignableToPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
       "CompositePackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan",
       "InvertingPackageScanFilter,org.apache.camel.impl.scan, org.apache.camel.support.scan"})
+    /**
+     * The package scan classes has moved from camel-base-engine to camel-support
+     *
+     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_camel_core">Moved scan classes</a>
+     */
+    @DisabledIfSystemProperty(named =CamelTestUtil.SYSTEM_PROPERTY_LATEST_RECIPE, matches = "true")
     @ParameterizedTest
     void movedScanClasses(String className, String originalImport, String expectedImport) {
         rewriteRun(

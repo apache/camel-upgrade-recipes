@@ -136,6 +136,28 @@
         </resources>
         <plugins>
             <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+                <execution>
+                    <id>run-with-latest</id>
+                    <goals>
+                        <goal>test</goal>
+                    </goals>
+                    <configuration>
+                        <systemProperties>
+                            <property>
+                                <name>camelUpgradeRecipes-useLatestRecipe</name>
+                                <value>true</value>
+                            </property>
+                        </systemProperties>
+                    </configuration>
+                </execution>
+            </executions>
+            </plugin>
+
+            <plugin>
                 <!-- to copy the dependencies for the test -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

@@ -18,6 +18,7 @@ package org.apache.camel.upgrade.camel40;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -105,6 +106,7 @@ public class CamelYamlTest implements RewriteTest {
             """));
     }
 
+    @DisabledIfSystemProperty(named = CamelTestUtil.SYSTEM_PROPERTY_LATEST_RECIPE, matches = "true")
     @Test
     void routeConfigurationWithOnException() {
         //language=yaml
@@ -138,6 +140,7 @@ public class CamelYamlTest implements RewriteTest {
             """));
     }
 
+    @DisabledIfSystemProperty(named = CamelTestUtil.SYSTEM_PROPERTY_LATEST_RECIPE, matches = "true")
     @Test
     void routeConfigurationWithoutOnException() {
         //language=yaml
@@ -152,6 +155,7 @@ public class CamelYamlTest implements RewriteTest {
             """));
     }
 
+    @DisabledIfSystemProperty(named =CamelTestUtil.SYSTEM_PROPERTY_LATEST_RECIPE, matches = "true")
     @Test
     void doubleDocument() {
         //language=yaml
@@ -210,6 +214,7 @@ public class CamelYamlTest implements RewriteTest {
             """));
     }
 
+    @DisabledIfSystemProperty(named =CamelTestUtil.SYSTEM_PROPERTY_LATEST_RECIPE, matches = "true")
     @Test
     void doubleDocumentSimple() {
         //language=yaml
@@ -230,6 +235,7 @@ public class CamelYamlTest implements RewriteTest {
             """));
     }
 
+    @DisabledIfSystemProperty(named =CamelTestUtil.SYSTEM_PROPERTY_LATEST_RECIPE, matches = "true")
     @Test
     void routeConfigurationIdempotent() {
         //language=yaml
