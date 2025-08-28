@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -154,6 +155,7 @@ public class CamelUpdate45Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_5.html#_camel_elasticsearch_camel_opensearch">CAMEL-ELASTICSEARCH/CAMEL-OPENSEARCH</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     //method has to stay public, because it is overridden by project quarkus-updates
     public void elasticSearch() {

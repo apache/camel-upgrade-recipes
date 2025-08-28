@@ -122,6 +122,20 @@
             <version>${camel4.8-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>1.13.0-RC1</version>
+            <scope>test</scope>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.junit.platform</groupId>-->
+<!--            <artifactId>junit-platform-runner</artifactId>-->
+<!--            <version>1.13.0-RC1</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
     </dependencies>
 
     <build>
@@ -135,6 +149,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.3.0</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Suite.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <camel-version>${camel-version}</camel-version>
+                        <camel4.10-lts-version>${camel4.10-lts-version}</camel4.10-lts-version>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <!-- to copy the dependencies for the test -->
                 <groupId>org.apache.maven.plugins</groupId>

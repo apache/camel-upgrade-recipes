@@ -28,6 +28,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class CamelTestUtil {
+    public static final String PROPERTY_USE_RECIPE = "camelUpgradeRecipes-useRecipe";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CamelTestUtil.class);
 
     /**
@@ -73,9 +75,14 @@ public class CamelTestUtil {
         public String getRecipe() {
             return "org.apache.camel.upgrade.camel" + major + minor + ".CamelMigrationRecipe";
         }
+
     }
 
     public static RecipeSpec recipe(RecipeSpec spec, CamelVersion to, String... activeRecipes) {
+        String useRecipe = System.getProperty(CamelTestUtil.PROPERTY_USE_RECIPE);
+        if (useRecipe != null && !useRecipe.isEmpty()) {
+            return spec.recipeFromResources(useRecipe);
+        }
         if (activeRecipes == null || activeRecipes.length == 0) {
             return spec.recipeFromResource(to.getYamlFile(), to.getRecipe());
         }

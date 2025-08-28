@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -89,6 +90,7 @@ public class CamelUpdate411Test implements RewriteTest {
      *
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_11.html#_camel_etcd3">Removed deprecated components</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void removedDependencies() {
         //language=xml
