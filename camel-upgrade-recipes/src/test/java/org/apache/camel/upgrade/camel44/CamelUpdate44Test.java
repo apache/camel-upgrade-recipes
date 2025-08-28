@@ -19,6 +19,7 @@ package org.apache.camel.upgrade.camel44;
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -41,6 +42,7 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_main">doc</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @DocumentExample
     @Test
     void camelMainRouteControllerProperty() {
@@ -60,6 +62,7 @@ public class CamelUpdate44Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_main">doc</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void camelMainRouteControllerDashedProperty() {
         rewriteRun(properties(

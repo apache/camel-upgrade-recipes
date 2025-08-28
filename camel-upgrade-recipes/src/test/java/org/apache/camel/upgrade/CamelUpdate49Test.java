@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -76,6 +77,7 @@ public class CamelUpdate49Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_google_secret_manager_properties_function">camel-google-secret-manager properties function</a>
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_camel_azure_key_vault_properties_function">camel-azure-key-vault properties function</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void secretFieldSyntax() {
         //language=java
@@ -336,6 +338,7 @@ public class CamelUpdate49Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_deprecated_components">Removed deprecated components</a>
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_9.html#_removed_api">Removed API</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void removedDependencies() {
         //language=xml
