@@ -17,9 +17,9 @@
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.CamelSpringBootMigrationRecipe
-displayName: Migrate to Apache Camel Spring Boot @camel-version@
+displayName: Migrate to Apache Camel Spring Boot @camel-latest-version@
 description: >- 
-  Migrate applications to Apache Camel Spring Boot @camel-version@ and Spring Boot @spring-boot-version@
+  Migrate applications to Apache Camel Spring Boot @camel-latest-version@ and Spring Boot @spring-boot-version@
 recipeList:
   - org.apache.camel.upgrade.camel414.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel413.CamelMigrationRecipe

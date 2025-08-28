@@ -125,17 +125,9 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
-            <version>1.13.0-RC1</version>
+            <version>1.13.4</version>
             <scope>test</scope>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.junit.platform</groupId>-->
-<!--            <artifactId>junit-platform-runner</artifactId>-->
-<!--            <version>1.13.0-RC1</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-
     </dependencies>
 
     <build>
@@ -159,7 +151,7 @@
                         <include>**/*Suite.java</include>
                     </includes>
                     <systemPropertyVariables>
-                        <camel-version>${camel-version}</camel-version>
+                        <camel-latest-version>${camel-latest-version}</camel-latest-version>
                         <camel4.10-lts-version>${camel4.10-lts-version}</camel4.10-lts-version>
                     </systemPropertyVariables>
                 </configuration>

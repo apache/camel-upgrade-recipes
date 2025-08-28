@@ -103,6 +103,7 @@
         <camel4.12-version>4.12.0</camel4.12-version>
 
         <camel4.10-lts-version>4.10.6</camel4.10-lts-version>
+        <camel-latest-version>4.14.0</camel-latest-version>
 
         <camel-version>${project.version}</camel-version>
         <camel-spring-boot-version>${project.version}</camel-spring-boot-version>
