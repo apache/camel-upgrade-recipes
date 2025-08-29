@@ -22,7 +22,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 //class has to stay public, because test is extended in project quarkus-updates
 @EnabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = "org.apache.camel.upgrade.Camel410LTSMigrationRecipe")
-public class CamelUpdate410LTSVersionTest  extends AbstractCamelUpdateVersionTest {
+public class CamelUpdate410LtsVersionTest extends AbstractCamelUpdateVersionTest {
 
 
     @Override
