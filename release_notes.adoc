@@ -1,5 +1,15 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.14.0.1
+
+Fixes https://github.com/apache/camel-upgrade-recipes/issues/60
+
+Introduces recipe for upgrading plain Camel into latest 4.10 (LTS) version by running:
+
+```
+mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.Camel410LTSMigrationRecipe
+```
+
 == 4.14.0
 
 === Summary

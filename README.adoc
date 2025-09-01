@@ -5,16 +5,31 @@ This project contains recipes to assist in the migration of Camel projects.
 You can find the recipes in the src/main/resources/META-INF/rewrite directory.
 
 The names of the recipes correspond to the Camel version they support, formatted as [major].[minor].yaml. To migrate from version X.Y to version A.B, apply all recipes with versions greater than X.Y and less than A.B.
-
 For example, to migrate from version 3.8 to 4.4, you need to apply the recipes `*4.0.yaml*` and `*4.4.yaml*`.
+
+Special recipes `latest.yaml` and `4.10LTS.yaml` (or other lts version in the future) can be used for migration to the latest version.
 
 == How to run from cmd
 
-To apply recipes on a standalone Camel Project you can use maven plugin:
+To upgrade to the latest version of Camel, you can execute the following script:
+
+```
+$ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.CamelMigrationRecipe
+```
+
+
+To upgrade to the latest version of Camel 4.10 (LTS), you can execute the following script:
+
+```
+$ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.Camel410LTSMigrationRecipe
+```
+
+
+To apply specific recipes you can use the following script:
 
 ```
 
-mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.0.4:run \
+$ mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.0.4:run \
 -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:4.8.0 \
 -DactiveRecipes=org.apache.camel.upgrade.camel44.CamelMigrationRecipe,org.apache.camel.upgrade.camel45.CamelMigrationRecipe
 ```
