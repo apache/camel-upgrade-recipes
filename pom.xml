@@ -140,12 +140,6 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-spring-boot-bom</artifactId>
-                <version>${camel-spring-boot-version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-parent</artifactId>
                 <version>${camel-version}</version>

@@ -31,6 +31,16 @@
     <name>Camel Spring Boot Upgrades Recipes</name>
     <description>Migration recipes (using openrewrite) for Camel Spring Boot to make Maven migrations easier</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-spring-boot-bom</artifactId>
+                <version>${camel-spring-boot-version}</version>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.camel.upgrade</groupId>
