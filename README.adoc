@@ -34,6 +34,11 @@ $ mvn -U org.openrewrite.maven:rewrite-maven-plugin:6.0.4:run \
 -DactiveRecipes=org.apache.camel.upgrade.camel44.CamelMigrationRecipe,org.apache.camel.upgrade.camel45.CamelMigrationRecipe
 ```
 
+[WARNING]
+====
+This project is not meant for migration of an application based on Camel-Quarkus. Use https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.0[Quakus migration guide] instead.
+====
+
 == JUnit testing
 
 Several migration paths to different versions must be covered by the tests.
