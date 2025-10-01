@@ -110,19 +110,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
-            <version>${camel4.8-version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-languages</artifactId>
-            <version>${camel4.8-version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
             <version>1.13.4</version>
