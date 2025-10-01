@@ -109,8 +109,8 @@
         <camel-spring-boot-version>${project.version}</camel-spring-boot-version>
 
         <!-- versions for camel-spring-boot -->
-        <spring-boot-version>3.5.0</spring-boot-version>
-        <springframework-version>6.2.7</springframework-version>
+        <spring-boot-version>3.5.6</spring-boot-version>
+        <springframework-version>6.2.11</springframework-version>
 
         <rewrite-recipe-bom.version>3.9.0</rewrite-recipe-bom.version>
 
