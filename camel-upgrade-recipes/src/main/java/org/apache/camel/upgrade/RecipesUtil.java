@@ -16,6 +16,7 @@
  */
 package org.apache.camel.upgrade;
 
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.*;
@@ -25,6 +26,7 @@ import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.openrewrite.Tree.randomId;
@@ -289,6 +291,28 @@ public class RecipesUtil {
         return kebabCasePattern
                 .matcher(kebabCase)
                 .replaceAll(mr -> mr.group(1).toUpperCase());
+    }
+
+    public static @Nullable String getValueFromScalar(Yaml y) {
+        if(y instanceof Yaml.Scalar) {
+            return ((Yaml.Scalar) y).getValue();
+        }
+        return null;
+    }
+
+    public static @Nullable String replacePropertyInUrl(String uri, String component, String oldProperty, String newProperty, String optionalValuePrefix) {
+        if(uri.startsWith(component) && uri.contains(oldProperty)) {
+
+            if(optionalValuePrefix != null) {
+                Matcher m = Pattern.compile(String.format("(^%s[:?].*)%s=(['\"]?.+$)", component, oldProperty)).matcher(uri);
+                if (m.find()) {
+                    return m.group(1) + newProperty + "=" + optionalValuePrefix + m.group(2);
+                }
+            } else {
+                throw new IllegalArgumentException("Replace without prefix is not implemented yet!");
+            }
+        }
+        return null;
     }
 
 }
