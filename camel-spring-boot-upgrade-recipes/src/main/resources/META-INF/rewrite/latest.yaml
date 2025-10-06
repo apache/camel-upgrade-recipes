@@ -21,6 +21,7 @@ displayName: Migrate to Apache Camel Spring Boot @camel-latest-version@
 description: >- 
   Migrate applications to Apache Camel Spring Boot @camel-latest-version@ and Spring Boot @spring-boot-version@
 recipeList:
+  - org.apache.camel.upgrade.camel415.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel414.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel413.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel412.CamelMigrationRecipe

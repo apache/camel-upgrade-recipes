@@ -261,6 +261,7 @@ public class CamelUpdate412Test implements RewriteTest {
     @Test
     void yamlDslBearer() {
         //language=yaml
+
         rewriteRun(yaml(
           """
                 - rest:

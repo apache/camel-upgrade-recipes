@@ -1,5 +1,26 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.15.0
+
+=== Summary
+
+This is a release supporting Camel and Camel Spring Boot 4.15.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats[Data Formats] | ⚠️ Partial | DataFormat changes are migrated automatically. Csv's change of parameters from List<String> to String are not supported by the migration tool
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_netty_camel_netty_http[camel-netty / camel-netty-htt] | ⚠️ Partial | Basic cases in Xml DSL annd Yaml DSL are covered. Java is not supported by the migration tool, because the java code requires manuall migration due to parameter type change.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_ai_nested_headers_classes[Camel AI Nested Headers classes] | ✅ Full |
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_mdc[camel-mdc] | ❌ None | Not supported by the migration tool.
+|===
+
+
 == 4.14.0.1
 
 Fixes https://github.com/apache/camel-upgrade-recipes/issues/60

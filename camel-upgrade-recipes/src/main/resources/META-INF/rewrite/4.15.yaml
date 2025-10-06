@@ -1,0 +1,303 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html
+#####
+
+#####
+# Update the Camel project from 4.14 to 4.15
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel415.CamelMigrationRecipe
+displayName: Migrates `camel 4.14` application to `camel 4.15`
+description: Migrates `camel 4.14` application to `camel 4.15`.
+recipeList:
+  - org.apache.camel.upgrade.camel415.aiNestedHeadersClasses
+  - org.apache.camel.upgrade.camel415.dataFormats
+  - org.apache.camel.upgrade.camel415.yamDataFormats
+  - org.apache.camel.upgrade.camel415.xmlDataFormats
+  - org.apache.camel.upgrade.camel415.nettyAndNettyHttp
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel415.aiNestedHeadersClasses
+displayName: Changed types of camel AI nested headers classes
+description: Changed types of camel AI nested headers classes.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChat.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.milvus.Milvus.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.milvus.MilvusHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.neo4j.Neo4jConstants.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.neo4j.Neo4jHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.qdrant.Qdrant.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.qdrant.QdrantHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.pinecone.PineconeVectorDb.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.pinecone.PineconeVectorDbHeaders
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.weaviate.WeaviateVectorDb.Headers
+      newFullyQualifiedTypeName: org.apache.camel.component.weaviate.WeaviateVectorDbHeaders
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel415.dataFormats
+displayName: Refactored dataFormats
+description: Refactored dataFormats.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CryptoDataFormat setAlgorithmParameterRef(String)
+      newMethodName: setAlgorithmParameterSpec
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CryptoDataFormat.Builder algorithmParameterRef(String)
+      newMethodName: algorithmParameterSpec
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CryptoDataFormat setKeyRef(String)
+      newMethodName: setKey
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CryptoDataFormat.Builder keyRef(String)
+      newMethodName: key
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CryptoDataFormat setInitVectorRef(String)
+      newMethodName: setInitVector
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CryptoDataFormat.Builder initVectorRef(String)
+      newMethodName: initVector
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CsvDataFormat setFormatRef(String)
+      newMethodName: setFormat
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CsvDataFormat.Builder formatRef(String)
+      newMethodName: format
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CsvDataFormat setFormatName(String)
+      newMethodName: setFormat
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.CsvDataFormat.Builder formatName(String)
+      newMethodName: format
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.FlatpackDataFormat setParserFactoryRef(String)
+      newMethodName: setParserFactory
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.FlatpackDataFormat.Builder parserFactoryRef(String)
+      newMethodName: parserFactory
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.JaxbDataFormat setNamespacePrefixRef(String)
+      newMethodName: setNamespacePrefix
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.JaxbDataFormat.Builder namespacePrefixRef(String)
+      newMethodName: namespacePrefix
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SoapDataFormat setNamespacePrefixRef(String)
+      newMethodName: setNamespacePrefix
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SoapDataFormat.Builder namespacePrefixRef(String)
+      newMethodName: namespacePrefix
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SoapDataFormat setElementNameStrategyRef(String)
+      newMethodName: setElementNameStrategy
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SoapDataFormat.Builder elementNameStrategyRef(String)
+      newMethodName: elementNameStrategy
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SwiftMxDataFormat setReadConfigRef(String)
+      newMethodName: setReadConfig
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SwiftMxDataFormat.Builder readConfigRef(String)
+      newMethodName: readConfig
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SwiftMxDataFormat setWriteConfigRef(String)
+      newMethodName: setWriteConfig
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.SwiftMxDataFormat.Builder writeConfigRef(String)
+      newMethodName: writeConfigObject
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.XMLSecurityDataFormat setKeyOrTrustStoreParametersRef(String)
+      newMethodName: setKeyOrTrustStoreParameters
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.model.dataformat.XMLSecurityDataFormat.Builder keyOrTrustStoreParametersRef(String)
+      newMethodName: keyOrTrustStoreParameters
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel415.yamDataFormats
+displayName: Refactored dataFormats (YAML DSL)
+description: Refactored dataFormats (YAML DSL).
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: crypto
+      oldPropertyKey: algorithmParameterRef
+      newPropertyKey: algorithmParameterSpec
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: crypto
+      oldPropertyKey: keyRef
+      newPropertyKey: key
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: crypto
+      oldPropertyKey: initVectorRef
+      newPropertyKey: initVector
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: csv
+      oldPropertyKey: formatRef
+      newPropertyKey: format
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: csv
+      oldPropertyKey: formatName
+      newPropertyKey: format
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: flatpack
+      oldPropertyKey: parserFactoryRef
+      newPropertyKey: parserFactory
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: jaxb
+      oldPropertyKey: namespacePrefixRef
+      newPropertyKey: namespacePrefix
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: soap
+      oldPropertyKey: namespacePrefixRef
+      newPropertyKey: namespacePrefix
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: soap
+      oldPropertyKey: elementNameStrategyRef
+      newPropertyKey: elementNameStrategy
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: swiftMx
+      oldPropertyKey: readConfigRef
+      newPropertyKey: readConfig
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: swiftMx
+      oldPropertyKey: writeConfigRef
+      newPropertyKey: writeConfig
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatYaml:
+      component: xmlSecurity
+      oldPropertyKey: keyOrTrustStoreParametersRef
+      newPropertyKey: keyOrTrustStoreParameters
+---
+# https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel415.xmlDataFormats
+displayName: Refactored dataFormats (XML DSL)
+description: Refactored dataFormats (XML DSL).
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: crypto
+      oldPropertyKey: algorithmParameterRef
+      newPropertyKey: algorithmParameterSpec
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: crypto
+      oldPropertyKey: keyRef
+      newPropertyKey: key
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: crypto
+      oldPropertyKey: initVectorRef
+      newPropertyKey: initVector
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: csv
+      oldPropertyKey: formatRef
+      newPropertyKey: format
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: csv
+      oldPropertyKey: formatName
+      newPropertyKey: format
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: flatpack
+      oldPropertyKey: parserFactoryRef
+      newPropertyKey: parserFactory
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: jaxb
+      oldPropertyKey: namespacePrefixRef
+      newPropertyKey: namespacePrefix
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: soap
+      oldPropertyKey: namespacePrefixRef
+      newPropertyKey: namespacePrefix
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: soap
+      oldPropertyKey: elementNameStrategyRef
+      newPropertyKey: elementNameStrategy
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: swiftMx
+      oldPropertyKey: readConfigRef
+      newPropertyKey: readConfig
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: swiftMx
+      oldPropertyKey: writeConfigRef
+      newPropertyKey: writeConfig
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInDataFormatXml:
+      component: xmlSecurity
+      oldPropertyKey: keyOrTrustStoreParametersRef
+      newPropertyKey: keyOrTrustStoreParameters
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_netty_camel_netty_http
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel415.nettyAndNettyHttp
+displayName: Changed parameter in camel-netty and camel-netty-http
+description: Changed parameter in camel-netty and camel-netty-http + enhanced value.
+recipeList:
+# XML
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentXml:
+      component: netty
+      oldPropertyKey: keyStoreFile
+      newPropertyKey: keyStoreResource
+      valuePrefix: "file:"
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentXml:
+      component: netty
+      oldPropertyKey: trustStoreFile
+      newPropertyKey: trustStoreResource
+      valuePrefix: "file:"
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentXml:
+      component: netty-http
+      oldPropertyKey: keyStoreFile
+      newPropertyKey: keyStoreResource
+      valuePrefix: "file:"
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentXml:
+      component: netty-http
+      oldPropertyKey: trustStoreFile
+      newPropertyKey: trustStoreResource
+      valuePrefix: "file:"
+# YAML
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentYaml:
+      component: netty
+      oldPropertyKey: keyStoreFile
+      newPropertyKey: keyStoreResource
+      valuePrefix: "file:"
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentYaml:
+      component: netty
+      oldPropertyKey: trustStoreFile
+      newPropertyKey: trustStoreResource
+      valuePrefix: "file:"
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentYaml:
+      component: netty-http
+      oldPropertyKey: keyStoreFile
+      newPropertyKey: keyStoreResource
+      valuePrefix: "file:"
+  - org.apache.camel.upgrade.customRecipes.ReplacePropertyInComponentYaml:
+      component: netty-http
+      oldPropertyKey: trustStoreFile
+      newPropertyKey: trustStoreResource
+      valuePrefix: "file:"
