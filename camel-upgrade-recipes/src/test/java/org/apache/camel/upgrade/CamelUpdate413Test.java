@@ -16,6 +16,7 @@
  */
 package org.apache.camel.upgrade;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
@@ -110,6 +111,8 @@ public class CamelUpdate413Test implements RewriteTest {
      *
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury">camel-fury</a>
      */
+    @Disabled("This test is dependant on the user settings.xml, if multiple repositories in the settings xml are" +
+            " configured, the test fails")
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void furyDependency() {
