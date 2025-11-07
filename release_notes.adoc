@@ -1,5 +1,22 @@
 = Camel Upgrade Recipes - Release notes
 
+No automatic migration is supported by the migration tool between Camel 4.15.0 and 4.16.0
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_eips[EIPS] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_core[camel-core] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_as2[camel-as2] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_kamelet[camel-kamelet] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_infinispan[camel-infinispan] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_jbang[camel-jbang] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_milo[camel-milo] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_camel_flink[camel-flink] | ❌ None | Not supported by the migration tool.
+|===
+
 == 4.15.0
 
 === Summary
