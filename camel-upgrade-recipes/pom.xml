@@ -232,6 +232,12 @@
                                     <version>${camel3.18-version}</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-milo</artifactId>
+                                    <version>${camel3.18-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
 
                                 <!-- camel 4.0 dependencies -->
                                 <artifactItem>
@@ -459,7 +465,7 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
-                                <!-- 4.1 -->
+                                <!-- 4.14 -->
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-langchain4j-chat</artifactId>
@@ -552,6 +558,32 @@
                                     <groupId>jakarta.ws.rs</groupId>
                                     <artifactId>jakarta.ws.rs-api</artifactId>
                                     <version>3.1.0</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- Milo Server -->
+                                <artifactItem>
+                                    <groupId>org.eclipse.milo</groupId>
+                                    <artifactId>stack-core</artifactId>
+                                    <version>0.6.8</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.milo</groupId>
+                                    <artifactId>stack-server</artifactId>
+                                    <version>0.6.8</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.milo</groupId>
+                                    <artifactId>stack-client</artifactId>
+                                    <version>0.6.8</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.milo</groupId>
+                                    <artifactId>sdk-client</artifactId>
+                                    <version>0.6.8</version>
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
