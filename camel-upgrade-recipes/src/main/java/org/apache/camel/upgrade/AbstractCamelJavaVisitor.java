@@ -123,6 +123,10 @@ public abstract class AbstractCamelJavaVisitor extends JavaIsoVisitor<ExecutionC
         return super.visitLiteral(literal, context);
     }
 
+    protected J.Lambda doVisitLambda(J.Lambda lambda, ExecutionContext context) {
+        return super.visitLambda(lambda, context);
+    }
+
     // ------------------------------------------ helper methods -------------------------------------------
 
     // If the migration fails - do not fail whole migration process, only this one recipe
