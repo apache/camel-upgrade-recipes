@@ -91,6 +91,131 @@ public class CamelUpdate415Test implements RewriteTest {
                                 keyOrTrustStoreParameters: "1333"
                   """));
     }
+    /**
+     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats">Data Formats</a> in Yaml
+     */
+    @Test
+    void dataFormatUnmarshalYamlDsl() {
+        //language=yaml
+        rewriteRun(yaml(
+                """
+                - route:
+                    id: csv-processing-route
+                    from:
+                      uri: "direct://input"
+                      steps:
+                        - unmarshal:
+                            crypto:
+                              algorithmParameterRef: "111"
+                              initVectorRef: "222"
+                              keyRef: "333"
+                            csv:
+                              formatRef: "444"
+                              formatName: "555"
+                            flatpack:
+                              parserFactoryRef: "666"
+                            jaxb:
+                              namespacePrefixRef: "777"
+                            soap:
+                              namespacePrefixRef: "888"
+                              elementNameStrategyRef: "999"
+                            swiftMx:
+                              readConfigRef: "1111"
+                              writeConfigRef: "1222"
+                            xmlSecurity:
+                              keyOrTrustStoreParametersRef: "1333"
+                """,
+                """
+                    - route:
+                        id: csv-processing-route
+                        from:
+                          uri: "direct://input"
+                          steps:
+                            - unmarshal:
+                                crypto:
+                                  algorithmParameterSpec: "111"
+                                  initVector: "222"
+                                  key: "333"
+                                csv:
+                                  format: "444"
+                                  format: "555"
+                                flatpack:
+                                  parserFactory: "666"
+                                jaxb:
+                                  namespacePrefix: "777"
+                                soap:
+                                  namespacePrefix: "888"
+                                  elementNameStrategy: "999"
+                                swiftMx:
+                                  readConfig: "1111"
+                                  writeConfig: "1222"
+                                xmlSecurity:
+                                  keyOrTrustStoreParameters: "1333"
+                """));
+    }
+
+     /**
+     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats">Data Formats</a> in Yaml
+     */
+    @Test
+    void dataFormatMarshalYamlDsl() {
+        //language=yaml
+        rewriteRun(yaml(
+                """
+                - route:
+                    id: csv-processing-route
+                    from:
+                      uri: "direct://input"
+                      steps:
+                        - marshal:
+                            crypto:
+                              algorithmParameterRef: "111"
+                              initVectorRef: "222"
+                              keyRef: "333"
+                            csv:
+                              formatRef: "444"
+                              formatName: "555"
+                            flatpack:
+                              parserFactoryRef: "666"
+                            jaxb:
+                              namespacePrefixRef: "777"
+                            soap:
+                              namespacePrefixRef: "888"
+                              elementNameStrategyRef: "999"
+                            swiftMx:
+                              readConfigRef: "1111"
+                              writeConfigRef: "1222"
+                            xmlSecurity:
+                              keyOrTrustStoreParametersRef: "1333"
+                """,
+                """
+                    - route:
+                        id: csv-processing-route
+                        from:
+                          uri: "direct://input"
+                          steps:
+                            - marshal:
+                                crypto:
+                                  algorithmParameterSpec: "111"
+                                  initVector: "222"
+                                  key: "333"
+                                csv:
+                                  format: "444"
+                                  format: "555"
+                                flatpack:
+                                  parserFactory: "666"
+                                jaxb:
+                                  namespacePrefix: "777"
+                                soap:
+                                  namespacePrefix: "888"
+                                  elementNameStrategy: "999"
+                                swiftMx:
+                                  readConfig: "1111"
+                                  writeConfig: "1222"
+                                xmlSecurity:
+                                  keyOrTrustStoreParameters: "1333"
+                """));
+    }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_ai_nested_headers_classes">Camel AI Nested Headers classes</a>

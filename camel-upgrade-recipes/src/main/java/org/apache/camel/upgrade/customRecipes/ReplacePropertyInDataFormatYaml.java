@@ -73,8 +73,14 @@ public class ReplacePropertyInDataFormatYaml extends Recipe {
 
 
                 String path = RecipesUtil.getProperty(getCursor());
-                //yaml fury marshal
+                //yaml marshal
                 if(path.endsWith("dataFormats." + component + "." + oldPropertyKey)) {
+                    return e.withKey(((Yaml.Scalar) e.getKey().copyPaste()).withValue(newPropertyKey));
+                }                //yaml marshal
+                if(path.endsWith("marshal." + component + "." + oldPropertyKey)) {
+                    return e.withKey(((Yaml.Scalar) e.getKey().copyPaste()).withValue(newPropertyKey));
+                }                //yaml marshal
+                if(path.endsWith("unmarshal." + component + "." + oldPropertyKey)) {
                     return e.withKey(((Yaml.Scalar) e.getKey().copyPaste()).withValue(newPropertyKey));
                 }
 
