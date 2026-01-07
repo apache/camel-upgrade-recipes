@@ -1,5 +1,33 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.17.0
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.17.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_core[camel-core] | ✅ Full    | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_custom_camel_components[Custom Camel components] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_cluster[camel-cluster] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_jbang[camel-jbang] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_debezium[camel-debezium] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_ftp[camel-ftp] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_infinispan[camel-infinispan] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_tika[camel-tika] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_undertow[camel-undertow] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_component_deprecation[component deprecation] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_testcontainers_updated_to_2_0_2[testcontainers updated to 2.0,2] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_salesforce[camel-salesforce] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_maven_archetypes[maven archetype] | ❌ None | Not supported by the migration tool.
+|===
+
 == 4.16.0
 
 === Summary
@@ -39,7 +67,7 @@ The following table lists migration topics and indicates the level of coverage (
 | Migration | Coverage | Comment
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats[Data Formats] | ⚠️ Partial | DataFormat changes are migrated automatically. Csv's change of parameters from List<String> to String are not supported by the migration tool
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_netty_camel_netty_http[camel-netty / camel-netty-htt] | ⚠️ Partial | Basic cases in Xml DSL and Yaml DSL are covered. Java is not supported by the migration tool, because the java code requires manuals migration due to parameter type change.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_netty_camel_netty_http[camel-netty / camel-netty-http] | ⚠️ Partial | Basic cases in Xml DSL and Yaml DSL are covered. Java is not supported by the migration tool, because the java code requires manuals migration due to parameter type change.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_ai_nested_headers_classes[Camel AI Nested Headers classes] | ✅ Full |
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_camel_mdc[camel-mdc] | ❌ None | Not supported by the migration tool.
 |===
