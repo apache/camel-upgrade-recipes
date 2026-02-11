@@ -509,6 +509,26 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
+                                <!-- 4.17 -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-qdrant</artifactId>
+                                    <version>${camel4.17-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-tahu</artifactId>
+                                    <version>${camel4.17-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <dependency>
+                                    <groupId>org.eclipse.tahu</groupId>
+                                    <artifactId>tahu-host</artifactId>
+                                    <version>${tahu-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </dependency>
+
                                 <!-- Apache HTTP Client -->
                                 <artifactItem>
                                     <groupId>org.apache.httpcomponents</groupId>

@@ -1,5 +1,27 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.18.0
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.18.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_simple[camel-simple] |  ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_file[camel-file] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_docling[camel-docling] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_qdrant[camel-qdrant] | ✅ Full todo    | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_tahu[camel-tahu] | ⚠️ Partial | Tool renames handlers to MultiHostApplicationEventHandler. Other API changes are not covered.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_platform_http_vertx_and_rest_dsl_contract_first[camel-platform-http-vertx and Rest DSL contract-first] | ❌ None | Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_component_deprecation[Component deprecation] | ❌ None | Not supported by the migration tool.
+|===
+
 == 4.17.0
 
 === Summary
