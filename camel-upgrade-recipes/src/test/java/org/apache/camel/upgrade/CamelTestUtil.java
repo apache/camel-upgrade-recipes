@@ -23,6 +23,7 @@ import org.openrewrite.test.RecipeSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -135,6 +136,44 @@ public class CamelTestUtil {
         return JavaParser.fromJavaVersion()
           .logCompilationWarningsAndErrors(true)
           .classpathFromResources(new InMemoryExecutionContext(), resources.toArray(new String[0]));
+    }
+
+    /**
+     * Gets the quarkus version from the versions.properties file. (which is populated during buildtime)
+     *
+     * @return the project version
+     */
+    public static String getCamelLatestVersion() {
+        return getString(
+                "camel.latest.version", "Could not determine camel latest version from properties file.");
+    }
+    public static String getCamel410LtsVersion() {
+        return getString(
+                "camel4.10.lts.version", "Could not determine 4.10 lts version from properties file.");
+    }
+
+
+    /**
+     * Reads property from the file versions.properties (which contains build time resolved versions)
+     */
+    public static String getString(String key, String error) {
+        try {
+            java.util.Properties properties = new java.util.Properties();
+            try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("versions.properties")) {
+                if (is != null) {
+                    properties.load(is);
+                    String version = properties.getProperty(key);
+                    if (version != null && !version.trim().isEmpty()) {
+                        return version;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(error, e);
+        }
+
+        // Ultimate fallback
+        return "";
     }
 
 }

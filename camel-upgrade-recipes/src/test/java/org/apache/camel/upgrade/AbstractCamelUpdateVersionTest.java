@@ -30,8 +30,8 @@ public abstract class AbstractCamelUpdateVersionTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         //recipe does not matter, because it  us executed via latest or lts recipe
-        CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_9)
-          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_10, "camel-core-model", "camel-api"))
+        CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_8)
+          .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_9, "camel-core-model", "camel-api"))
           .typeValidationOptions(TypeValidation.none());
     }
 

@@ -138,6 +138,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>**/*.yaml</include>
+                    <include>**/*.properties</include>
                 </includes>
             </resource>
         </resources>
@@ -151,10 +152,6 @@
                         <include>**/*Test.java</include>
                         <include>**/*Suite.java</include>
                     </includes>
-                    <systemPropertyVariables>
-                        <camel-latest-version>${camel-latest-version}</camel-latest-version>
-                        <camel4.10-lts-version>${camel4.10-lts-version}</camel4.10-lts-version>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
