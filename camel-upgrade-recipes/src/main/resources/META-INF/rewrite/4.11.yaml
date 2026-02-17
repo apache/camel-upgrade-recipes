@@ -58,7 +58,5 @@ name: org.apache.camel.upgrade.camel411.removedLightweight
 displayName: Removed deprecated property camel.main.lightweight
 description: Removed deprecated configuration properties (camel.main.lightweight).
 recipeList:
-  - org.openrewrite.yaml.DeleteProperty:
-      propertyKey: camel.main.lightweight
   - org.openrewrite.properties.DeleteProperty:
       propertyKey: camel.main.lightweight

@@ -1,7 +1,6 @@
 package org.apache.camel.upgrade.suites;
 
 import org.apache.camel.upgrade.CamelTestUtil;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.platform.suite.api.*;
 
