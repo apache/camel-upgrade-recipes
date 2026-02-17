@@ -35,7 +35,7 @@ public class CamelUpdate47Test implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_7)
           .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_6,
-            "camel-base-engine", "camel-api", "http-common", "camel-undertow", "jakarta.servlet-api-6.0.0"))
+            "camel-base-engine", "camel-api", "camel-undertow", "jakarta.servlet-api-6.0.0"))
           .typeValidationOptions(TypeValidation.none());
     }
 
