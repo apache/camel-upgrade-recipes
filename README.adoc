@@ -57,6 +57,16 @@ This project is released as standard Apache Camel module.
 
 ⚠️ Check that release notes are up-to-date!
 
+⚠️ Check that the following versions are up-to-date!
+```xml
+        <!-- versions for camel-spring-boot -->
+        <spring-boot-version>3.5.10</spring-boot-version>
+        <springframework-version>6.2.15</springframework-version>
+
+        <!-- Should be aligned to quarkus-updates - https://github.com/quarkusio/quarkus-updates/blob/main/pom.xml#L64 -->
+        <rewrite-recipe-bom.version>3.24.0</rewrite-recipe-bom.version>
+```
+
 Check that everything is alright and run:
 
 ```bash
@@ -117,6 +127,36 @@ When done, release the staging repository.
 To do this you'll need to access https://repository.apache.org/#stagingRepositories.
 Select proper staging repository and click release.
 
+## Cancelling
+
+If the vote email was already sent, send a cancelling vote email. (https://lists.apache.org/thread/b6dmmjzjsvg3vnkmbyz0xd8bddllsh0m[example])
+
+All changes done during the releasing have to be reverted manually:
+
+* Staging repository has to be dropped in https://repository.apache.org/#stagingRepositories
+
+* Both *tag* and *release* in github have to be deleted
+
+* Project version has to be reverted to the value before the release was started. (example https://github.com/apache/camel-upgrade-recipes/commit/d6db69ed45a39c5e5de31871178d2b74b3c574b9[commit])
+
+* Dev folder (https://dist.apache.org/repos/dist/dev/camel/camel-upgrade-recipes/4.18.0/[example]) has to be deleted via svn. See example commands below.
+```bash
+export $VERSION=4.18.0
+
+svn checkout 'https://dist.apache.org/repos/dist/dev/camel/camel-upgrade-recipes' camel-upgrade-recipes-dev
+
+# In case you have performed the above step during some release in the past, you need to update your working copy:
+cd camel-upgrade-recipes-dev
+svn update .
+
+svn remove $VERSION
+
+# Review and commit the changes:
+svn diff
+
+# Commit change
+svn commit -m "Cleaning cancelled Camel Upgrade Recipes release *$VERSION)"
+```
 
 ## Applying OpenRewrite best practices
 
