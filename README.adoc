@@ -49,7 +49,7 @@ Libraries are not packed into the installed jar.
 == Test jar
 
 Project installs also test classes into a `test-jar` artifact.
-This allows other projects (like https://github.com/quarkusio/quarkus-updates/[quarkus-updates]) to ruse the tests.
+This allows other projects (like https://github.com/quarkusio/quarkus-updates/[quarkus-updates]) to reuse the tests.
 
 == Releasing
 
