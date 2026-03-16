@@ -1,0 +1,90 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel419.CamelSpringBootMigrationRecipe
+displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.19
+description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.19.
+recipeList:
+  - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel419.migrateJUnitStarterDependency
+  - org.apache.camel.upgrade.camel419.upgradeSpringFrameworkDependencies
+  - org.apache.camel.upgrade.camel419.migrateMdcLoggingSpringBoot
+  - org.apache.camel.upgrade.camel419.migrateGroovyXmlStarter
+  - org.openrewrite.java.testing.junit5.JUnit5BestPractices
+  - org.openrewrite.java.testing.junit5.UpgradeJUnit5_6
+---
+# Migrate Spring Boot JUnit 5 starter to JUnit 6
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel419.migrateJUnitStarterDependency
+displayName: Migrate camel-test-spring-junit5 to camel-test-spring-junit6
+description: Migrates camel-test-spring-junit5 to camel-test-spring-junit6 and updates Camel test package imports.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-test-spring-junit5
+      newGroupId: org.apache.camel
+      newArtifactId: camel-test-spring-junit6
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.apache.camel.test.spring.junit5
+      newPackageName: org.apache.camel.test.spring.junit6
+      recursive: true
+---
+# Upgrade Spring Framework dependencies using custom recipes
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel419.upgradeSpringFrameworkDependencies
+displayName: Upgrade Spring Framework dependencies for Camel 4.19
+description: Upgrades Spring Boot to 4.x, Spring Framework to 7.x, Spring Security to 7.x, and Spring Batch to 6.x using custom recipes.
+recipeList:
+  # Upgrade Spring Boot 3 to 4
+  - org.apache.camel.upgrade.spring.UpgradeSpringBoot3To4
+  # Upgrade Spring Framework 6 to 7
+  - org.apache.camel.upgrade.spring.UpgradeSpringFramework6To7
+  # Upgrade Spring Security 6 to 7
+  - org.apache.camel.upgrade.spring.UpgradeSpringSecurity6To7
+  # Upgrade Spring Batch 5 to 6
+  - org.apache.camel.upgrade.spring.UpgradeSpringBatch5To6
+---
+# https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_mdc_older_logic_deprecation
+# Migrate from deprecated useMdcLogging property to camel-mdc-starter for Spring Boot
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel419.migrateMdcLoggingSpringBoot
+displayName: Migrate from deprecated MDC logging property to camel-mdc-starter
+description: The older logic used for MDC (enabled via camel.main.useMdcLogging = true) is deprecated in favor of camel-mdc component. This recipe adds the camel-mdc-starter dependency and removes the deprecated property.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.apache.camel.springboot
+      artifactId: camel-mdc-starter
+      version: ${camel.version}
+      acceptTransitive: true
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: camel.main.useMdcLogging
+  - org.openrewrite.yaml.DeleteProperty:
+      propertyKey: $.camel.main.useMdcLogging
+---
+# https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_groovy_xml
+# Migrate camel-groovy-xml-starter to camel-groovy-starter
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel419.migrateGroovyXmlStarter
+displayName: Migrate camel-groovy-xml-starter to camel-groovy-starter
+description: camel-groovy-xml has been removed and moved into camel-groovy. Changes the dependency from camel-groovy-xml-starter to camel-groovy-starter.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel.springboot
+      oldArtifactId: camel-groovy-xml-starter
+      newGroupId: org.apache.camel.springboot
+      newArtifactId: camel-groovy-starter
