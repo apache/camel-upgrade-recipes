@@ -28,6 +28,23 @@ name: org.apache.camel.upgrade.camel419.CamelMigrationRecipe
 displayName: Migrates `camel 4.18` application to `camel 4.19`
 description: Migrates `camel 4.18` application to `camel 4.19`.
 recipeList:
+  # Upgrade Camel dependencies to 4.19.0-SNAPSHOT FIRST
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.version
+      newValue: @camel-latest-version@
+  # Then run API migrations
   - org.apache.camel.upgrade.camel419.migrateMdcLogging
   - org.apache.camel.upgrade.camel419.migrateGroovyXml
 ---
@@ -35,14 +52,9 @@ recipeList:
 # Migrate from deprecated useMdcLogging property to camel-mdc component
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel419.migrateMdcLogging
-displayName: Migrate from deprecated MDC logging property to camel-mdc component
-description: The older logic used for MDC (enabled via camel.main.useMdcLogging = true) is deprecated in favor of camel-mdc component. This recipe adds the camel-mdc dependency and removes the deprecated property.
+displayName: Remove deprecated MDC logging property
+description: The older logic used for MDC (enabled via camel.main.useMdcLogging = true) is deprecated in favor of camel-mdc component. This recipe removes the deprecated property. If you were using MDC logging, manually add the camel-mdc dependency.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
-      groupId: org.apache.camel
-      artifactId: camel-mdc
-      version: ${camel.version}
-      acceptTransitive: true
   - org.openrewrite.properties.DeleteProperty:
       propertyKey: camel.main.useMdcLogging
   - org.openrewrite.yaml.DeleteProperty:

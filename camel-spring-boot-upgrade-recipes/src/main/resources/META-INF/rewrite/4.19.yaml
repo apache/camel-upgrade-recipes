@@ -20,20 +20,84 @@ name: org.apache.camel.upgrade.camel419.CamelSpringBootMigrationRecipe
 displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.19
 description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.19.
 recipeList:
+  # Upgrade versions FIRST before adding new 4.19 dependencies
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.version
+      newValue: @camel-latest-version@
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: '*camel*'
+      artifactId: 'camel-spring-boot-bom'
+      newVersion: @camel-spring-boot-version@
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel.springboot'
+      artifactId: '*'
+      newVersion: @camel-spring-boot-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot.version
+      newValue: @camel-spring-boot-version@
+  # Now run API migrations that may add new dependencies
   - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel419.migrateJUnitStarterDependency
+  - org.apache.camel.upgrade.camel419.upgradeJUnit5To6
   - org.apache.camel.upgrade.camel419.upgradeSpringFrameworkDependencies
   - org.apache.camel.upgrade.camel419.migrateMdcLoggingSpringBoot
   - org.apache.camel.upgrade.camel419.migrateGroovyXmlStarter
-  - org.openrewrite.java.testing.junit5.JUnit5BestPractices
-  - org.openrewrite.java.testing.junit5.UpgradeJUnit5_6
 ---
-# Migrate Spring Boot JUnit 5 starter to JUnit 6
+# Upgrade JUnit 5 to JUnit 6 for Camel
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel419.migrateJUnitStarterDependency
-displayName: Migrate camel-test-spring-junit5 to camel-test-spring-junit6
-description: Migrates camel-test-spring-junit5 to camel-test-spring-junit6 and updates Camel test package imports.
+name: org.apache.camel.upgrade.camel419.upgradeJUnit5To6
+displayName: Upgrade JUnit 5 to JUnit 6
+description: Migrates JUnit 5 to JUnit 6.0.3 and updates all Camel test dependencies from junit5 to junit6.
 recipeList:
+  # Upgrade core JUnit dependencies
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.junit.jupiter
+      artifactId: junit-jupiter
+      newVersion: 6.0.3
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.junit.jupiter
+      artifactId: junit-jupiter-api
+      newVersion: 6.0.3
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.junit.jupiter
+      artifactId: junit-jupiter-engine
+      newVersion: 6.0.3
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.junit.jupiter
+      artifactId: junit-jupiter-params
+      newVersion: 6.0.3
+  # Migrate camel-test-junit5 to camel-test-junit6
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-test-junit5
+      newGroupId: org.apache.camel
+      newArtifactId: camel-test-junit6
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.apache.camel.test.junit5
+      newPackageName: org.apache.camel.test.junit6
+      recursive: true
+  # Migrate camel-test-main-junit5 to camel-test-main-junit6
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-test-main-junit5
+      newGroupId: org.apache.camel
+      newArtifactId: camel-test-main-junit6
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.apache.camel.test.main.junit5
+      newPackageName: org.apache.camel.test.main.junit6
+      recursive: true
+  # Migrate camel-test-spring-junit5 to camel-test-spring-junit6
   - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
       oldGroupId: org.apache.camel
       oldArtifactId: camel-test-spring-junit5
@@ -63,14 +127,9 @@ recipeList:
 # Migrate from deprecated useMdcLogging property to camel-mdc-starter for Spring Boot
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel419.migrateMdcLoggingSpringBoot
-displayName: Migrate from deprecated MDC logging property to camel-mdc-starter
-description: The older logic used for MDC (enabled via camel.main.useMdcLogging = true) is deprecated in favor of camel-mdc component. This recipe adds the camel-mdc-starter dependency and removes the deprecated property.
+displayName: Remove deprecated MDC logging property
+description: The older logic used for MDC (enabled via camel.main.useMdcLogging = true) is deprecated in favor of camel-mdc component. This recipe removes the deprecated property. If you were using MDC logging, manually add the camel-mdc-starter dependency.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
-      groupId: org.apache.camel.springboot
-      artifactId: camel-mdc-starter
-      version: ${camel.version}
-      acceptTransitive: true
   - org.openrewrite.properties.DeleteProperty:
       propertyKey: camel.main.useMdcLogging
   - org.openrewrite.yaml.DeleteProperty:

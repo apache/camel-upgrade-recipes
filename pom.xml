@@ -116,10 +116,10 @@
         <jspecify-version>1.0.0</jspecify-version>
 
         <!-- versions for camel-spring-boot -->
-        <spring-boot-version>4.0.3</spring-boot-version>
-        <springframework-version>7.0.5</springframework-version>
-        <spring-security-version>7.0.3</spring-security-version>
-        <spring-batch-version>6.0.2</spring-batch-version>
+        <spring-boot-version>4.0.4</spring-boot-version>
+        <springframework-version>7.0.6</springframework-version>
+        <spring-security-version>7.0.4</spring-security-version>
+        <spring-batch-version>6.0.3</spring-batch-version>
 
         <!-- Should be aligned to quarkus-updates - https://github.com/quarkusio/quarkus-updates/blob/main/pom.xml#L64 -->
         <rewrite-recipe-bom.version>3.24.0</rewrite-recipe-bom.version>
