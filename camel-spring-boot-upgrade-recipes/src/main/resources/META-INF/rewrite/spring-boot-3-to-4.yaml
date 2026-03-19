@@ -21,6 +21,20 @@ name: org.apache.camel.upgrade.spring.UpgradeSpringBoot3To4
 displayName: Upgrade Spring Boot from 3.* to 4.*
 description: Upgrades Spring Boot dependencies from 3.* to 4.* based on https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide
 recipeList:
+  # Update Java version to 17 (minimum for Spring Boot 4)
+  - org.apache.camel.upgrade.UpgradeToJava17
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: java.version
+      newValue: "17"
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: maven.compiler.source
+      newValue: "17"
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: maven.compiler.target
+      newValue: "17"
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: maven.compiler.release
+      newValue: "17"
   # Update Spring Boot version property
   - org.openrewrite.maven.ChangePropertyValue:
       key: spring-boot.version
