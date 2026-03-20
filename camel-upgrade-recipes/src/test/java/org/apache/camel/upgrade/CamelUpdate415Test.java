@@ -300,7 +300,7 @@ public class CamelUpdate415Test implements RewriteTest {
 
                         new JaxbDataFormat().setNamespacePrefixRef("777");
 
-                        SoapDataFormat soap = new SoapDataFormat();;
+                        SoapDataFormat soap = new SoapDataFormat();
 
                         soap.setNamespacePrefixRef("888");
                         soap.setElementNameStrategyRef("999");
@@ -338,9 +338,9 @@ public class CamelUpdate415Test implements RewriteTest {
                         new FlatpackDataFormat().setParserFactory("666");
                         
                         new JaxbDataFormat().setNamespacePrefix("777");
-                        
-                        SoapDataFormat soap = new SoapDataFormat();;
-                      
+
+                        SoapDataFormat soap = new SoapDataFormat();
+
                         soap.setNamespacePrefix("888");
                         soap.setElementNameStrategy("999");
                         

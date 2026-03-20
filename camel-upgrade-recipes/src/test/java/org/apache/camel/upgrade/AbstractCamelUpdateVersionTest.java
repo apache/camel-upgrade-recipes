@@ -27,6 +27,10 @@ public abstract class AbstractCamelUpdateVersionTest implements RewriteTest {
 
     protected abstract String targetVersion();
 
+    protected String targetJavaVersion() {
+        return "21";
+    }
+
     @Override
     public void defaults(RecipeSpec spec) {
         //recipe does not matter, because it  us executed via latest or lts recipe
@@ -52,7 +56,7 @@ public abstract class AbstractCamelUpdateVersionTest implements RewriteTest {
 
                <properties>
                   <camel.version>%s</camel.version>
-                  <maven.compiler.release>17</maven.compiler.release>
+                  <maven.compiler.release>%s</maven.compiler.release>
                </properties>
       
                <dependencies>
@@ -63,7 +67,7 @@ public abstract class AbstractCamelUpdateVersionTest implements RewriteTest {
                    </dependency>
                  </dependencies>
             </project>
-            """.formatted(targetVersion());
+            """.formatted(targetVersion(), targetJavaVersion());
         //language=xml
         rewriteRun(pomXml(
           """

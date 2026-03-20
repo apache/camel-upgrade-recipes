@@ -7,6 +7,7 @@ target
 .classpath
 .ekstazi
 .project
+.versionsBackup
 .settings
 .checkstyle
 *.log
