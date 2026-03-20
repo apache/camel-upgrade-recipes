@@ -40,7 +40,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 class NoModerneRecipesTest {
 
     private static final String MODERNE_RECIPE_PREFIX = "io.moderne";
-    private static final String MODERNE_LICENSE = "Moderne Proprietary License";
+    private static final String MODERNE_SOURCE_AVAILABLE_RECIPE_PREFIX = "org.openrewrite.java.recipes";
+    private static final String MODERNE_PROPRIETARY_LICENSE = "Moderne Proprietary License";
+    private static final String MODERNE_SOURCE_AVAILABLE_LICENSE = "Moderne Source Available License";
     private static final String REWRITE_PATH = "META-INF/rewrite";
 
     @Test
@@ -66,9 +68,23 @@ class NoModerneRecipesTest {
                                                      fileName, lineNumber, trimmedLine));
                     }
 
+                    // Check for Moderne Source Available recipe prefix
+                    if (trimmedLine.startsWith("- " + MODERNE_SOURCE_AVAILABLE_RECIPE_PREFIX) ||
+                        (trimmedLine.contains(MODERNE_SOURCE_AVAILABLE_RECIPE_PREFIX) &&
+                         (trimmedLine.contains("recipeList:") || trimmedLine.startsWith("- ")))) {
+                        violations.add(String.format("%s:%d - Found Moderne Source Available recipe reference: %s",
+                                                     fileName, lineNumber, trimmedLine));
+                    }
+
                     // Check for Moderne Proprietary License in comments or headers
-                    if (line.contains(MODERNE_LICENSE)) {
+                    if (line.contains(MODERNE_PROPRIETARY_LICENSE)) {
                         violations.add(String.format("%s:%d - Found Moderne Proprietary License: %s",
+                                                     fileName, lineNumber, trimmedLine));
+                    }
+
+                    // Check for Moderne Source Available License in comments or headers
+                    if (line.contains(MODERNE_SOURCE_AVAILABLE_LICENSE)) {
+                        violations.add(String.format("%s:%d - Found Moderne Source Available License: %s",
                                                      fileName, lineNumber, trimmedLine));
                     }
                 }
