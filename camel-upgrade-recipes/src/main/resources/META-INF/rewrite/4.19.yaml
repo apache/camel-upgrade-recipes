@@ -45,20 +45,7 @@ recipeList:
       key: camel.version
       newValue: @camel-latest-version@
   # Then run API migrations
-  - org.apache.camel.upgrade.camel419.migrateMdcLogging
   - org.apache.camel.upgrade.camel419.migrateGroovyXml
----
-# https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_mdc_older_logic_deprecation
-# Migrate from deprecated useMdcLogging property to camel-mdc component
-type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel419.migrateMdcLogging
-displayName: Remove deprecated MDC logging property
-description: The older logic used for MDC (enabled via camel.main.useMdcLogging = true) is deprecated in favor of camel-mdc component. This recipe removes the deprecated property. If you were using MDC logging, manually add the camel-mdc dependency.
-recipeList:
-  - org.openrewrite.properties.DeleteProperty:
-      propertyKey: camel.main.useMdcLogging
-  - org.openrewrite.yaml.DeleteProperty:
-      propertyKey: $.camel.main.useMdcLogging
 ---
 # https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_groovy_xml
 # Migrate camel-groovy-xml to camel-groovy

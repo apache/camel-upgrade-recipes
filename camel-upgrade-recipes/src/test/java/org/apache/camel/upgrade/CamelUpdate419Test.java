@@ -16,14 +16,9 @@
  */
 package org.apache.camel.upgrade;
 
-import org.junit.jupiter.api.Test;
-import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
-
-import static org.openrewrite.maven.Assertions.pomXml;
-import static org.openrewrite.properties.Assertions.properties;
 
 //class has to stay public, because test is extended in project quarkus-updates
 public class CamelUpdate419Test implements RewriteTest {
@@ -34,73 +29,5 @@ public class CamelUpdate419Test implements RewriteTest {
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_18,
                         "camel-core-model", "camel-api"))
                 .typeValidationOptions(TypeValidation.none());
-    }
-
-    /**
-     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_mdc_older_logic_deprecation">MDC Logging migration</a>
-     */
-    @DocumentExample
-    @Test
-    void migrateMdcLogging() {
-        //language=xml
-        rewriteRun(
-                pomXml(
-                        """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
-
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
-
-                           <properties>
-                              <camel.version>4.18.0</camel.version>
-                           </properties>
-
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-core</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                             </dependencies>
-                        </project>
-                        """,
-                        """
-                        <project>
-                           <modelVersion>4.0.0</modelVersion>
-
-                           <artifactId>test</artifactId>
-                           <groupId>org.apache.camel.test</groupId>
-                           <version>1.0.0</version>
-
-                           <properties>
-                              <camel.version>4.18.0</camel.version>
-                           </properties>
-
-                           <dependencies>
-                               <dependency>
-                                   <groupId>org.apache.camel</groupId>
-                                   <artifactId>camel-core</artifactId>
-                                   <version>${camel.version}</version>
-                               </dependency>
-                              <dependency>
-                                 <groupId>org.apache.camel</groupId>
-                                 <artifactId>camel-mdc</artifactId>
-                                 <version>${camel.version}</version>
-                              </dependency>
-                             </dependencies>
-                        </project>
-                        """
-                ),
-                properties(
-                        """
-                        camel.main.useMdcLogging=true
-                        """,
-                        """
-                        """,
-                        spec -> spec.path("application.properties")
-                )
-        );
     }
 }
