@@ -46,14 +46,13 @@ These rules apply to ALL AI agents working on this codebase.
 
 - Recipes added must be licensed under the Apache License
 - Any recipes added in the recipeList of a Recipe must be licensed under the Apache License
-- Do not use recipes released under the Moderne Proprietary License or the Moderne Source Available License
+- Do not use recipes released under the Moderne Proprietary License or the Moderne Source Available License in the recipeList of a recipe
 - Check the licensing of a recipe before adding it to a recipeList
 
 ### Code Quality
 
 - Every PR must include tests for new functionality or bug fixes.
 - Every PR must include documentation updates where applicable.
-- All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
 - All generated files must be regenerated and committed (CI checks for uncommitted changes).
 
 ## Project Structure
@@ -81,7 +80,7 @@ mvn test              # unit tests
 ## Links
 
 - https://camel.apache.org/
-- https://github.com/apache/camel
+- https://github.com/apache/camel-upgrade-recipes
 - https://issues.apache.org/jira/browse/CAMEL
 - dev@camel.apache.org
 - https://camel.zulipchat.com/
