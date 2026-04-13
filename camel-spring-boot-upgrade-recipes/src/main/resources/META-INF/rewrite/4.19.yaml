@@ -49,6 +49,7 @@ recipeList:
       newValue: @camel-spring-boot-version@
   # Now run API migrations that may add new dependencies
   - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel418.CamelSpringBootMigrationRecipe
   - org.apache.camel.upgrade.camel419.upgradeJUnit5To6
   - org.apache.camel.upgrade.camel419.upgradeSpringFrameworkDependencies
   - org.apache.camel.upgrade.camel419.migrateMdcLoggingSpringBoot

@@ -1,5 +1,58 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.19.0
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.19.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_bom[camel-bom] |  ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_cloud_removal[camel-cloud and serviceCall EIP] |  ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_pqc_tls_auto_configuration[PQC TLS Auto-Configuration] | ❌ None | Automatic configuration, no migration needed.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_errorregistry[Errorregistry] | ❌ None | Addition of a new SPI, no migration needed.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_saga_eip[Saga EIP] |  ✅ Full | XML and YAML DSL automatically migrated. Java DSL not affected.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_platform_http_main[camel-platform-http-main] | ❌ None | Configuration change requires manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_csimple_deprecation[camel-csimple (deprecation)] | ❌ None | Deprecated module. Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_simple[camel-simple] | ❌ None | Syntax change requires manual code review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_test_infra[camel-test-infra] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_yaml_io_camel_xml_io[camel-yaml-io / camel-xml-io] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_jackson_3_components[Jackson 3 components] | ❌ None | Component addition, no migration required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_test_junit6_camel_test_main_junit6_camel_test_spring_junit6[camel-test-junit6, camel-test-main-junit6, camel-test-spring-junit6] | ❌ None | Optional migration.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_jbang[camel-jbang] | ❌ None | Configuration change requires manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_groovy[camel-groovy] | ❌ None | External library upgrade requires manual testing.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_groovy_xml[camel-groovy-xml] | ✅ Full | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_kafka[camel-kafka] | ❌ None | External library upgrade with behavior changes. Requires manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_google_pubsub_lite[camel-google-pubsub-lite] | ❌ None | Component removal requires manual migration.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_json_patch[camel-json-patch] | ❌ None |  Deprecated module. Not supported by the migration tool.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_mail[camel-mail] | ❌ None | Automatic behavior change, no code migration needed.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_file_camel_aws2_s3_camel_ibm_cos[camel-file / camel-aws2-s3 / camel-ibm-cos] | ❌ None | Behavior change, no migration required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_openapi_java[camel-openapi-java] | ❌ None | Configuration change requires manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_arangodb[camel-arangodb] | ❌ None | Configuration change requires manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_as2[camel-as2] | ❌ None | API changes require manual code updates.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_couchbase[camel-couchbase] | ❌ None | Configuration change requires manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_debezium[camel-debezium] | ❌ None | External library upgrade requires manual testing.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_mail_2[camel-mail] | ❌ None | Automatic behavior change, no code migration needed.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_ftp[camel-ftp] | ❌ None | Module extraction may require dependency addition for custom implementations.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_jsch_upgrade[JSch upgrade] | ❌ None | External library upgrade requires manual testing.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_openssh_certificate_authentication[OpenSSH certificate authentication] | ❌ None | New feature, no automated migration required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_azure_credentialtype_standardization[camel-azure (CredentialType standardization)] | ❌ None | Enum deprecation. No automatic migration required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_quickfixj[camel-quickfix] | ❌ None | External library upgrade requires manual testing.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_ssh[camel-ssh] | ❌ None | New properties available, no migration required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_json_validator[camel-json-validator] | ❌ None | External library upgrade requires manual code updates.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_mdc_older_logic_deprecation[MDC older logic (Deprecation)] | ❌ None | Configuration deprecation requires manual migration.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_splunk_deprecation[camel-splunk (Deprecation)] | ❌ None | Component deprecation requires manual migration decision.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_tracing_deprecation[camel-tracing (Deprecation)] | ❌ None | Component deprecation requires manual migration decision.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_zeebe_deprecation[camel-zeebe (Deprecation)] | ❌ None | Deprecated component requires manual migration to camel-camunda.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_removed_components[Removed Components] | ✅ Full | Component removal: Automatically migrated.
+|===
+
 == 4.18.0
 
 === Summary
@@ -16,7 +69,7 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_simple[camel-simple] |  ❌ None | Not supported by the migration tool.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_file[camel-file] | ❌ None | Not supported by the migration tool.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_docling[camel-docling] | ❌ None | Not supported by the migration tool.
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_qdrant[camel-qdrant] | ✅ Full todo    | Automatically migrated.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_qdrant[camel-qdrant] | ✅ Full | Automatically migrated.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_tahu[camel-tahu] | ⚠️ Partial | Tool renames handlers to MultiHostApplicationEventHandler. Other API changes are not covered.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_platform_http_vertx_and_rest_dsl_contract_first[camel-platform-http-vertx and Rest DSL contract-first] | ❌ None | Not supported by the migration tool.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_component_deprecation[Component deprecation] | ❌ None | Not supported by the migration tool.

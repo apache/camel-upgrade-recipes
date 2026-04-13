@@ -28,7 +28,36 @@ name: org.apache.camel.upgrade.camel419.CamelMigrationRecipe
 displayName: Migrates `camel 4.18` application to `camel 4.19`
 description: Migrates `camel 4.18` application to `camel 4.19`.
 recipeList:
+  - org.apache.camel.upgrade.camel419.removedComponents
   - org.apache.camel.upgrade.camel419.migrateGroovyXml
+  - org.apache.camel.upgrade.camel419.XmlDsl419SagaRecipe
+  - org.apache.camel.upgrade.camel419.YamlDsl419SagaRecipe
+  - org.apache.camel.upgrade.camel419.Pom419TestInfraRecipe
+  - org.apache.camel.upgrade.camel419.YamlDsl419RoutePolicyRecipe
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel419.removedComponents
+displayName: The camel-test module has been removed from camel-bom
+description: The camel-test module has been removed from camel-bom.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-test
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-cloud
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-service
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-nitrite
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-torchserve
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-test-infra-torchserve
 ---
 # https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_groovy_xml
 # Migrate camel-groovy-xml to camel-groovy
