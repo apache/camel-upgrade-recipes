@@ -22,25 +22,6 @@ description: >-
   Migrate applications to Apache Camel Spring Boot @camel-latest-version@ and Spring Boot @spring-boot-version@
 recipeList:
   - org.apache.camel.upgrade.camel419.CamelSpringBootMigrationRecipe
-  - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel418.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel417.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel416.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel415.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel414.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel413.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel412.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel411.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel45.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
-  - org.apache.camel.upgrade.UpgradeToJava17
-  - org.apache.camel.upgrade.JavaVersion17
-  - org.apache.camel.upgrade.UpdateCamelSpringBootPropertiesAndYamlKeys
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
@@ -74,22 +55,3 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-parent
       newVersion: @spring-boot-version@
-  - org.openrewrite.maven.RemoveDependency:
-       groupId: org.apache.camel.springboot
-       artifactId: camel-k-starter
-  - org.openrewrite.maven.RemoveDependency:
-        groupId: org.apache.camel.springboot
-        artifactId: camel-etcd3-starter
-  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
-      oldGroupId: org.apache.camel-springboot
-      oldArtifactId: camel-fury-starter
-      newArtifactId: camel-fory-starter
-  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
-      oldPropertyKey: camel.springboot.main-run-controller
-      newPropertyKey: camel.main.run-controller
-  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
-      oldPropertyKey: camel.springboot.include-non-singletons
-      newPropertyKey: camel.main.include-non-singletons
-  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
-      oldPropertyKey: camel.springboot.warn-on-early-shutdown
-      newPropertyKey: camel.main.warn-on-early-shutdown
