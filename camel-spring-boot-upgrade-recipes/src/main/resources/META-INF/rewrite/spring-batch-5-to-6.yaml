@@ -1,0 +1,217 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+# Upgrade Spring Batch from 5.* to 6.*
+# See: https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-6.0-Migration-Guide
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.spring.UpgradeSpringBatch5To6
+displayName: Upgrade Spring Batch from 5.* to 6.*
+description: Upgrades Spring Batch dependencies from 5.* to 6.* and migrates moved/renamed APIs.
+recipeList:
+  # Update Spring Batch version property
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: spring-batch.version
+      newValue: ${spring-batch-version}
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: spring-batch-version
+      newValue: ${spring-batch-version}
+  # Update Spring Batch dependencies
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.springframework.batch
+      artifactId: "*"
+      newVersion: ${spring-batch-version}
+  # Migrate moved and renamed APIs
+  - org.apache.camel.upgrade.spring.SpringBatch6MovedAPIs
+  - org.apache.camel.upgrade.spring.SpringBatch6RenamedAPIs
+---
+# Migrate moved APIs in Spring Batch 6.*
+# See: https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-6.0-Migration-Guide#moved-apis
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.spring.SpringBatch6MovedAPIs
+displayName: Migrate Spring Batch 6.* moved APIs
+description: Migrates packages and types that were moved in Spring Batch 6.*.
+recipeList:
+  # Move explore package
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: org.springframework.batch.core.explore
+      newPackageName: org.springframework.batch.core.repository.explore
+      recursive: true
+  # Move JDBC DAO classes
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.JdbcExecutionContextDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.jdbc.JdbcExecutionContextDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.JdbcJobExecutionDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.jdbc.JdbcJobExecutionDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.JdbcJobInstanceDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.jdbc.JdbcJobInstanceDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.JdbcStepExecutionDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.jdbc.JdbcStepExecutionDao
+  # Move Mongo DAO classes
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.MongoExecutionContextDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.mongo.MongoExecutionContextDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.MongoJobExecutionDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.mongo.MongoJobExecutionDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.MongoJobInstanceDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.mongo.MongoJobInstanceDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.MongoStepExecutionDao
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.mongo.MongoStepExecutionDao
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.MongoSequenceIncrementer
+      newFullyQualifiedTypeName: org.springframework.batch.core.repository.dao.mongo.MongoSequenceIncrementer
+  # Move partition APIs
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.partition.support.Partitioner
+      newFullyQualifiedTypeName: org.springframework.batch.core.partition.Partitioner
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.partition.support.PartitionNameProvider
+      newFullyQualifiedTypeName: org.springframework.batch.core.partition.PartitionNameProvider
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.partition.support.PartitionStep
+      newFullyQualifiedTypeName: org.springframework.batch.core.partition.PartitionStep
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.partition.support.StepExecutionAggregator
+      newFullyQualifiedTypeName: org.springframework.batch.core.partition.StepExecutionAggregator
+  # Move listener classes
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.ChunkListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.ChunkListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.ItemProcessListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.ItemProcessListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.ItemReadListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.ItemReadListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.ItemWriteListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.ItemWriteListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobExecutionListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.JobExecutionListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.SkipListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.SkipListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.StepExecutionListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.StepExecutionListener
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.StepListener
+      newFullyQualifiedTypeName: org.springframework.batch.core.listener.StepListener
+  # Move job-related classes
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.Job
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.Job
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobExecution
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.JobExecution
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobExecutionException
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.JobExecutionException
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobInstance
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.JobInstance
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobInterruptedException
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.JobInterruptedException
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobKeyGenerator
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.JobKeyGenerator
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.DefaultJobKeyGenerator
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.DefaultJobKeyGenerator
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.StartLimitExceededException
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.StartLimitExceededException
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.UnexpectedJobExecutionException
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.UnexpectedJobExecutionException
+  # Move job parameters classes
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.CompositeJobParametersValidator
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.CompositeJobParametersValidator
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.DefaultJobParametersValidator
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.DefaultJobParametersValidator
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobParameter
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.JobParameter
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobParameters
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.JobParameters
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobParametersBuilder
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.JobParametersBuilder
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobParametersIncrementer
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.JobParametersIncrementer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.InvalidJobParametersException
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.InvalidJobParametersException
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.JobParametersValidator
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.JobParametersValidator
+  # Move step-related classes
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.Step
+      newFullyQualifiedTypeName: org.springframework.batch.core.step.Step
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.StepContribution
+      newFullyQualifiedTypeName: org.springframework.batch.core.step.StepContribution
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.StepExecution
+      newFullyQualifiedTypeName: org.springframework.batch.core.step.StepExecution
+  # Move parameter incrementers
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.launch.support.RunIdIncrementer
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.RunIdIncrementer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.core.launch.support.DataFieldMaxValueJobParametersIncrementer
+      newFullyQualifiedTypeName: org.springframework.batch.core.job.parameters.DataFieldMaxValueJobParametersIncrementer
+---
+# Migrate renamed APIs in Spring Batch 6.*
+# See: https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-6.0-Migration-Guide#renamed-apis
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.spring.SpringBatch6RenamedAPIs
+displayName: Migrate Spring Batch 6.* renamed APIs
+description: Migrates classes and methods that were renamed in Spring Batch 6.*.
+recipeList:
+  # Rename ChunkHandler to ChunkRequestHandler
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.springframework.batch.integration.chunk.ChunkHandler
+      newFullyQualifiedTypeName: org.springframework.batch.integration.chunk.ChunkRequestHandler
+  # Rename JobStep.setJobLauncher to setJobOperator
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.springframework.batch.core.step.job.JobStep setJobLauncher(org.springframework.batch.core.launch.JobLauncher)
+      newMethodName: setJobOperator
+  # Rename JobStepBuilder.launcher to operator
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.springframework.batch.core.step.builder.JobStepBuilder launcher(org.springframework.batch.core.launch.JobLauncher)
+      newMethodName: operator
+  # Rename SystemCommandTasklet.setJobExplorer to setJobRepository
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.springframework.batch.core.step.tasklet.SystemCommandTasklet setJobExplorer(org.springframework.batch.core.explore.JobExplorer)
+      newMethodName: setJobRepository
+---
+# Note: Removed APIs in Spring Batch 6.*
+# See: https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-6.0-Migration-Guide#removed-apis
+# These APIs have been removed and require manual migration. Please refer to the migration guide for alternatives.
