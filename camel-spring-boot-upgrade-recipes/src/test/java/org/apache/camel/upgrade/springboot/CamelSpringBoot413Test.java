@@ -60,9 +60,9 @@ class CamelSpringBoot413Test implements RewriteTest {
     @Test
     void yamlFile() {
         rewriteRun(
-                //both org.apache.camel.upgrade.camel413.CamelSpringBootMigrationRecipe and
-                // org.apache.camel.upgrade.UpdateCamelSpringBootPropertiesAndYamlKeys modifies this properties
-                spec -> spec.expectedCyclesThatMakeChanges(2),
+                //only org.apache.camel.upgrade.UpdateCamelSpringBootPropertiesAndYamlKeys modifies this file;
+                // YamlDsl413Recipe is gated on Camel YAML DSL root keys and does not apply to Spring Boot application.yaml
+                spec -> spec.expectedCyclesThatMakeChanges(1),
             yaml(
                     """
                       camel:
