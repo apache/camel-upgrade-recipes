@@ -82,7 +82,7 @@ class CamelSpringBoot413Test implements RewriteTest {
                             name: 'Foo'
                           routecontroller.backOffMultiplier: 5
                           routecontroller.backOffDelay: true
-                          main.runController: something
+                          main.run-controller: something
                         another:
                           ignored:
                             property: true
