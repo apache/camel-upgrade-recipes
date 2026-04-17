@@ -79,6 +79,50 @@ public class CamelUpdate413Test implements RewriteTest {
     }
 
     /**
+     * Non-Camel YAML (GitHub Actions workflow, Kubernetes manifest) must not be rewritten
+     * even when it contains kebab-case keys.
+     */
+    @Test
+    void yamlDslLeavesUnrelatedYamlAlone() {
+        rewriteRun(
+          //language=yaml
+          yaml(
+            """
+              name: CI
+              on:
+                push:
+                  branches: [main]
+              jobs:
+                build:
+                  runs-on: ubuntu-latest
+                  steps:
+                    - uses: actions/checkout@v4
+                    - uses: actions/setup-java@v4
+                      with:
+                        distribution: zulu
+                        java-version: '17'
+              """),
+          //language=yaml
+          yaml(
+            """
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: my-app
+              spec:
+                replicas: 1
+                selector:
+                  match-labels:
+                    app: my-app
+                template:
+                  spec:
+                    containers:
+                      - name: app
+                        image-pull-policy: IfNotPresent
+              """));
+    }
+
+    /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_http">camel-http</a>
      */
     @Test
