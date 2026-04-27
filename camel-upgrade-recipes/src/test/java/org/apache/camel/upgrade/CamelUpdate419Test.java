@@ -16,8 +16,10 @@
  */
 package org.apache.camel.upgrade;
 
-import org.apache.camel.upgrade.camel419.*;
+import org.apache.camel.upgrade.camel419.Pom419TestInfraRecipe;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -31,19 +33,26 @@ public class CamelUpdate419Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipeFromResources("org.apache.camel.upgrade.camel419.CamelMigrationRecipe")
+        CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_19)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_18,
-                        "camel-core-model", "camel-api"))
+                        "camel-core-model", "camel-api", "camel-qdrant", "camel-tahu", "tahu-host"))
                 .typeValidationOptions(TypeValidation.none());
     }
 
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_bom">camel-bom</a>
+     *
+     * This test verifies both the removal of camel-test dependency (4.19 specific)
+     * and version property upgrades. It combines the 4.19 migration recipe with
+     * the internal CamelToTheLatestRecipe for version upgrades.
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    @DocumentExample
     @Test
     void camelBom() {
         //language=xml
-        rewriteRun(pomXml(
+        rewriteRun(
+            pomXml(
                 """
                   <project>
                      <modelVersion>4.0.0</modelVersion>
@@ -92,7 +101,8 @@ public class CamelUpdate419Test implements RewriteTest {
                       </dependencies>
       
                   </project>
-                  """));
+                  """
+            ));
     }
 
     /**
@@ -157,27 +167,27 @@ public class CamelUpdate419Test implements RewriteTest {
             - route:
                 from:
                   uri: direct:start
-                steps:
-                  - saga:
-                      compensation:
-                        uri: direct:compensate
-                      completion:
-                        uri: direct:complete
-                      steps:
-                        - to:
-                            uri: direct:action
+                  steps:
+                    - saga:
+                        compensation:
+                          uri: direct:compensate
+                        completion:
+                          uri: direct:complete
+                        steps:
+                          - to:
+                              uri: direct:action
             """,
           """
             - route:
                 from:
                   uri: direct:start
-                steps:
-                  - saga:
-                      compensation: direct:compensate
-                      completion: direct:complete
-                      steps:
-                        - to:
-                            uri: direct:action
+                  steps:
+                    - saga:
+                        compensation: direct:compensate
+                        completion: direct:complete
+                        steps:
+                          - to:
+                              uri: direct:action
             """));
     }
 
@@ -185,8 +195,9 @@ public class CamelUpdate419Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_test_infra">camel-test-infra</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
-    void testInfraTestJarRemoval() {
+    void infraTestJarRemoval() {
         //language=xml
         rewriteRun(spec -> spec.recipe(new Pom419TestInfraRecipe()),
                 pomXml(
@@ -243,7 +254,8 @@ public class CamelUpdate419Test implements RewriteTest {
                                   </dependency>
                               </dependencies>
                           </project>
-                          """));
+                          """
+                ));
     }
 
     /**
@@ -259,9 +271,9 @@ public class CamelUpdate419Test implements RewriteTest {
                 routePolicy: myPolicy
                 from:
                   uri: direct:start
-                steps:
-                  - to:
-                      uri: mock:result
+                  steps:
+                    - to:
+                        uri: mock:result
             """,
           """
             - route:
@@ -269,14 +281,15 @@ public class CamelUpdate419Test implements RewriteTest {
                 routePolicyRef: myPolicy
                 from:
                   uri: direct:start
-                steps:
-                  - to:
-                      uri: mock:result
+                  steps:
+                    - to:
+                        uri: mock:result
             """));
     }
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_bom">camel-bom</a>
      */
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void removedComponents() {
         //language=xml

@@ -1,10 +1,10 @@
 = Camel Upgrade Recipes - Release notes
 
-== 4.19.0
+== 4.20.0
 
 === Summary
 
-This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.19.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html[migration guide]).
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.20.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_20.html[migration guide]).
 
 === Migration coverage
 
@@ -13,6 +13,10 @@ The following table lists migration topics and indicates the level of coverage (
 [%autowidth,stripes=hover]
 |===
 | Migration | Coverage | Comment
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_20.html#_camel_jbang[camel-jbang] | ❌ None | YAML DSL file naming convention change. Manual review required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_20.html#_camel_exec[camel-exec] | ❌ None | Security change requiring explicit opt-in via `allowControlHeaders=true`. Manual configuration required.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_20.html#_camel_pulsar[camel-pulsar] | ⚠️ Partial | V1 to V2 topic URI format automatically migrated for simple topic names (without slashes). Removes cluster segment from URIs like `pulsar:persistent://tenant/cluster/namespace/topic`. URIs with slashes in topic names (e.g., `topic/sub-path`) are NOT transformed to avoid ambiguity between V1 and V2 formats - these require manual migration.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_20.html#_camel_oaipmh[camel-oaipmh] | ❌ None | New HTTP header parameter functionality. No migration needed.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_bom[camel-bom] |  ✅ Full | Automatically migrated.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_cloud_removal[camel-cloud and serviceCall EIP] |  ✅ Full | Automatically migrated.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_pqc_tls_auto_configuration[PQC TLS Auto-Configuration] | ❌ None | Automatic configuration, no migration needed.
