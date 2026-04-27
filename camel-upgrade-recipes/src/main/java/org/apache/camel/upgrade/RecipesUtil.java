@@ -315,4 +315,29 @@ public class RecipesUtil {
         return null;
     }
 
+    /**
+     * Transform a string using the provided pattern and replacement.
+     *
+     * @param value The original string
+     * @param pattern The compiled regex pattern to match
+     * @param replacement The replacement string using ${1}, ${2}, etc. for capturing groups
+     * @return Optional containing the transformed string, or empty if the pattern doesn't match
+     */
+    public static Optional<String> transform(String value, Pattern pattern, String replacement) {
+        Matcher matcher = pattern.matcher(value);
+        if (!matcher.matches()) {
+            return Optional.empty();
+        }
+
+        String result = replacement;
+
+        // Replace all ${n} placeholders with corresponding capturing groups
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            String groupValue = matcher.group(i);
+            // Replace with group value, or empty string if group is null
+            result = result.replace("${" + i + "}", groupValue != null ? groupValue : "");
+        }
+
+        return Optional.of(result);
+    }
 }

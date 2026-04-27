@@ -101,7 +101,8 @@ public class CamelUpdate413Test implements RewriteTest {
                       with:
                         distribution: zulu
                         java-version: '17'
-              """),
+              """
+          ),
           //language=yaml
           yaml(
             """
@@ -119,7 +120,8 @@ public class CamelUpdate413Test implements RewriteTest {
                     containers:
                       - name: app
                         image-pull-policy: IfNotPresent
-              """));
+              """
+          ));
     }
 
     /**
