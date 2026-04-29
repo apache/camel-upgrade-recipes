@@ -59,6 +59,9 @@ This project is released as standard Apache Camel module.
 
 ⚠️ Check that the following versions are up-to-date!
 ```xml
+        <!-- versions for latest recipes, has to be kept aligned to the latest camel release -->
+        <camel-latest-version>4.20.0</camel-latest-version>
+
         <!-- versions for camel-spring-boot -->
         <spring-boot-version>3.5.10</spring-boot-version>
         <springframework-version>6.2.15</springframework-version>
