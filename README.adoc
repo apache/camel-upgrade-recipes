@@ -70,6 +70,8 @@ This project is released as standard Apache Camel module.
         <rewrite-recipe-bom.version>3.24.0</rewrite-recipe-bom.version>
 ```
 
+NOTE: The `camel-latest-version` property is automatically verified by the test suite (`LatestCamelVersionTest`) to match the highest version recipe file. If you add a new version recipe (e.g., `4.21.yaml`), the test will fail until you update the property.
+
 Check that everything is alright and run:
 
 ```bash
