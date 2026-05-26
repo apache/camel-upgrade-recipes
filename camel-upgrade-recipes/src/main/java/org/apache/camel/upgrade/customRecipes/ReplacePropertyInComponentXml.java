@@ -16,27 +16,18 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Setter
 public class ReplacePropertyInComponentXml extends Recipe {
 
     private static final XPathMatcher FROM_MATCHER = new XPathMatcher("//route/from");
@@ -59,6 +50,32 @@ public class ReplacePropertyInComponentXml extends Recipe {
             description = "This value is appended before the current value of the modified method.",
             required = false)
     String valuePrefix;
+
+    public ReplacePropertyInComponentXml() {
+    }
+
+    public ReplacePropertyInComponentXml(String component, String oldPropertyKey, String newPropertyKey, String valuePrefix) {
+        this.component = component;
+        this.oldPropertyKey = oldPropertyKey;
+        this.newPropertyKey = newPropertyKey;
+        this.valuePrefix = valuePrefix;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public void setOldPropertyKey(String oldPropertyKey) {
+        this.oldPropertyKey = oldPropertyKey;
+    }
+
+    public void setNewPropertyKey(String newPropertyKey) {
+        this.newPropertyKey = newPropertyKey;
+    }
+
+    public void setValuePrefix(String valuePrefix) {
+        this.valuePrefix = valuePrefix;
+    }
 
     @Override
     public String getDisplayName() {
@@ -91,22 +108,16 @@ public class ReplacePropertyInComponentXml extends Recipe {
     }
 
     private Xml.Tag replacePropertyIfPossible(final Xml.Tag tag) {
-
-        List<Xml.Attribute> attributes = new ArrayList<>(tag.getAttributes());
-
-        Optional<Xml.Attribute> uri = attributes.stream().filter(a -> "uri".equals(a.getKey().getName())).findAny();
-        if(uri.isPresent() && (component.equals(uri.get().getValue().getValue()) || uri.get().getValue().getValue().startsWith(component + ":"))) {
-            String u = uri.get().getValue().getValue();
-            //replace property and apply optionalPrefix
-            u = RecipesUtil.replacePropertyInUrl(u, component, oldPropertyKey, newPropertyKey, valuePrefix);
-            if(u != null) {
-                attributes.remove(uri.get());
-                attributes.add(uri.get().withValue(uri.get().getValue().withValue(u)));
-                return tag.withAttributes(attributes);
+        Optional<Xml.Attribute> uri = tag.getAttributes().stream().filter(a -> "uri".equals(a.getKey().getName())).findAny();
+        if (uri.isPresent() && (component.equals(uri.get().getValue().getValue()) || uri.get().getValue().getValue().startsWith(component + ":"))) {
+            String u = RecipesUtil.replacePropertyInUrl(uri.get().getValue().getValue(), component, oldPropertyKey, newPropertyKey, valuePrefix);
+            if (u != null) {
+                Xml.Attribute matched = uri.get();
+                String newUri = u;
+                return tag.withAttributes(ListUtils.map(tag.getAttributes(), attr ->
+                        attr == matched ? attr.withValue(attr.getValue().withValue(newUri)) : attr));
             }
         }
         return tag;
-
-
     }
 }

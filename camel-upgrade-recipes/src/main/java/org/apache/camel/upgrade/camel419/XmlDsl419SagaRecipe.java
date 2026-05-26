@@ -20,10 +20,10 @@ import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,66 +57,62 @@ public class XmlDsl419SagaRecipe extends Recipe {
                 Xml.Tag t = super.doVisitTag(tag, ctx);
 
                 if (SAGA_MATCHER.matches(getCursor())) {
-                    List<Xml.Tag> children = new ArrayList<>(t.getChildren());
-                    List<Xml.Attribute> attributes = new ArrayList<>(t.getAttributes());
-                    boolean modified = false;
-
-                    modified |= convertChildElementToAttribute(children, attributes, "compensation");
-                    modified |= convertChildElementToAttribute(children, attributes, "completion");
-
-                    if (modified) {
-                        t = t.withContent(children);
-                        t = t.withAttributes(attributes);
-                    }
+                    t = convertChildElementToAttribute(t, "compensation");
+                    t = convertChildElementToAttribute(t, "completion");
                 }
 
                 return t;
             }
 
-            private boolean convertChildElementToAttribute(List<Xml.Tag> children, List<Xml.Attribute> attributes, String elementName) {
-                Optional<Xml.Tag> childTag = children.stream()
+            private Xml.Tag convertChildElementToAttribute(Xml.Tag t, String elementName) {
+                Optional<Xml.Tag> childTag = t.getChildren().stream()
                         .filter(child -> elementName.equals(child.getName()))
                         .findFirst();
 
-                if (childTag.isPresent()) {
-                    Xml.Tag tag = childTag.get();
-                    String uri = null;
-
-                    // First, try to get the uri from the 'uri' attribute
-                    Optional<Xml.Attribute> uriAttr = tag.getAttributes().stream()
-                            .filter(attr -> "uri".equals(attr.getKeyAsString()))
-                            .findFirst();
-
-                    if (uriAttr.isPresent()) {
-                        uri = uriAttr.get().getValueAsString();
-                    } else if (tag.getValue().isPresent()) {
-                        // Fallback to text content if no uri attribute
-                        uri = tag.getValue().get().trim();
-                    }
-
-                    if (uri != null && !uri.isEmpty()) {
-                        children.removeIf(child -> elementName.equals(child.getName()));
-
-                        if (attributes.stream().noneMatch(a -> elementName.equals(a.getKeyAsString()))) {
-                            attributes.add(new Xml.Attribute(
-                                    org.openrewrite.Tree.randomId(),
-                                    " ",
-                                    org.openrewrite.marker.Markers.EMPTY,
-                                    new Xml.Ident(org.openrewrite.Tree.randomId(), "", org.openrewrite.marker.Markers.EMPTY, elementName),
-                                    "",
-                                    new Xml.Attribute.Value(
-                                            org.openrewrite.Tree.randomId(),
-                                            "",
-                                            org.openrewrite.marker.Markers.EMPTY,
-                                            Xml.Attribute.Value.Quote.Double,
-                                            uri
-                                    )
-                            ));
-                        }
-                        return true;
-                    }
+                if (childTag.isEmpty()) {
+                    return t;
                 }
-                return false;
+
+                Xml.Tag found = childTag.get();
+                String uri = null;
+
+                Optional<Xml.Attribute> uriAttr = found.getAttributes().stream()
+                        .filter(attr -> "uri".equals(attr.getKeyAsString()))
+                        .findFirst();
+
+                if (uriAttr.isPresent()) {
+                    uri = uriAttr.get().getValueAsString();
+                } else if (found.getValue().isPresent()) {
+                    uri = found.getValue().get().trim();
+                }
+
+                if (uri == null || uri.isEmpty()) {
+                    return t;
+                }
+
+                if (t.getAttributes().stream().anyMatch(a -> elementName.equals(a.getKeyAsString()))) {
+                    return t;
+                }
+
+                t = t.withContent(ListUtils.flatMap(t.getContent(), content ->
+                        content instanceof Xml.Tag && elementName.equals(((Xml.Tag) content).getName()) ? null : content));
+
+                t = t.withAttributes(ListUtils.concat(t.getAttributes(), new Xml.Attribute(
+                        org.openrewrite.Tree.randomId(),
+                        " ",
+                        org.openrewrite.marker.Markers.EMPTY,
+                        new Xml.Ident(org.openrewrite.Tree.randomId(), "", org.openrewrite.marker.Markers.EMPTY, elementName),
+                        "",
+                        new Xml.Attribute.Value(
+                                org.openrewrite.Tree.randomId(),
+                                "",
+                                org.openrewrite.marker.Markers.EMPTY,
+                                Xml.Attribute.Value.Quote.Double,
+                                uri
+                        )
+                )));
+
+                return t;
             }
         };
     }

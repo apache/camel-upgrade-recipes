@@ -19,6 +19,7 @@ package org.apache.camel.upgrade.camel419;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.XmlVisitor;
 import org.openrewrite.xml.tree.Xml;
@@ -65,11 +66,9 @@ public class Pom419TestInfraRecipe extends Recipe {
                         // Check if it has <type>test-jar</type>
                         Optional<Xml.Tag> typeTag = t.getChild("type");
                         if (typeTag.isPresent() && "test-jar".equals(typeTag.get().getValue().orElse(""))) {
-                            // Remove the type tag
                             t = t.withContent(
-                                t.getContent().stream()
-                                    .filter(content -> content != typeTag.get())
-                                    .toList()
+                                ListUtils.flatMap(t.getContent(), content ->
+                                    content == typeTag.get() ? null : content)
                             );
                         }
                     }

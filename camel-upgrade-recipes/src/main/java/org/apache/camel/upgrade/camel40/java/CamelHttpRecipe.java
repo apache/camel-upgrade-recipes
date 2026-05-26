@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel40.java;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.jspecify.annotations.Nullable;
@@ -28,8 +26,6 @@ import org.openrewrite.java.ChangeType;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.tree.J;
 
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class CamelHttpRecipe extends Recipe {
 
     private static final String SET_CREDENTIALS = "org.apache.http.impl.client.BasicCredentialsProvider setCredentials(..)";

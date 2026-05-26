@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel42;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -32,8 +30,6 @@ import java.util.Collections;
  * Recipe migrating changes between Camel 4.3 to 4.4, for more details see the
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_core" >documentation</a>.
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class CamelSagaRecipe extends Recipe {
 
     private static final String M_NEW_SAGA = "org.apache.camel.saga.InMemorySagaService newSaga()";

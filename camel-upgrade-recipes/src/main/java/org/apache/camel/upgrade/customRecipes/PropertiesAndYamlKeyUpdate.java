@@ -1,19 +1,11 @@
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.properties.ChangePropertyKey;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Setter
 public class PropertiesAndYamlKeyUpdate extends Recipe {
 
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Old configuration key",
@@ -23,6 +15,22 @@ public class PropertiesAndYamlKeyUpdate extends Recipe {
     @Option(example = "TODO Provide a usage example for the docs", displayName = "New configuration key",
             description = "The configuration to be replaced with.")
     String newPropertyKey;
+
+    public PropertiesAndYamlKeyUpdate() {
+    }
+
+    public PropertiesAndYamlKeyUpdate(String oldPropertyKey, String newPropertyKey) {
+        this.oldPropertyKey = oldPropertyKey;
+        this.newPropertyKey = newPropertyKey;
+    }
+
+    public void setOldPropertyKey(String oldPropertyKey) {
+        this.oldPropertyKey = oldPropertyKey;
+    }
+
+    public void setNewPropertyKey(String newPropertyKey) {
+        this.newPropertyKey = newPropertyKey;
+    }
 
     @Override
     public String getDisplayName() {

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -33,9 +30,6 @@ import java.util.regex.Matcher;
 /**
  * Replaces literal matching pattern and replacing it with a replacement (regexp groups are supported)
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class LiteralRegexpConverterRecipe extends Recipe {
 
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Literal regexp name",
@@ -45,6 +39,22 @@ public class LiteralRegexpConverterRecipe extends Recipe {
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Replacement to use",
             description = "Replacement to use.")
     public String replacement;
+
+    public LiteralRegexpConverterRecipe() {
+    }
+
+    public LiteralRegexpConverterRecipe(String regexp, String replacement) {
+        this.regexp = regexp;
+        this.replacement = replacement;
+    }
+
+    public void setRegexp(String regexp) {
+        this.regexp = regexp;
+    }
+
+    public void setReplacement(String replacement) {
+        this.replacement = replacement;
+    }
 
     @Override
     public String getDisplayName() {

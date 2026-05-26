@@ -16,29 +16,21 @@
  */
 package org.apache.camel.upgrade.customRecipes.internal;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
  * Transform component URIs in XML DSL using regexp with capturing groups.
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class ChangeXmlComponentUriRecipe extends Recipe {
 
     private static final XPathMatcher FROM_MATCHER = new XPathMatcher("//route/from");
@@ -57,6 +49,22 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
         example = "pulsar:${2}://${3}/${5}/${6}"
     )
     public String replacement;
+
+    public ChangeXmlComponentUriRecipe() {
+    }
+
+    public ChangeXmlComponentUriRecipe(String uriPattern, String replacement) {
+        this.uriPattern = uriPattern;
+        this.replacement = replacement;
+    }
+
+    public void setUriPattern(String uriPattern) {
+        this.uriPattern = uriPattern;
+    }
+
+    public void setReplacement(String replacement) {
+        this.replacement = replacement;
+    }
 
     @Override
     public String getDisplayName() {
@@ -87,22 +95,13 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
     }
 
     private static Xml.Tag transformXmlUri(Xml.Tag tag, Pattern pattern, String replacement) {
-        List<Xml.Attribute> attributes = new ArrayList<>(tag.getAttributes());
-        Optional<Xml.Attribute> uriAttr = attributes.stream()
-                .filter(a -> "uri".equals(a.getKey().getName()))
-                .findFirst();
-
-        if (uriAttr.isPresent()) {
-            String originalUri = uriAttr.get().getValue().getValue();
-            return RecipesUtil.transform(originalUri, pattern, replacement)
-                    .map(newUri -> {
-                        attributes.remove(uriAttr.get());
-                        attributes.add(uriAttr.get().withValue(uriAttr.get().getValue().withValue(newUri)));
-                        return tag.withAttributes(attributes);
-                    })
-                    .orElse(tag);
-        }
-
-        return tag;
+        return tag.withAttributes(ListUtils.map(tag.getAttributes(), attr -> {
+            if (!"uri".equals(attr.getKey().getName())) {
+                return attr;
+            }
+            return RecipesUtil.transform(attr.getValue().getValue(), pattern, replacement)
+                    .map(newUri -> attr.withValue(attr.getValue().withValue(newUri)))
+                    .orElse(attr);
+        }));
     }
 }

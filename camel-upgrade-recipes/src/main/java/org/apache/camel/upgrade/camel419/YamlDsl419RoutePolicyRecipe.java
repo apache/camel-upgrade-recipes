@@ -16,10 +16,10 @@
  */
 package org.apache.camel.upgrade.camel419;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
+import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.JsonPathMatcher;
@@ -31,8 +31,6 @@ import org.openrewrite.yaml.tree.Yaml;
  * </p>
  * In the YAML DSL we have renamed routePolicy to routePolicyRef.
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class YamlDsl419RoutePolicyRecipe extends Recipe {
 
     private static final JsonPathMatcher ROUTE_POLICY_MATCHER = new JsonPathMatcher("$..route.routePolicy");
@@ -50,7 +48,7 @@ public class YamlDsl419RoutePolicyRecipe extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
 
-        return new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
 
             @Override
             protected void clearLocalCache() {
@@ -72,6 +70,6 @@ public class YamlDsl419RoutePolicyRecipe extends Recipe {
 
                 return e;
             }
-        };
+        });
     }
 }

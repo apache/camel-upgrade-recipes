@@ -16,13 +16,11 @@
  */
 package org.apache.camel.upgrade.customRecipes.internal;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.JsonPathMatcher;
@@ -33,9 +31,6 @@ import java.util.regex.Pattern;
 /**
  * Transform component URIs in YAML DSL using regexp with capturing groups.
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class ChangeYamlComponentUriRecipe extends Recipe {
 
     private static final JsonPathMatcher YAML_URI_MATCHER = new JsonPathMatcher("$..uri");
@@ -54,6 +49,22 @@ public class ChangeYamlComponentUriRecipe extends Recipe {
     )
     public String replacement;
 
+    public ChangeYamlComponentUriRecipe() {
+    }
+
+    public ChangeYamlComponentUriRecipe(String uriPattern, String replacement) {
+        this.uriPattern = uriPattern;
+        this.replacement = replacement;
+    }
+
+    public void setUriPattern(String uriPattern) {
+        this.uriPattern = uriPattern;
+    }
+
+    public void setReplacement(String replacement) {
+        this.replacement = replacement;
+    }
+
     @Override
     public String getDisplayName() {
         return "Change Camel component URI in YAML DSL";
@@ -68,7 +79,7 @@ public class ChangeYamlComponentUriRecipe extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         Pattern pattern = Pattern.compile(uriPattern);
 
-        return new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
             @Override
             protected void clearLocalCache() {
                 // Nothing to clear
@@ -88,6 +99,6 @@ public class ChangeYamlComponentUriRecipe extends Recipe {
 
                 return e;
             }
-        };
+        });
     }
 }

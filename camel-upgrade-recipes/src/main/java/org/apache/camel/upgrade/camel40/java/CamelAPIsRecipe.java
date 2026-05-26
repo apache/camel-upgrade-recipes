@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel40.java;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.jspecify.annotations.Nullable;
@@ -39,8 +37,6 @@ import java.util.regex.Pattern;
  * Recipe migrating changes between Camel 3.x to 4.x, for more details see the
  * <a href="https://camel.apache.org/manual/camel-4-migration-guide.html#_api_changes">documentation</a>.
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class CamelAPIsRecipe extends Recipe {
 
     private static final String MATCHER_CONTEXT_GET_ENDPOINT_MAP = "org.apache.camel.CamelContext getEndpointMap()";

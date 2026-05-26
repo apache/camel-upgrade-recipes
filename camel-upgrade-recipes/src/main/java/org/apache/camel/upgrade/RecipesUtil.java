@@ -21,7 +21,9 @@ import org.openrewrite.*;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
+import org.openrewrite.marker.SearchResult;
 import org.openrewrite.xml.tree.Xml;
+import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
 import java.util.*;
@@ -42,6 +44,44 @@ public class RecipesUtil {
 
     public static TreeVisitor<?, ExecutionContext> newVisitor(String requiredImport, AbstractCamelJavaVisitor visitor) {
         return Preconditions.check(new UsesType<>(requiredImport, false), visitor);
+    }
+
+    // ---------------- Camel YAML DSL precondition
+    private static final Set<String> CAMEL_DSL_ROOT_KEYS = Set.of(
+            "route", "routes", "from", "rest", "beans",
+            "route-configuration", "routeConfiguration",
+            "route-template", "routeTemplate",
+            "templated-route", "templatedRoute",
+            "rest-configuration", "restConfiguration",
+            "error-handler", "errorHandler",
+            "on-exception", "onException",
+            "intercept", "intercept-from", "interceptFrom",
+            "intercept-send-to-endpoint", "interceptSendToEndpoint",
+            "dataFormats", "data-formats");
+
+    public static TreeVisitor<?, ExecutionContext> camelYamlDslPrecondition() {
+        return new YamlIsoVisitor<ExecutionContext>() {
+            @Override
+            public Yaml.Document visitDocument(Yaml.Document document, ExecutionContext ctx) {
+                if (hasCamelRootKey(document.getBlock())) {
+                    return SearchResult.found(document);
+                }
+                return document;
+            }
+        };
+    }
+
+    public static boolean hasCamelRootKey(Yaml.Block block) {
+        if (block instanceof Yaml.Mapping) {
+            return ((Yaml.Mapping) block).getEntries().stream()
+                    .anyMatch(entry -> CAMEL_DSL_ROOT_KEYS.contains(entry.getKey().getValue()));
+        }
+        if (block instanceof Yaml.Sequence) {
+            return ((Yaml.Sequence) block).getEntries().stream()
+                    .map(Yaml.Sequence.Entry::getBlock)
+                    .anyMatch(RecipesUtil::hasCamelRootKey);
+        }
+        return false;
     }
 
     //---------------- annotations helpers
