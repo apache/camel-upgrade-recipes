@@ -16,9 +16,6 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.customRecipes.internal.ChangeJavaComponentUriRecipe;
 import org.apache.camel.upgrade.customRecipes.internal.ChangeXmlComponentUriRecipe;
 import org.apache.camel.upgrade.customRecipes.internal.ChangeYamlComponentUriRecipe;
@@ -45,9 +42,6 @@ import java.util.List;
  * <p>
  * This will transform Pulsar URIs in Java code, XML DSL, and YAML DSL all at once.
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class ChangeComponentUriRecipe extends Recipe {
 
     @Option(
@@ -63,6 +57,22 @@ public class ChangeComponentUriRecipe extends Recipe {
         example = "pulsar:${2}://${3}/${5}/${6}"
     )
     public String replacement;
+
+    public ChangeComponentUriRecipe() {
+    }
+
+    public ChangeComponentUriRecipe(String uriPattern, String replacement) {
+        this.uriPattern = uriPattern;
+        this.replacement = replacement;
+    }
+
+    public void setUriPattern(String uriPattern) {
+        this.uriPattern = uriPattern;
+    }
+
+    public void setReplacement(String replacement) {
+        this.replacement = replacement;
+    }
 
     @Override
     public String getDisplayName() {

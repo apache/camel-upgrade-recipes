@@ -16,10 +16,10 @@
  */
 package org.apache.camel.upgrade.camel47;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
+import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.JsonPathMatcher;
@@ -33,8 +33,6 @@ import java.util.Map;
  * </p>
  * The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class YamlDsl47Recipe extends Recipe {
 
 
@@ -60,7 +58,7 @@ public class YamlDsl47Recipe extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
 
-        return new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
 
             @Override
             protected void clearLocalCache() {
@@ -80,7 +78,7 @@ public class YamlDsl47Recipe extends Recipe {
                         .orElse(e);
             }
 
-        };
+        });
     }
 
 }

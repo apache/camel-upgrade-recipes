@@ -16,9 +16,6 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -33,9 +30,6 @@ import java.util.regex.Pattern;
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class MoveGetterToExtendedCamelContext extends Recipe {
 
     private static final String MATCHER_GET_NAME_RESOLVER = "org.apache.camel.ExtendedCamelContext getComponentNameResolver()";
@@ -48,6 +42,17 @@ public class MoveGetterToExtendedCamelContext extends Recipe {
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Method name",
             description = "Name of the method on external camel context.")
     public String oldMethodName;
+
+    public MoveGetterToExtendedCamelContext() {
+    }
+
+    public MoveGetterToExtendedCamelContext(String oldMethodName) {
+        this.oldMethodName = oldMethodName;
+    }
+
+    public void setOldMethodName(String oldMethodName) {
+        this.oldMethodName = oldMethodName;
+    }
 
     @Override
     public String getDisplayName() {

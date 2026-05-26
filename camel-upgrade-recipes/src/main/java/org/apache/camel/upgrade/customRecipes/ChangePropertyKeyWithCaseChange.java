@@ -16,10 +16,6 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -32,10 +28,6 @@ import java.util.List;
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Setter
 public class ChangePropertyKeyWithCaseChange extends Recipe {
 
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Old property key",
@@ -50,6 +42,27 @@ public class ChangePropertyKeyWithCaseChange extends Recipe {
             description = "Regexp for exclusions",
             example = "camel.springboot.main-run-controller")
     List<String> exclusions = new ArrayList<>();
+
+    public ChangePropertyKeyWithCaseChange() {
+    }
+
+    public ChangePropertyKeyWithCaseChange(String oldPropertyKey, String newPrefix, List<String> exclusions) {
+        this.oldPropertyKey = oldPropertyKey;
+        this.newPrefix = newPrefix;
+        this.exclusions = exclusions;
+    }
+
+    public void setOldPropertyKey(String oldPropertyKey) {
+        this.oldPropertyKey = oldPropertyKey;
+    }
+
+    public void setNewPrefix(String newPrefix) {
+        this.newPrefix = newPrefix;
+    }
+
+    public void setExclusions(List<String> exclusions) {
+        this.exclusions = exclusions;
+    }
 
     @Override
     public String getDisplayName() {

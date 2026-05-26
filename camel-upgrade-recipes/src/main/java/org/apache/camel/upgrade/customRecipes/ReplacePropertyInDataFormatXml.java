@@ -16,26 +16,15 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Setter
 public class ReplacePropertyInDataFormatXml extends Recipe {
 
 
@@ -50,6 +39,27 @@ public class ReplacePropertyInDataFormatXml extends Recipe {
     @Option(example = "TODO Provide a usage example for the docs", displayName = "New prefix before any group",
             description = "The prefix to be replaced with.")
     String newPropertyKey;
+
+    public ReplacePropertyInDataFormatXml() {
+    }
+
+    public ReplacePropertyInDataFormatXml(String component, String oldPropertyKey, String newPropertyKey) {
+        this.component = component;
+        this.oldPropertyKey = oldPropertyKey;
+        this.newPropertyKey = newPropertyKey;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public void setOldPropertyKey(String oldPropertyKey) {
+        this.oldPropertyKey = oldPropertyKey;
+    }
+
+    public void setNewPropertyKey(String newPropertyKey) {
+        this.newPropertyKey = newPropertyKey;
+    }
 
     @Override
     public String getDisplayName() {
@@ -78,15 +88,9 @@ public class ReplacePropertyInDataFormatXml extends Recipe {
     }
 
     private Xml.Tag replacePropertyIfPossible(final Xml.Tag tag) {
-
-        List<Xml.Attribute> attributes = new ArrayList<>(tag.getAttributes());
-
-        Optional<Xml.Attribute> property = attributes.stream().filter(a -> oldPropertyKey.equals(a.getKey().getName())).findAny();
-        if(property.isPresent()) {
-            attributes.remove(property.get());
-            attributes.add(property.get().withKey(property.get().getKey().withName(newPropertyKey)));
-            return tag.withAttributes(attributes);
-        }
-        return tag;
+        return tag.withAttributes(ListUtils.map(tag.getAttributes(), attr ->
+                oldPropertyKey.equals(attr.getKey().getName())
+                        ? attr.withKey(attr.getKey().withName(newPropertyKey))
+                        : attr));
     }
 }

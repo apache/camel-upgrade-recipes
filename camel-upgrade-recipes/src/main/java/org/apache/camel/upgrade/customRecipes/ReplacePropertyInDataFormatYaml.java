@@ -16,22 +16,15 @@
  */
 package org.apache.camel.upgrade.customRecipes;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Setter
 public class ReplacePropertyInDataFormatYaml extends Recipe {
 
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Component",
@@ -45,6 +38,27 @@ public class ReplacePropertyInDataFormatYaml extends Recipe {
     @Option(example = "TODO Provide a usage example for the docs", displayName = "New prefix before any group",
             description = "The prefix to be replaced with.")
     String newPropertyKey;
+
+    public ReplacePropertyInDataFormatYaml() {
+    }
+
+    public ReplacePropertyInDataFormatYaml(String component, String oldPropertyKey, String newPropertyKey) {
+        this.component = component;
+        this.oldPropertyKey = oldPropertyKey;
+        this.newPropertyKey = newPropertyKey;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public void setOldPropertyKey(String oldPropertyKey) {
+        this.oldPropertyKey = oldPropertyKey;
+    }
+
+    public void setNewPropertyKey(String newPropertyKey) {
+        this.newPropertyKey = newPropertyKey;
+    }
 
 
     @Override
@@ -60,7 +74,7 @@ public class ReplacePropertyInDataFormatYaml extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
 
-        return new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
 
             @Override
             protected void clearLocalCache() {
@@ -87,7 +101,7 @@ public class ReplacePropertyInDataFormatYaml extends Recipe {
                 return e;
             }
 
-        };
+        });
     }
 
 }

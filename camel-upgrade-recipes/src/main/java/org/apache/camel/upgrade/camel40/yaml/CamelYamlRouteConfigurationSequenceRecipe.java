@@ -16,10 +16,10 @@
  */
 package org.apache.camel.upgrade.camel40.yaml;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
+import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.JsonPathMatcher;
@@ -37,8 +37,6 @@ import static org.openrewrite.Tree.randomId;
  * Camel API changes requires several changes in YAML route definition. Route-configuration children sequence is
  * replaced with mappingEntry (with special migration of "on-exception")
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
 
     @Override
@@ -54,7 +52,7 @@ public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
 
-        return new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
 
             private Yaml.Sequence sequenceToReplace;
             private boolean indentRegistered = false;
@@ -117,7 +115,7 @@ public class CamelYamlRouteConfigurationSequenceRecipe extends Recipe {
                 }
                 return e;
             }
-        };
+        });
     }
 
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel412;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -28,8 +26,6 @@ import org.openrewrite.java.tree.J;
 /**
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_12.html#_java_dsl">Java DSL</a>
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
 public class Java412Recipes extends Recipe {
 
     private static final String M_END_CHOICE = "org.apache.camel.model.ChoiceDefinition endChoice()";

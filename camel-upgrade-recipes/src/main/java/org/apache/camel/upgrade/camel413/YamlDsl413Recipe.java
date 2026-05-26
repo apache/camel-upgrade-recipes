@@ -16,19 +16,13 @@
  */
 package org.apache.camel.upgrade.camel413;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.marker.SearchResult;
-import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
-
-import java.util.Set;
 
 /**
  * <p>
@@ -36,22 +30,7 @@ import java.util.Set;
  * </p>
  * Kebab-case is changed to camelCase.
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class YamlDsl413Recipe extends Recipe {
-
-    // Root-level keys that identify a YAML document as Camel YAML DSL,
-    // so the rewrite does not touch unrelated YAML (Kubernetes, GitHub Actions, Helm, etc.).
-    private static final Set<String> CAMEL_DSL_ROOT_KEYS = Set.of(
-            "route", "routes", "from", "rest", "beans",
-            "route-configuration", "routeConfiguration",
-            "route-template", "routeTemplate",
-            "templated-route", "templatedRoute",
-            "rest-configuration", "restConfiguration",
-            "error-handler", "errorHandler",
-            "on-exception", "onException",
-            "intercept", "intercept-from", "interceptFrom",
-            "intercept-send-to-endpoint", "interceptSendToEndpoint");
 
     @Override
     public String getDisplayName() {
@@ -66,17 +45,7 @@ public class YamlDsl413Recipe extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
 
-        TreeVisitor<?, ExecutionContext> camelYamlDslCheck = new YamlIsoVisitor<ExecutionContext>() {
-            @Override
-            public Yaml.Document visitDocument(Yaml.Document document, ExecutionContext ctx) {
-                if (hasCamelRootKey(document.getBlock())) {
-                    return SearchResult.found(document);
-                }
-                return document;
-            }
-        };
-
-        return Preconditions.check(camelYamlDslCheck, new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
 
             @Override
             protected void clearLocalCache() {
@@ -106,19 +75,6 @@ public class YamlDsl413Recipe extends Recipe {
             }
 
         });
-    }
-
-    private static boolean hasCamelRootKey(Yaml.Block block) {
-        if (block instanceof Yaml.Mapping) {
-            return ((Yaml.Mapping) block).getEntries().stream()
-                    .anyMatch(entry -> CAMEL_DSL_ROOT_KEYS.contains(entry.getKey().getValue()));
-        }
-        if (block instanceof Yaml.Sequence) {
-            return ((Yaml.Sequence) block).getEntries().stream()
-                    .map(Yaml.Sequence.Entry::getBlock)
-                    .anyMatch(YamlDsl413Recipe::hasCamelRootKey);
-        }
-        return false;
     }
 
 }

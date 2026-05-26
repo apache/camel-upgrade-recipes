@@ -21,11 +21,11 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.Tree;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,18 +87,20 @@ public class XmlDslRecipe extends Recipe {
                     //if values are not empty, migrate tag
                     if (typeAttr.isPresent() && !typeAttr.get().getValueAsString().isEmpty() && beanTypeAttr.isPresent() &&
                             !beanTypeAttr.get().getValueAsString().isEmpty()) {
-                        // gather attributes
-                        List<Xml.Attribute> attrs = new ArrayList<>(t.getAttributes());
-                        attrs.remove(typeAttr.get());
-                        attrs.remove(beanTypeAttr.get());
-
-                        //migrate values
                         Xml.Attribute.Value tmp = typeAttr.get().getValue();
-                        attrs.add(typeAttr.get().withValue(beanTypeAttr.get().getValue()));
-                        attrs.add(beanTypeAttr.get()
-                                .withKey(new Xml.Ident(Tree.randomId(), "", Markers.EMPTY, "scriptLanguage")).withValue(tmp));
+                        Xml.Attribute newType = typeAttr.get().withValue(beanTypeAttr.get().getValue());
+                        Xml.Attribute newScriptLang = beanTypeAttr.get()
+                                .withKey(new Xml.Ident(Tree.randomId(), "", Markers.EMPTY, "scriptLanguage")).withValue(tmp);
 
-                        t = t.withAttributes(attrs);
+                        t = t.withAttributes(ListUtils.map(t.getAttributes(), attr -> {
+                            if (attr == typeAttr.get()) {
+                                return newType;
+                            }
+                            if (attr == beanTypeAttr.get()) {
+                                return newScriptLang;
+                            }
+                            return attr;
+                        }));
                     }
 
                 }

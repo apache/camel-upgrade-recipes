@@ -1,7 +1,5 @@
 package org.apache.camel.upgrade.camel416;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -21,8 +19,6 @@ import java.util.List;
 /**
  * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_16.html#_subscription_monitoring_api_changes">Java Milo Subscription API changes</a>
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
 public class Camel416MiloLambdaRecipe extends Recipe {
 
     private static final MethodMatcher MATCHER =

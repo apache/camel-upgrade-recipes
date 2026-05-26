@@ -16,9 +16,6 @@
  */
 package org.apache.camel.upgrade.customRecipes.internal;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -33,9 +30,6 @@ import java.util.regex.Pattern;
 /**
  * Transform component URIs in Java code using regexp with capturing groups.
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class ChangeJavaComponentUriRecipe extends Recipe {
 
     @Option(
@@ -51,6 +45,22 @@ public class ChangeJavaComponentUriRecipe extends Recipe {
         example = "pulsar:${2}://${3}/${5}/${6}"
     )
     public String replacement;
+
+    public ChangeJavaComponentUriRecipe() {
+    }
+
+    public ChangeJavaComponentUriRecipe(String uriPattern, String replacement) {
+        this.uriPattern = uriPattern;
+        this.replacement = replacement;
+    }
+
+    public void setUriPattern(String uriPattern) {
+        this.uriPattern = uriPattern;
+    }
+
+    public void setReplacement(String replacement) {
+        this.replacement = replacement;
+    }
 
     @Override
     public String getDisplayName() {

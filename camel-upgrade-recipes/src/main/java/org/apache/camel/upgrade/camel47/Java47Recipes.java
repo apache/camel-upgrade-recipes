@@ -16,8 +16,6 @@
  */
 package org.apache.camel.upgrade.camel47;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
@@ -34,8 +32,6 @@ import java.util.Optional;
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
  */
-@EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
 public class Java47Recipes extends Recipe {
 
     /**

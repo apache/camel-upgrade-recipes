@@ -16,10 +16,10 @@
  */
 package org.apache.camel.upgrade.camel419;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
+import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.JsonPathMatcher;
@@ -32,8 +32,6 @@ import org.openrewrite.yaml.tree.Yaml;
  * Changed model for configuring completion and compensation URIs in YAML DSL.
  * Flattens nested uri fields to direct attribute values.
  */
-@EqualsAndHashCode(callSuper = false)
-@Value
 public class YamlDsl419SagaRecipe extends Recipe {
 
     private static final JsonPathMatcher COMPENSATION_MATCHER = new JsonPathMatcher("$..saga.compensation");
@@ -52,7 +50,7 @@ public class YamlDsl419SagaRecipe extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
 
-        return new AbstractCamelYamlVisitor() {
+        return Preconditions.check(RecipesUtil.camelYamlDslPrecondition(), new AbstractCamelYamlVisitor() {
 
             @Override
             protected void clearLocalCache() {
@@ -82,6 +80,6 @@ public class YamlDsl419SagaRecipe extends Recipe {
 
                 return e;
             }
-        };
+        });
     }
 }
