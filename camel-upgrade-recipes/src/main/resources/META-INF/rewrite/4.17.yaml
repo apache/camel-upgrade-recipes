@@ -29,7 +29,11 @@ displayName: Migrates `camel 4.16` application to `camel 4.17`
 description: Migrates `camel 4.16` application to `camel 4.17`.
 recipeList:
   - org.openrewrite.java.ChangeMethodName:
-      methodPattern: "org.apache.camel.model.ProcessorDefinition#transform(..)"
+      methodPattern: "org.apache.camel.model.ProcessorDefinition transform(org.apache.camel.spi.DataType)"
+      newMethodName: "transformDataType"
+      matchOverrides: true
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: "org.apache.camel.model.ProcessorDefinition transform(org.apache.camel.spi.DataType, org.apache.camel.spi.DataType)"
       newMethodName: "transformDataType"
       matchOverrides: true
   - org.apache.camel.upgrade.camel417.YamlTransform417Recipe

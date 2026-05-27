@@ -110,6 +110,28 @@ public class CamelUpdate417Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_core">Camel-core transform EIP</a>
      */
     @Test
+    void transformEipNotDataType() {
+        //language=java
+        rewriteRun(java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class TransformRoute extends RouteBuilder {
+
+                    @Override
+                    public void configure() {
+                        from("direct:start")
+                            .transform(constant("Hello World"))
+                            .to("mock:result");
+                    }
+                }
+                """));
+    }
+
+    /**
+     * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_17.html#_camel_core">Camel-core transform EIP</a>
+     */
+    @Test
     void transformEip() {
         //language=java
         rewriteRun(java(
