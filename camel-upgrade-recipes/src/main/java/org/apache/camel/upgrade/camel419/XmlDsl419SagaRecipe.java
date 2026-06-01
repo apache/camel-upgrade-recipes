@@ -24,7 +24,6 @@ import org.openrewrite.internal.ListUtils;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -97,7 +96,7 @@ public class XmlDsl419SagaRecipe extends Recipe {
                 t = t.withContent(ListUtils.flatMap(t.getContent(), content ->
                         content instanceof Xml.Tag && elementName.equals(((Xml.Tag) content).getName()) ? null : content));
 
-                t = t.withAttributes(ListUtils.concat(t.getAttributes(), new Xml.Attribute(
+                return t.withAttributes(ListUtils.concat(t.getAttributes(), new Xml.Attribute(
                         org.openrewrite.Tree.randomId(),
                         " ",
                         org.openrewrite.marker.Markers.EMPTY,
@@ -111,8 +110,6 @@ public class XmlDsl419SagaRecipe extends Recipe {
                                 uri
                         )
                 )));
-
-                return t;
             }
         };
     }

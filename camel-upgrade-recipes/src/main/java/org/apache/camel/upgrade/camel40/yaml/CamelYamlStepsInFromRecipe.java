@@ -30,8 +30,6 @@ import org.openrewrite.yaml.format.IndentsVisitor;
 import org.openrewrite.yaml.style.IndentsStyle;
 import org.openrewrite.yaml.tree.Yaml;
 
-import java.util.List;
-
 /**
  * Fixes following yaml change.
  *
@@ -58,8 +56,6 @@ import java.util.List;
  * </pre>
  */
 public class CamelYamlStepsInFromRecipe extends Recipe {
-
-    private static final String[] PATHS_TO_PRE_CHECK = new String[] { "route.from" };
     private static final JsonPathMatcher MATCHER_WITHOUT_ROUTE = new JsonPathMatcher("$.steps");
     private static final JsonPathMatcher MATCHER_WITH_ROUTE = new JsonPathMatcher("$.route.steps");
 

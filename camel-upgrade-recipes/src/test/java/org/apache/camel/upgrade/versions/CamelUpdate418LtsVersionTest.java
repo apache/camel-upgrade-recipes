@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel410lts;
+package org.apache.camel.upgrade.versions;
 
 import org.apache.camel.upgrade.AbstractCamelUpdateVersionTest;
 import org.apache.camel.upgrade.CamelTestUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 //class has to stay public, because test is extended in project quarkus-updates
-@EnabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = "org.apache.camel.upgrade.Camel410LTSMigrationRecipe")
-public class CamelUpdate410LtsVersionTest extends AbstractCamelUpdateVersionTest {
+@Disabled //until 4.18.3 is released
+@EnabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = "org.apache.camel.upgrade.Camel418LTSMigrationRecipe")
+public class CamelUpdate418LtsVersionTest extends AbstractCamelUpdateVersionTest {
 
 
     @Override
     protected String targetVersion() {
-        return CamelTestUtil.getCamel410LtsVersion();
+        return CamelTestUtil.getCamel418LtsVersion();
     }
 }

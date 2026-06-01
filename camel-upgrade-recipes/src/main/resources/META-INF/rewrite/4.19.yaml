@@ -28,12 +28,11 @@ name: org.apache.camel.upgrade.camel419.CamelMigrationRecipe
 displayName: Migrates `camel 4.18` application to `camel 4.19`
 description: Migrates `camel 4.18` application to `camel 4.19`.
 recipeList:
+  - org.apache.camel.upgrade.camel418_1.saga
+  - org.apache.camel.upgrade.camel418_1.routePolicy
   - org.apache.camel.upgrade.camel419.removedComponents
   - org.apache.camel.upgrade.camel419.migrateGroovyXml
-  - org.apache.camel.upgrade.camel419.XmlDsl419SagaRecipe
-  - org.apache.camel.upgrade.camel419.YamlDsl419SagaRecipe
   - org.apache.camel.upgrade.camel419.Pom419TestInfraRecipe
-  - org.apache.camel.upgrade.camel419.YamlDsl419RoutePolicyRecipe
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel419.removedComponents

@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade.springboot;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -33,29 +34,7 @@ class UpgradeSpringBoot3To4Test implements RewriteTest {
                 .activateRecipes("org.apache.camel.upgrade.spring.UpgradeSpringBoot3To4"));
     }
 
-    @Test
-    void javaVersionNotDowngraded() {
-        rewriteRun(
-            //language=xml
-            pomXml(
-                """
-                    <project>
-                        <modelVersion>4.0.0</modelVersion>
-                        <groupId>com.example</groupId>
-                        <artifactId>test</artifactId>
-                        <version>1.0.0</version>
-                        <properties>
-                            <java.version>21</java.version>
-                            <maven.compiler.source>21</maven.compiler.source>
-                            <maven.compiler.target>21</maven.compiler.target>
-                            <maven.compiler.release>21</maven.compiler.release>
-                        </properties>
-                    </project>
-                    """
-            )
-        );
-    }
-
+    @DocumentExample
     @Test
     void javaVersionUpgradedFromOlder() {
         rewriteRun(
@@ -80,6 +59,29 @@ class UpgradeSpringBoot3To4Test implements RewriteTest {
                         <version>1.0.0</version>
                         <properties>
                             <java.version>17</java.version>
+                        </properties>
+                    </project>
+                    """
+            )
+        );
+    }
+
+    @Test
+    void javaVersionNotDowngraded() {
+        rewriteRun(
+            //language=xml
+            pomXml(
+                """
+                    <project>
+                        <modelVersion>4.0.0</modelVersion>
+                        <groupId>com.example</groupId>
+                        <artifactId>test</artifactId>
+                        <version>1.0.0</version>
+                        <properties>
+                            <java.version>21</java.version>
+                            <maven.compiler.source>21</maven.compiler.source>
+                            <maven.compiler.target>21</maven.compiler.target>
+                            <maven.compiler.release>21</maven.compiler.release>
                         </properties>
                     </project>
                     """

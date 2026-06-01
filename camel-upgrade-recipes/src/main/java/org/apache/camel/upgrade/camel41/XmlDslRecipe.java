@@ -26,7 +26,6 @@ import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.XPathMatcher;
 import org.openrewrite.xml.tree.Xml;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
