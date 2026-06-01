@@ -1,0 +1,577 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.upgrade;
+
+import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
+import org.openrewrite.test.RecipeSpec;
+import org.openrewrite.test.RewriteTest;
+import org.openrewrite.test.TypeValidation;
+
+import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.java.Assertions.mavenProject;
+import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
+
+/**
+ * Tests for migrating from Camel 4.18.1 to 4.18.3.
+ * Most changes are header renames that were introduced in 4.18.x and reused from 4.21 recipes.
+ */
+public class CamelUpdate418_3Test implements RewriteTest {
+
+    @Override
+    public void defaults(RecipeSpec spec) {
+        CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_18_3)
+                .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_18_1, "camel-api",
+                        "camel-core-model", "camel-support"))
+                .typeValidationOptions(TypeValidation.none());
+    }
+
+    @Test
+    void testLuceneHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-lucene",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-lucene", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        // QUERY is too generic, not migrated to prevent false positives
+                                        exchange.getIn().setHeader("QUERY", "lucene query");
+                                        // Only Lucene-specific headers are migrated
+                                        exchange.getIn().setHeader("RETURN_LUCENE_DOCS", true);
+                                    })
+                                    .to("lucene:insert");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        // QUERY is too generic, not migrated to prevent false positives
+                                        exchange.getIn().setHeader("QUERY", "lucene query");
+                                        // Only Lucene-specific headers are migrated
+                                        exchange.getIn().setHeader("CamelLuceneReturnLuceneDocs", true);
+                                    })
+                                    .to("lucene:insert");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testJGroupsHeadersMigration() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-jgroups",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-jgroups", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("JGROUPS_CHANNEL_ADDRESS", "addr1");
+                                        exchange.getIn().setHeader("JGROUPS_DEST", "destination");
+                                    })
+                                    .to("jgroups:clusterName");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelJGroupsChannelAddress", "addr1");
+                                        exchange.getIn().setHeader("CamelJGroupsDest", "destination");
+                                    })
+                                    .to("jgroups:clusterName");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testJiraHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-jira",
+                        pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <repositories>
+                                <repository>
+                                    <id>atlassian</id>
+                                    <url>https://packages.atlassian.com/artifactory/maven-atlassian-all/</url>
+                                    <name>atlassian external repo</name>
+                                    <snapshots>
+                                        <enabled>false</enabled>
+                                    </snapshots>
+                                    <releases>
+                                        <enabled>true</enabled>
+                                    </releases>
+                                </repository>
+                            </repositories>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-jira</artifactId>
+                                    <version>4.18.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """
+                        ),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("IssueKey", "CAMEL-12345");
+                                        exchange.getIn().setHeader("IssueSummary", "Bug fix");
+                                        exchange.getIn().setHeader("ProjectKey", "CAMEL");
+                                        exchange.getIn().setHeader("linkType", "Relates");
+                                        exchange.getIn().setHeader("minutesSpent", 30);
+                                    })
+                                    .to("jira:addIssue");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelJiraIssueKey", "CAMEL-12345");
+                                        exchange.getIn().setHeader("CamelJiraIssueSummary", "Bug fix");
+                                        exchange.getIn().setHeader("CamelJiraIssueProjectKey", "CAMEL");
+                                        exchange.getIn().setHeader("CamelJiraLinkType", "Relates");
+                                        exchange.getIn().setHeader("CamelJiraMinutesSpent", 30);
+                                    })
+                                    .to("jira:addIssue");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testJGroupsRaftHeadersMigration() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-jgroups-raft",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-jgroups-raft", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("JGROUPSRAFT_SET_OFFSET", 10);
+                                        exchange.getIn().setHeader("JGROUPSRAFT_SET_TIMEOUT", 5000);
+                                    })
+                                    .to("jgroups-raft:cluster");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelJGroupsRaftSetOffset", 10);
+                                        exchange.getIn().setHeader("CamelJGroupsRaftSetTimeout", 5000);
+                                    })
+                                    .to("jgroups-raft:cluster");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testShiroHeadersMigration() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-shiro",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-shiro", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("SHIRO_SECURITY_USERNAME", "admin");
+                                        exchange.getIn().setHeader("SHIRO_SECURITY_PASSWORD", "secret");
+                                    })
+                                    .to("shiro:login");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelShiroSecurityUsername", "admin");
+                                        exchange.getIn().setHeader("CamelShiroSecurityPassword", "secret");
+                                    })
+                                    .to("shiro:login");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testSolrHeadersMigration() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-solr",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-solr", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("SolrField.id", "doc123");
+                                        exchange.getIn().setHeader("SolrField.name", "Test Document");
+                                        exchange.getIn().setHeader("SolrParam.commit", true);
+                                        exchange.getIn().setHeader("SolrParam.commitWithin", 1000);
+                                    })
+                                    .to("solr:http://localhost:8983/solr");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelSolrField.id", "doc123");
+                                        exchange.getIn().setHeader("CamelSolrField.name", "Test Document");
+                                        exchange.getIn().setHeader("CamelSolrParam.commit", true);
+                                        exchange.getIn().setHeader("CamelSolrParam.commitWithin", 1000);
+                                    })
+                                    .to("solr:http://localhost:8983/solr");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testGitHub2HeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-github",
+                        pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-github2</artifactId>
+                                    <version>4.18.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """
+                        ),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("GitHubIssueTitle", "Bug Report");
+                                    })
+                                    .to("github2:pullRequests");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelGitHubIssueTitle", "Bug Report");
+                                    })
+                                    .to("github2:pullRequests");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testGoogleCloudHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-google-cloud",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-google-functions", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("GoogleCloudFunctionsOperation", "createFunction");
+                                    })
+                                    .to("google-functions:project");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelGoogleCloudFunctionsOperation", "createFunction");
+                                    })
+                                    .to("google-functions:project");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testMongoDbGridFsHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-mongodb",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-mongodb-gridfs", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("gridfs.operation", "create");
+                                    })
+                                    .to("mongodb-gridfs:mydb");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.Exchange;
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class Test extends RouteBuilder {
+                            public void configure() {
+                                from("direct:start")
+                                    .process(exchange -> {
+                                        exchange.getIn().setHeader("CamelGridFsOperation", "create");
+                                    })
+                                    .to("mongodb-gridfs:mydb");
+                            }
+                        }
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    void testOpenstackHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-openstack",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-openstack", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                // Generic *Id headers not migrated to prevent false positives
+                                                exchange.getIn().setHeader("domainId", "default");
+                                                exchange.getIn().setHeader("networkId", "net-123");
+                                                // Only OpenStack-specific headers with clear context are migrated
+                                                exchange.getIn().setHeader("FlavorId", "m1.small");
+                                                exchange.getIn().setHeader("RAM", 2048);
+                                                exchange.getIn().setHeader("adminStateUp", true);
+                                            })
+                                            .to("openstack-nova://host");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                // Generic *Id headers not migrated to prevent false positives
+                                                exchange.getIn().setHeader("domainId", "default");
+                                                exchange.getIn().setHeader("networkId", "net-123");
+                                                // Only OpenStack-specific headers with clear context are migrated
+                                                exchange.getIn().setHeader("CamelOpenstackNovaFlavorId", "m1.small");
+                                                exchange.getIn().setHeader("CamelOpenstackNovaRam", 2048);
+                                                exchange.getIn().setHeader("CamelOpenstackNeutronAdminStateUp", true);
+                                            })
+                                            .to("openstack-nova://host");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testWeb3jHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-web3j",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-web3j", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("FROM_ADDRESS", "0x123");
+                                                exchange.getIn().setHeader("TO_ADDRESS", "0x456");
+                                                exchange.getIn().setHeader("AT_BLOCK", "latest");
+                                            })
+                                            .to("web3j://http://localhost:8545");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("CamelWeb3jFromAddress", "0x123");
+                                                exchange.getIn().setHeader("CamelWeb3jToAddress", "0x456");
+                                                exchange.getIn().setHeader("CamelWeb3jAtBlock", "latest");
+                                            })
+                                            .to("web3j://http://localhost:8545");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+
+}

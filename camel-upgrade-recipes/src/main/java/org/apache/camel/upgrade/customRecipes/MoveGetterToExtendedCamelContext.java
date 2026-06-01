@@ -25,19 +25,10 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.tree.J;
 
-import java.util.regex.Pattern;
-
 /**
  * Replaces prefix with the new one and changes the suffix tp start with lower case
  */
 public class MoveGetterToExtendedCamelContext extends Recipe {
-
-    private static final String MATCHER_GET_NAME_RESOLVER = "org.apache.camel.ExtendedCamelContext getComponentNameResolver()";
-    private static final String MATCHER_GET_MODEL_JAXB_CONTEXT_FACTORY
-            = "org.apache.camel.ExtendedCamelContext getModelJAXBContextFactory()";
-    private static final String MATCHER_GET_MODEL_TO_XML_DUMPER = "org.apache.camel.ExtendedCamelContext getModelToXMLDumper()";
-    private static final Pattern ABSTRACT_CONTEXT_TYPE = Pattern.compile("org.apache.camel.impl.engine.AbstractCamelContext");
-    private static final String MATCHER_CONTEXT_GET_EXT = "org.apache.camel.CamelContext getExtension(java.lang.Class)";
 
     @Option(example = "TODO Provide a usage example for the docs", displayName = "Method name",
             description = "Name of the method on external camel context.")

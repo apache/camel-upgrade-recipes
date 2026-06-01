@@ -1,0 +1,254 @@
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInJavaMethod
+examples:
+- description: ''
+  parameters:
+  - kafka.TOPIC
+  - CamelKafkaTopic
+  sources:
+  - before: |
+      import org.apache.camel.Exchange;
+
+      class Test {
+          void configure(Exchange exchange) {
+              exchange.getIn().setHeader("kafka.TOPIC", "my-topic");
+          }
+      }
+    after: |
+      import org.apache.camel.Exchange;
+
+      class Test {
+          void configure(Exchange exchange) {
+              exchange.getIn().setHeader("CamelKafkaTopic", "my-topic");
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInSimpleExpression
+examples:
+- description: ''
+  parameters:
+  - kafka.TOPIC
+  - CamelKafkaTopic
+  sources:
+  - before: |
+      import org.apache.camel.builder.RouteBuilder;
+
+      class Test extends RouteBuilder {
+          public void configure() {
+              from("direct:start")
+                  .setBody(simple("${header.kafka.TOPIC}"));
+          }
+      }
+    after: |
+      import org.apache.camel.builder.RouteBuilder;
+
+      class Test extends RouteBuilder {
+          public void configure() {
+              from("direct:start")
+                  .setBody(simple("${header.CamelKafkaTopic}"));
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInXmlDsl
+examples:
+- description: ''
+  parameters:
+  - kafka.TOPIC
+  - CamelKafkaTopic
+  sources:
+  - before: |
+      <route xmlns="http://camel.apache.org/schema/spring">
+          <from uri="direct:start"/>
+          <setHeader name="kafka.TOPIC">
+              <constant>my-topic</constant>
+          </setHeader>
+      </route>
+    after: |
+      <route xmlns="http://camel.apache.org/schema/spring">
+          <from uri="direct:start"/>
+          <setHeader name="CamelKafkaTopic">
+              <constant>my-topic</constant>
+          </setHeader>
+      </route>
+    language: xml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInYamlDsl
+examples:
+- description: ''
+  parameters:
+  - kafka.TOPIC
+  - CamelKafkaTopic
+  sources:
+  - before: |
+      - route:
+          from:
+            uri: "direct:start"
+          steps:
+            - setHeader:
+                name: kafka.TOPIC
+                constant: my-topic
+    after: |
+      - route:
+          from:
+            uri: "direct:start"
+          steps:
+            - setHeader:
+                name: CamelKafkaTopic
+                constant: my-topic
+    language: yaml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInJavaMethod
+examples:
+- description: ''
+  parameters:
+  - SolrField.
+  - CamelSolrField.
+  sources:
+  - before: |
+      import org.apache.camel.Exchange;
+
+      class Test {
+          void configure(Exchange exchange) {
+              exchange.getIn().setHeader("SolrField.id", "doc123");
+              exchange.getIn().setHeader("SolrField.name", "Test Document");
+          }
+      }
+    after: |
+      import org.apache.camel.Exchange;
+
+      class Test {
+          void configure(Exchange exchange) {
+              exchange.getIn().setHeader("CamelSolrField.id", "doc123");
+              exchange.getIn().setHeader("CamelSolrField.name", "Test Document");
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInSimpleExpression
+examples:
+- description: ''
+  parameters:
+  - SolrField.
+  - CamelSolrField.
+  sources:
+  - before: |
+      import org.apache.camel.builder.RouteBuilder;
+
+      class Test extends RouteBuilder {
+          public void configure() {
+              from("direct:start")
+                  .setBody(simple("${header.SolrField.id}"));
+          }
+      }
+    after: |
+      import org.apache.camel.builder.RouteBuilder;
+
+      class Test extends RouteBuilder {
+          public void configure() {
+              from("direct:start")
+                  .setBody(simple("${header.CamelSolrField.id}"));
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInXmlDsl
+examples:
+- description: ''
+  parameters:
+  - SolrField.
+  - CamelSolrField.
+  sources:
+  - before: |
+      <route xmlns="http://camel.apache.org/schema/spring">
+          <from uri="direct:start"/>
+          <setHeader name="SolrField.id">
+              <constant>doc123</constant>
+          </setHeader>
+      </route>
+    after: |
+      <route xmlns="http://camel.apache.org/schema/spring">
+          <from uri="direct:start"/>
+          <setHeader name="CamelSolrField.id">
+              <constant>doc123</constant>
+          </setHeader>
+      </route>
+    language: xml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInYamlDsl
+examples:
+- description: ''
+  parameters:
+  - SolrField.
+  - CamelSolrField.
+  sources:
+  - before: |
+      - route:
+          from:
+            uri: "direct:start"
+          steps:
+            - setHeader:
+                name: SolrField.id
+                constant: doc123
+    after: |
+      - route:
+          from:
+            uri: "direct:start"
+          steps:
+            - setHeader:
+                name: CamelSolrField.id
+                constant: doc123
+    language: yaml
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.camel421.RenameHeaders
+examples:
+- description: ''
+  parameters:
+  - |-
+    Map.of(
+                        "kafka.TOPIC", "CamelKafkaTopic",
+                        "kafka.PARTITION", "CamelKafkaPartition",
+                        "kafka.KEY", "CamelKafkaKey"
+                    )
+  sources:
+  - before: |
+      import org.apache.camel.Exchange;
+      import org.apache.camel.builder.RouteBuilder;
+
+      class Test extends RouteBuilder {
+          public void configure() {
+              from("direct:start")
+                  .process(exchange -> {
+                      exchange.getIn().setHeader("kafka.TOPIC", "topic1");
+                      exchange.getIn().setHeader("kafka.PARTITION", "0");
+                      exchange.getIn().setHeader("kafka.KEY", "key1");
+                  })
+                  .setBody(simple("Topic: ${header.kafka.TOPIC}, Partition: ${header.kafka.PARTITION}"));
+          }
+      }
+    after: |
+      import org.apache.camel.Exchange;
+      import org.apache.camel.builder.RouteBuilder;
+
+      class Test extends RouteBuilder {
+          public void configure() {
+              from("direct:start")
+                  .process(exchange -> {
+                      exchange.getIn().setHeader("CamelKafkaTopic", "topic1");
+                      exchange.getIn().setHeader("CamelKafkaPartition", "0");
+                      exchange.getIn().setHeader("CamelKafkaKey", "key1");
+                  })
+                  .setBody(simple("Topic: ${header.CamelKafkaTopic}, Partition: ${header.CamelKafkaPartition}"));
+          }
+      }
+    language: java

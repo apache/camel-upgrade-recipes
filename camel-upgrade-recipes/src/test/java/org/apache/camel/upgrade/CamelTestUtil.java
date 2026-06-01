@@ -55,8 +55,11 @@ public class CamelTestUtil {
         v4_16(4, 16, 0),
         v4_17(4, 17, 0),
         v4_18(4, 18, 0),
+        v4_18_1(4, 18, 1, true),
+        v4_18_3(4, 18, 3, true),
         v4_19(4, 19, 0),
-        v4_20(4, 20, 0);
+        v4_20(4, 20, 0),
+        v4_21(4, 21, 0);
 
         private int major;
         private int minor;
@@ -100,11 +103,17 @@ public class CamelTestUtil {
     }
 
     public static RecipeSpec recipe(RecipeSpec spec, CamelVersion to, String... activeRecipes) {
+        return recipe(spec, to, false, activeRecipes);
+    }
+    public static RecipeSpec recipe(RecipeSpec spec, CamelVersion to, boolean useAllRecipes, String... activeRecipes) {
         String useRecipe = System.getProperty(CamelTestUtil.PROPERTY_USE_RECIPE);
         if (useRecipe != null && !useRecipe.isEmpty()) {
             return spec.recipeFromResources(useRecipe);
         }
         if (activeRecipes == null || activeRecipes.length == 0) {
+            if (useAllRecipes) {
+                return spec.recipeFromResources(to.getRecipe());
+            }
             return spec.recipeFromResource(to.getYamlFile(), to.getRecipe());
         }
         return spec.recipeFromResource(to.getYamlFile(), activeRecipes);
@@ -153,6 +162,10 @@ public class CamelTestUtil {
         return getString(
                 "camel4.10.lts.version", "Could not determine 4.10 lts version from properties file.");
     }
+    public static String getCamel418LtsVersion() {
+        return getString(
+                "camel4.18.lts.version", "Could not determine 4.18 lts version from properties file.");
+    }
 
 
     /**
@@ -176,6 +189,34 @@ public class CamelTestUtil {
 
         // Ultimate fallback
         return "";
+    }
+
+    /**
+     * Helper method to create a minimal pom.xml with a Camel component dependency.
+     * This is required for the ModuleHasDependency precondition to work in tests.
+     *
+     * @param artifactId the Camel component artifact ID (e.g., "camel-kafka")
+     * @param version the Camel version to use for the dependency
+     * @return a minimal pom.xml string with the specified dependency
+     */
+    public static String pomXmlWithDependency(String artifactId, CamelVersion version) {
+        return """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                    <properties>                                                                                     \s
+                        <maven.compiler.release>17</maven.compiler.release>                                          \s
+                    </properties>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>%s</artifactId>
+                            <version>%s</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """.formatted(artifactId, version.getVersion());
     }
 
 }

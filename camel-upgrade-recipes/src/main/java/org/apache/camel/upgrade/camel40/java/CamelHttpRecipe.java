@@ -28,9 +28,6 @@ import org.openrewrite.java.tree.J;
 
 public class CamelHttpRecipe extends Recipe {
 
-    private static final String SET_CREDENTIALS = "org.apache.http.impl.client.BasicCredentialsProvider setCredentials(..)";
-    private static final String SCOPE_ANY = "AuthScope.ANY";
-
     @Override
     public String getDisplayName() {
         return "Camel Http Extension changes";

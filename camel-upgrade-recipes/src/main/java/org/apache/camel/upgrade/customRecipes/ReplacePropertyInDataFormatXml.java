@@ -89,8 +89,8 @@ public class ReplacePropertyInDataFormatXml extends Recipe {
 
     private Xml.Tag replacePropertyIfPossible(final Xml.Tag tag) {
         return tag.withAttributes(ListUtils.map(tag.getAttributes(), attr ->
-                oldPropertyKey.equals(attr.getKey().getName())
-                        ? attr.withKey(attr.getKey().withName(newPropertyKey))
-                        : attr));
+                oldPropertyKey.equals(attr.getKey().getName()) ?
+                        attr.withKey(attr.getKey().withName(newPropertyKey)) :
+                        attr));
     }
 }

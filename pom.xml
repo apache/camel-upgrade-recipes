@@ -106,9 +106,10 @@
         <camel4.18-version>4.18.0</camel4.18-version>
 
         <camel4.10-lts-version>4.10.6</camel4.10-lts-version>
+        <camel4.18-lts-version>4.18.3</camel4.18-lts-version>
 
         <!-- versions for latest recipes, has to be kept aligned to the latest camel release -->
-        <camel-latest-version>4.20.0</camel-latest-version>
+        <camel-latest-version>4.21.0</camel-latest-version>
 
         <camel-version>${project.version}</camel-version>
         <camel-spring-boot-version>${project.version}</camel-spring-boot-version>

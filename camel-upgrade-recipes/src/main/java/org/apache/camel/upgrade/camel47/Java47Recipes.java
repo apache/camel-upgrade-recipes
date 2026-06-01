@@ -48,8 +48,6 @@ public class Java47Recipes extends Recipe {
             this.c = c;
         }
     }
-
-    private static final String MATCHER_GET_HEADER = "org.apache.camel.Message getHeader(java.lang.String, java.lang.Class)";
     private static final String MATCHER_GET_IN = "org.apache.camel.Exchange getIn()";
     private static final List<Triple> HEADERS_MAP = Arrays.asList(
             new Triple("org.apache.camel.Message getHeader(java.lang.String, java.lang.Class)", "Exchange.HTTP_SERVLET_REQUEST", "#{any(org.apache.camel.Exchange)}.getMessage(HttpMessage.class).getRequest()"),

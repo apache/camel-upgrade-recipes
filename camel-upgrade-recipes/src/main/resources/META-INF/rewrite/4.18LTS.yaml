@@ -16,13 +16,12 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.CamelMigrationRecipe
-displayName: Migrate to @camel-latest-version@
-description: Migrates Apache Camel application to @camel-latest-version@.
+name: org.apache.camel.upgrade.Camel418LTSMigrationRecipe
+displayName: Migrate to Camel 4.18LTS
+description: Migrates Apache Camel application to 4.18 LTS. This recipe aggregates all migration steps from 4.0 to 4.18.3.
 recipeList:
-  - org.apache.camel.upgrade.camel421.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel420.CamelMigrationRecipe
-  - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel418_3.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel418_1.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel418.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel417.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel416.CamelMigrationRecipe
@@ -44,15 +43,15 @@ recipeList:
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'
-      newVersion: @camel-latest-version@
+      newVersion: @camel4.18-lts-version@
   - org.openrewrite.maven.UpgradePluginVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'
-      newVersion: @camel-latest-version@
+      newVersion: @camel4.18-lts-version@
   - org.openrewrite.maven.UpgradeParentVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'
-      newVersion: @camel-latest-version@
+      newVersion: @camel4.18-lts-version@
   - org.openrewrite.maven.ChangePropertyValue:
       key: camel.version
-      newValue: @camel-latest-version@
+      newValue: @camel4.18-lts-version@
