@@ -21,7 +21,7 @@ displayName: Migrate to Apache Camel Spring Boot @camel-latest-version@
 description: >- 
   Migrate applications to Apache Camel Spring Boot @camel-latest-version@ and Spring Boot @spring-boot-version@
 recipeList:
-  - org.apache.camel.upgrade.camel420.CamelSpringBootMigrationRecipe
+  - org.apache.camel.upgrade.camel421.CamelSpringBootMigrationRecipe
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'

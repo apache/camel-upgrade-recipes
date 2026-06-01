@@ -56,7 +56,8 @@ public class CamelTestUtil {
         v4_17(4, 17, 0),
         v4_18(4, 18, 0),
         v4_19(4, 19, 0),
-        v4_20(4, 20, 0);
+        v4_20(4, 20, 0),
+        v4_21(4, 21, 0);
 
         private int major;
         private int minor;
@@ -176,6 +177,34 @@ public class CamelTestUtil {
 
         // Ultimate fallback
         return "";
+    }
+
+    /**
+     * Helper method to create a minimal pom.xml with a Camel component dependency.
+     * This is required for the ModuleHasDependency precondition to work in tests.
+     *
+     * @param artifactId the Camel component artifact ID (e.g., "camel-kafka")
+     * @param version the Camel version to use for the dependency
+     * @return a minimal pom.xml string with the specified dependency
+     */
+    public static String pomXmlWithDependency(String artifactId, CamelVersion version) {
+        return """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                    <properties>                                                                                     \s
+                        <maven.compiler.release>17</maven.compiler.release>                                          \s
+                    </properties>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>%s</artifactId>
+                            <version>%s</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """.formatted(artifactId, version.getVersion());
     }
 
 }
