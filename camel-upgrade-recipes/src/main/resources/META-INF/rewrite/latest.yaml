@@ -23,6 +23,7 @@ recipeList:
   - org.apache.camel.upgrade.camel421.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel420.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel418_3.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel418.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel417.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel416.CamelMigrationRecipe

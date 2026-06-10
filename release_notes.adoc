@@ -25,7 +25,7 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#virtual-threads[Virtual Threads maxQueueSize Honored] | ❌ None | Runtime behavior change
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#new-block-rejected-policy[New Block Rejected Policy] | ❌ None | New feature
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#java-serialization[Java Serialization Type Converters Removed] | ❌ None | Removal without replacement
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#reifierstrategy[ReifierStrategy SPI Removed] | ⚠️ TODO-full | Needs removal recipe for `org.apache.camel.spi.ReifierStrategy`
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#reifierstrategy[ReifierStrategy SPI Removed] | ✅ Full | Import removal automated for `org.apache.camel.spi.ReifierStrategy`
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#namednode-getchildren-method[NamedNode.getChildren() Method] | ❌ None | New method (additive)
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#namednode-level[NamedNode Level Calculation Changed] | ❌ None | Runtime behavior change
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jbang[camel-jbang] | ❌ None | CLI runtime behavior
@@ -35,15 +35,15 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jms[camel-jms ObjectMessage Disabled by Default] | ❌ None | Security change, manual configuration required
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-sjms-camel-sjms2[camel-sjms/sjms2 ObjectMessage Disabled] | ❌ None | Security change, manual configuration required
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-hazelcast[camel-hazelcast Default Serialization Filter] | ❌ None | Runtime security enhancement
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-stomp-removal[camel-stomp Removed] | ⚠️ TODO-full | Needs `RemoveDependency` for `org.apache.camel:camel-stomp`
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-aws-xray-removal[camel-aws-xray Removed] | ⚠️ TODO-full | Needs `RemoveDependency` for `org.apache.camel:camel-aws-xray`
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-guava-eventbus-removal[camel-guava-eventbus Removed] | ⚠️ TODO-full | Needs `RemoveDependency` for `org.apache.camel:camel-guava-eventbus`
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-grape-removal[camel-grape Removed] | ⚠️ TODO-full | Needs `RemoveDependency` for `org.apache.camel:camel-grape`
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-elytron-removal[camel-elytron Removed] | ⚠️ TODO-full | Needs `RemoveDependency` for `org.apache.camel:camel-elytron`
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-stomp-removal[camel-stomp Removed] | ✅ Full | Automated removal of `org.apache.camel:camel-stomp` dependency
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-aws-xray-removal[camel-aws-xray Removed] | ✅ Full | Automated removal of `org.apache.camel:camel-aws-xray` dependency
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-guava-eventbus-removal[camel-guava-eventbus Removed] | ✅ Full | Automated removal of `org.apache.camel:camel-guava-eventbus` dependency
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-grape-removal[camel-grape Removed] | ✅ Full | Automated removal of `org.apache.camel:camel-grape` dependency
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-elytron-removal[camel-elytron Removed] | ✅ Full | Automated removal of `org.apache.camel:camel-elytron` dependency
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-github-removal[camel-github → camel-github2] | ⚠️ TODO-full | Needs dependency change, type changes, and URI changes
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-telemetry[camel-telemetry Processor Span Changes] | ❌ None | Interface signature changed
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-opentelemetry2[camel-opentelemetry2 Scope Management] | ❌ None | Internal implementation change
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-djl[camel-djl Word Embedding Removed] | ⚠️ TODO-partial | Needs removal of `ZooWordEmbeddingPredictor`
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-djl[camel-djl Word Embedding Removed] | ✅ Full | Import removal automated for `ZooWordEmbeddingPredictor`
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-aws-bedrock[camel-aws-bedrock Guardrail Header] | ❌ None | New optional feature
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jgroups-potential-breaking-change[camel-jgroups Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-elasticsearch-rest-client[camel-elasticsearch-rest-client Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
@@ -67,7 +67,14 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-platform-http-main[camel-platform-http-main JWT Validation] | ❌ None | New optional feature
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-test[camel-test Port Extension] | ❌ None | Behavior change
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-mongodb-gridfs[camel-mongodb-gridfs Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jooq-dbcp[camel-jooq DBCP Dependency] | ⚠️ TODO-full | Needs `ChangeDependency`: `commons-dbcp:commons-dbcp` → `org.apache.commons:commons-dbcp2`
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-lucene[camel-lucene Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`qUERY()` → `luceneQuery()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-pdf-potential-breaking-change[camel-pdf Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-arangodb-potential-breaking-change[camel-arangodb Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`key()` → `arangoDbKey()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jt400-potential-breaking-change[camel-jt400 Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`kEY()` → `jt400Key()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-mail-2[camel-mail Consumer Dispatch Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-milo-potential-breaking-change[camel-milo Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`await()` → `miloAwait()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-elasticsearch-camel-opensearch-potential-breaking-change[camel-elasticsearch/opensearch Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`operation()` → `elasticsearchOperation()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jooq-dbcp[camel-jooq DBCP Dependency] | ❌ None | Dependency was test-only, removed from camel-jooq. Users should add commons-dbcp2 if needed. Not automated as version mapping is complex.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#deprecation-of-camel-ironmq[camel-ironmq Deprecated] | ⚠️ TODO-full | Needs deprecation warning recipe
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#deprecation-of-camel-digitalocean[camel-digitalocean Deprecated] | ❌ None | Deprecation notice
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-irc-potential-breaking-change[camel-irc Headers (deprecated)] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review. Component is deprecated.
@@ -77,6 +84,64 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#deprecation-of-camel-paho[camel-paho Deprecated] | ❌ None | Deprecation notice
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#tightened-default-objectinputfilter-across-deserialization-sites-potential-breaking-change[Tightened ObjectInputFilter Defaults] | ❌ None | Runtime security limits
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-azure-storage-blob[camel-azure-storage-blob List Versions] | ❌ None | New feature
+|===
+
+== 4.18.3
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.18.3 LTS with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc[migration guide]).
+
+Most recipes in 4.18.3 are header renames that were introduced in the 4.18.x maintenance releases and later adopted in 4.21.0. These recipes are shared between 4.18.3 and 4.21.0.
+
+=== Safety Features
+
+All header rename recipes include dependency-based preconditions using `ModuleHasDependency`. This ensures headers are only renamed when the corresponding Camel component is actually present in the project, preventing false positives and accidental renaming of unrelated headers.
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-core[DefaultHeaderFilterStrategy Lowercase Default] | ❌ None | Configuration default change from 4.18.3, manual review required
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-jms[camel-jms ObjectMessage Disabled] | ❌ None | Security change, manual configuration required
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-sjms-camel-sjms2[camel-sjms/sjms2 ObjectMessage Disabled] | ❌ None | Security change, manual configuration required
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-aws-bedrock[camel-aws-bedrock Guardrail Header] | ❌ None | Header name change, manual migration required
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-hazelcast[camel-hazelcast Serialization Filter] | ❌ None | Runtime security enhancement
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-jgroups-potential-breaking-change[camel-jgroups Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-lucene[camel-lucene Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`qUERY()` → `luceneQuery()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-jgroups-raft[camel-jgroups-raft Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-elasticsearch-rest-client[camel-elasticsearch-rest-client Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-neo4j[camel-neo4j Property Validation] | ❌ None | New validation behavior, no migration needed
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-mail[camel-mail SMTP Security] | ❌ None | Security change requiring opt-in, manual configuration required
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-mail-2[camel-mail Consumer Dispatch Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-jira-potential-breaking-change[camel-jira Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`issueKey()` → `jiraIssueKey()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-pdf-potential-breaking-change[camel-pdf Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-arangodb-potential-breaking-change[camel-arangodb Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`key()` → `arangoDbKey()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-jt400-potential-breaking-change[camel-jt400 Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`kEY()` → `jt400Key()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-github2-potential-breaking-change[camel-github2 Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-elasticsearch-camel-opensearch-potential-breaking-change[camel-elasticsearch/opensearch Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`operation()` → `elasticsearchOperation()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-google-functions-camel-google-secret-manager-camel-google-vision-camel-google-text-to-speech-camel-google-speech-to-text-potential-breaking-change[camel-google-cloud Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-openstack-potential-breaking-change[camel-openstack Headers] | ❌ None | 50+ header constant renames, not covered by automated migration
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-shiro-potential-breaking-change[camel-shiro Security Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Security-critical - headers now filtered by default.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-web3j-potential-breaking-change[camel-web3j Headers] | ❌ None | 40+ header constant renames with extensive DSL changes, not covered by automated migration
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-milo-potential-breaking-change[camel-milo Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods (`await()` → `miloAwait()`) require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-mongodb-gridfs[camel-mongodb-gridfs Headers] | ⚠️ Partial | Header string literals migrated. DSL accessor methods require manual update.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-solr[camel-solr Header Prefixes] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-dns-potential-breaking-change[camel-dns Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-kafka-potential-breaking-change[camel-kafka Headers (HIGH IMPACT)] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review. Includes precondition to only migrate when camel-kafka is present.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-github-removal[camel-github → camel-github2 Migration] | ⚠️ Partial | Dependency change automated (`camel-github` → `camel-github2`). Type changes and URI updates require manual migration.
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-cxf-potential-breaking-change[camel-cxf/cxfrs Headers] | ❌ None | Header renames with cross-transport impact, not covered
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-nats[camel-nats HeaderFilterStrategy] | ❌ None | New filtering behavior
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-xmpp[camel-xmpp HeaderFilterStrategy] | ❌ None | New filtering behavior
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-vertx-websocket[camel-vertx-websocket HeaderFilterStrategy] | ❌ None | New filtering behavior
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-atmosphere-websocket[camel-atmosphere-websocket HeaderFilterStrategy] | ❌ None | New filtering behavior
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-iggy[camel-iggy HeaderFilterStrategy] | ❌ None | New filtering behavior
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-aws2-sqs[camel-aws2-sqs HeaderFilterStrategy] | ❌ None | New filtering behavior
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.adoc#camel-aws2-sns[camel-aws2-sns HeaderFilterStrategy] | ❌ None | New filtering behavior
 |===
 
 == 4.20.0
