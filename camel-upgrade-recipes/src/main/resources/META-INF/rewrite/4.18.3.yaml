@@ -27,12 +27,10 @@
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel418_3.CamelMigrationRecipe
 displayName: Migrates `camel 4.18.1` application to `camel 4.18.3`
-description: Migrates `camel 4.18.1` application to `camel 4.18.3`. Header rename changes were introduced in 4.18.x.
+description: Migrates `camel 4.18.1` application to `camel 4.18.3`
 recipeList:
   # Header renames
-  - org.apache.camel.upgrade.camel418_3.upgradeKafkaRecipes
   - org.apache.camel.upgrade.camel418_3.upgradeJGroupsHeaders
-  - org.apache.camel.upgrade.camel418_3.upgradeDnsHeaders
   - org.apache.camel.upgrade.camel418_3.upgradeJiraHeaders
   - org.apache.camel.upgrade.camel418_3.upgradeJGroupsRaftHeaders
   - org.apache.camel.upgrade.camel418_3.upgradeShiroHeaders
@@ -40,7 +38,10 @@ recipeList:
   - org.apache.camel.upgrade.camel418_3.upgradeSolrHeaders
   - org.apache.camel.upgrade.camel418_3.upgradeGitHub2Headers
   - org.apache.camel.upgrade.camel418_3.upgradeGoogleCloudHeaders
+  - org.apache.camel.upgrade.camel418_3.upgradeGoogleSecretManagerHeaders
   - org.apache.camel.upgrade.camel418_3.upgradeMongoDbGridFsHeaders
+  - org.apache.camel.upgrade.camel418_3.upgradeOpenstackHeaders
+  - org.apache.camel.upgrade.camel418_3.upgradeWeb3jHeaders
   # Partial automation - header string literals migrated, DSL accessor methods require manual update
   - org.apache.camel.upgrade.camel418_3.upgradeLuceneHeaders
   - org.apache.camel.upgrade.camel418_3.upgradePdfHeaders
@@ -51,32 +52,9 @@ recipeList:
   - org.apache.camel.upgrade.camel418_3.upgradeElasticsearchHeaders
   - org.apache.camel.upgrade.camel418_3.upgradeOpensearchHeaders
   # Other migrations
-  - org.apache.camel.upgrade.camel418_3.migrateGithubToGithub2
----
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-kafka---potential-breaking-change
-type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel418_3.upgradeKafkaRecipes
-displayName: Migrate camel-kafka headers
-description: Renames Kafka header constants only if camel-kafka dependency is present.
-preconditions:
-  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
-      groupIdPattern: org.apache.camel
-      artifactIdPattern: camel-kafka
-recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
-      headerMappings:
-        kafka.PARTITION_KEY: CamelKafkaPartitionKey
-        kafka.PARTITION: CamelKafkaPartition
-        kafka.KEY: CamelKafkaKey
-        kafka.TOPIC: CamelKafkaTopic
-        kafka.OVERRIDE_TOPIC: CamelKafkaOverrideTopic
-        kafka.OFFSET: CamelKafkaOffset
-        kafka.HEADERS: CamelKafkaHeaders
-        kafka.LAST_RECORD_BEFORE_COMMIT: CamelKafkaLastRecordBeforeCommit
-        kafka.LAST_POLL_RECORD: CamelKafkaLastPollRecord
-        kafka.TIMESTAMP: CamelKafkaTimestamp
-        kafka.OVERRIDE_TIMESTAMP: CamelKafkaOverrideTimestamp
-        kafka.RECORD_META: CamelKafkaRecordMeta
+  - org.apache.camel.upgrade.camel419.YamlDsl419RoutePolicyRecipe
+  - org.apache.camel.upgrade.camel419.YamlDsl419SagaRecipe
+  - org.apache.camel.upgrade.camel419.XmlDsl419SagaRecipe
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-jgroups-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
@@ -94,24 +72,6 @@ recipeList:
         JGROUPS_DEST: CamelJGroupsDest
         JGROUPS_SRC: CamelJGroupsSrc
         JGROUPS_ORIGINAL_MESSAGE: CamelJGroupsOriginalMessage
----
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-dns-potential-breaking-change
-type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel418_3.upgradeDnsHeaders
-displayName: Migrate camel-dns header constants to new naming convention
-description: Renames DNS header constants from dns.* pattern to CamelDns* pattern only if camel-dns dependency is present.
-preconditions:
-  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
-      groupIdPattern: org.apache.camel
-      artifactIdPattern: camel-dns
-recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
-      headerMappings:
-        dns.class: CamelDnsClass
-        dns.name: CamelDnsName
-        dns.domain: CamelDnsDomain
-        dns.server: CamelDnsServer
-        dns.type: CamelDnsType
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-jira-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
@@ -143,6 +103,8 @@ recipeList:
         IssueWatchersRemove: CamelJiraIssueWatchersRemove
         ParentIssueKey: CamelJiraParentIssueKey
         ChildIssueKey: CamelJiraChildIssueKey
+        linkType: CamelJiraLinkType
+        minutesSpent: CamelJiraMinutesSpent
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-jgroups-raft
 type: specs.openrewrite.org/v1beta/recipe
@@ -204,25 +166,17 @@ recipeList:
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-solr
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel418_3.upgradeSolrHeaders
-displayName: Migrate camel-solr header constants to new naming convention
-description: Renames Solr header constants to CamelSolr* pattern only if camel-solr dependency is present.
+displayName: Migrate camel-solr header prefixes to new naming convention
+description: Renames Solr header prefixes SolrField. and SolrParam. to CamelSolrField. and CamelSolrParam. when camel-solr dependency is present. Routes that reference constants symbolically continue to work without changes. Note - Because the renamed prefixes now begin with Camel, they are stripped by HeaderFilterStrategy when crossing transport boundaries. Routes that bridge external transports and want to drive Solr fields/params from headers must carry values in non-Camel-prefixed headers and map them in the route.
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-solr
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
-      headerMappings:
-        SolrOperation: CamelSolrOperation
-        SolrCollection: CamelSolrCollection
-        SolrRequestHandler: CamelSolrRequestHandler
-        SolrQueryString: CamelSolrQueryString
-        SolrSize: CamelSolrSize
-        SolrFrom: CamelSolrFrom
-        SolrParams: CamelSolrParams
-        SolrDeleteByQuery: CamelSolrDeleteByQuery
-        SolrField.id: CamelSolrField.id
-        SolrParam.commit: CamelSolrParam.commit
+  - org.apache.camel.upgrade.camel421.RenameHeaderPrefixes:
+      prefixMappings:
+        SolrField.: CamelSolrField.
+        SolrParam.: CamelSolrParam.
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-github2-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
@@ -232,7 +186,7 @@ description: Renames GitHub2 producer header constants to CamelGitHub* pattern o
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
-      artifactIdPattern: camel-github
+      artifactIdPattern: camel-github2
 recipeList:
   - org.apache.camel.upgrade.camel421.RenameHeaders:
       headerMappings:
@@ -241,7 +195,7 @@ recipeList:
         GitHubPullRequestHeadCommitSHA: CamelGitHubPullRequestHeadCommitSha
         GitHubIssueTitle: CamelGitHubIssueTitle
 ---
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-google-functions-camel-google-secret-manager-camel-google-vision-camel-google-text-to-speech-camel-google-speech-to-text-potential-breaking-change
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-google-functions-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel418_3.upgradeGoogleCloudHeaders
 displayName: Migrate camel-google-cloud header constants to new naming convention
@@ -256,6 +210,22 @@ recipeList:
         GoogleCloudFunctionsOperation: CamelGoogleCloudFunctionsOperation
         GoogleCloudFunctionsEntryPoint: CamelGoogleCloudFunctionsEntryPoint
         GoogleCloudFunctionsRuntime: CamelGoogleCloudFunctionsRuntime
+        GoogleCloudFunctionsSourceArchiveUrl: CamelGoogleCloudFunctionsSourceArchiveUrl
+        GoogleCloudFunctionsResponseObject: CamelGoogleCloudFunctionsResponseObject
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-google-secret-manager-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418_3.upgradeGoogleSecretManagerHeaders
+displayName: Migrate camel-google-secret-manager header constants to new naming convention
+description: Renames Google Secret Manager header constants to CamelGoogleSecretManager* pattern only if camel-google-secret-manager dependency is present.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-google-secret-manager
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        GoogleSecretManagerOperation: CamelGoogleSecretManagerOperation
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-mongodb-gridfs
 type: specs.openrewrite.org/v1beta/recipe
@@ -412,14 +382,109 @@ recipeList:
         size: CamelOpensearchSize
         from: CamelOpensearchFrom
 ---
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-github-removal
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-openstack-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel418_3.migrateGithubToGithub2
-displayName: Migrate camel-github to camel-github2
-description: Migrates from deprecated camel-github artifact to camel-github2 (which is actually GitHub API v2). The component name remains 'github' in routes.
+name: org.apache.camel.upgrade.camel418_3.upgradeOpenstackHeaders
+displayName: Migrate camel-openstack header constants to new naming convention
+description: Renames OpenStack-specific header constants to CamelOpenstack* pattern only if camel-openstack dependency is present. Generic header names (operation, ID, name, description, properties, etc.) are excluded to avoid false positives and require manual migration.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-openstack
 recipeList:
-  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
-      oldGroupId: org.apache.camel
-      oldArtifactId: camel-github
-      newGroupId: org.apache.camel
-      newArtifactId: camel-github2
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        # Keystone-specific headers
+        domainId: CamelOpenstackKeystoneDomainId
+        parentId: CamelOpenstackKeystoneParentId
+        userId: CamelOpenstackKeystoneUserId
+        groupId: CamelOpenstackKeystoneGroupId
+        # Nova-specific headers
+        FlavorId: CamelOpenstackNovaFlavorId
+        RAM: CamelOpenstackNovaRam
+        VCPU: CamelOpenstackNovaVcpu
+        rxtxFactor: CamelOpenstackNovaRxtxFactor
+        AdminPassword: CamelOpenstackNovaAdminPassword
+        ImageId: CamelOpenstackNovaImageId
+        KeypairName: CamelOpenstackNovaKeypairName
+        NetworkId: CamelOpenstackNovaNetworkId
+        # Cinder-specific headers
+        volumeType: CamelOpenstackCinderVolumeType
+        imageRef: CamelOpenstackCinderImageRef
+        snapshotId: CamelOpenstackCinderSnapshotId
+        isBootable: CamelOpenstackCinderIsBootable
+        volumeId: CamelOpenstackCinderVolumeId
+        # Glance-specific headers
+        diskFormat: CamelOpenstackGlanceDiskFormat
+        containerFormat: CamelOpenstackGlanceContainerFormat
+        isPublic: CamelOpenstackGlanceIsPublic
+        minRam: CamelOpenstackGlanceMinRam
+        minDisk: CamelOpenstackGlanceMinDisk
+        # Neutron-specific headers
+        tenantId: CamelOpenstackNeutronTenantId
+        networkId: CamelOpenstackNeutronNetworkId
+        adminStateUp: CamelOpenstackNeutronAdminStateUp
+        networkType: CamelOpenstackNeutronNetworkType
+        physicalNetwork: CamelOpenstackNeutronPhysicalNetwork
+        segmentId: CamelOpenstackNeutronSegmentId
+        isShared: CamelOpenstackNeutronIsShared
+        isRouterExternal: CamelOpenstackNeutronIsRouterExternal
+        enableDHCP: CamelOpenstackNeutronEnableDhcp
+        ipVersion: CamelOpenstackNeutronIpVersion
+        cidr: CamelOpenstackNeutronCidr
+        subnetPools: CamelOpenstackNeutronSubnetPools
+        deviceId: CamelOpenstackNeutronDeviceId
+        macAddress: CamelOpenstackNeutronMacAddress
+        routerId: CamelOpenstackNeutronRouterId
+        subnetId: CamelOpenstackNeutronSubnetId
+        portId: CamelOpenstackNeutronPortId
+        interfaceType: CamelOpenstackNeutronInterfaceType
+        # Swift-specific headers
+        containerName: CamelOpenstackSwiftContainerName
+        objectName: CamelOpenstackSwiftObjectName
+        end_marker: CamelOpenstackSwiftEndMarker
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-web3j-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418_3.upgradeWeb3jHeaders
+displayName: Migrate camel-web3j header constants to new naming convention
+description: Renames Web3j-specific header constants to CamelWeb3j* pattern only if camel-web3j dependency is present. Generic header names (ID, OPERATION, INDEX, VALUE, DATA, status, operation) excluded to prevent false positives - require manual migration with code review. Note - DSL accessor renames and operation semantics still require manual review.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-web3j
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        AT_BLOCK: CamelWeb3jAtBlock
+        ADDRESS: CamelWeb3jAddress
+        ADDRESSES: CamelWeb3jAddresses
+        FROM_ADDRESS: CamelWeb3jFromAddress
+        TO_ADDRESS: CamelWeb3jToAddress
+        POSITION: CamelWeb3jPosition
+        BLOCK_HASH: CamelWeb3jBlockHash
+        TRANSACTION_HASH: CamelWeb3jTransactionHash
+        SHA3_HASH_OF_DATA_TO_SIGN: CamelWeb3jSha3HashOfDataToSign
+        SIGNED_TRANSACTION_DATA: CamelWeb3jSignedTransactionData
+        FULL_TRANSACTION_OBJECTS: CamelWeb3jFullTransactionObjects
+        SOURCE_CODE: CamelWeb3jSourceCode
+        FILTER_ID: CamelWeb3jFilterId
+        DATABASE_NAME: CamelWeb3jDatabaseName
+        KEY_NAME: CamelWeb3jKeyName
+        NONCE: CamelWeb3jNonce
+        HEADER_POW_HASH: CamelWeb3jHeaderPowHash
+        MIX_DIGEST: CamelWeb3jMixDigest
+        CLIENT_ID: CamelWeb3jClientId
+        GAS_PRICE: CamelWeb3jGasPrice
+        GAS_LIMIT: CamelWeb3jGasLimit
+        FROM_BLOCK: CamelWeb3jFromBlock
+        TO_BLOCK: CamelWeb3jToBlock
+        TOPICS: CamelWeb3jTopics
+        PRIORITY: CamelWeb3jPriority
+        TTL: CamelWeb3jTtl
+        PRIVATE_FOR: CamelWeb3jPrivateFor
+        PRIVATE_FROM: CamelWeb3jPrivateFrom
+        ERROR_CODE: CamelWeb3jErrorCode
+        ERROR_DATA: CamelWeb3jErrorData
+        ERROR_MESSAGE: CamelWeb3jErrorMessage
+        ETH_HASHRATE: CamelWeb3jEthHashrate

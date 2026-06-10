@@ -23,6 +23,8 @@ import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.openrewrite.java.Assertions.mavenProject;
+import static org.openrewrite.maven.Assertions.pomXml;
 
 //class has to stay public, because test is extended in project quarkus-updates
 public class CamelUpdate418Test implements RewriteTest {
@@ -31,7 +33,7 @@ public class CamelUpdate418Test implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_18)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_17,
-                        "camel-core-model", "camel-api", "camel-qdrant", "camel-tahu", "tahu-host"))
+                        "camel-core-model", "camel-api", "camel-support", "camel-qdrant", "camel-tahu", "tahu-host"))
                 .typeValidationOptions(TypeValidation.none());
     }
 
@@ -96,5 +98,175 @@ public class CamelUpdate418Test implements RewriteTest {
                       }
                   }
                   """));
+    }
+
+    @Test
+    void testKafkaHeadersMigration() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-kafka",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-kafka", CamelTestUtil.CamelVersion.v4_17)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+        
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("kafka.TOPIC", "topic1");
+                                            })
+                                            .setBody(simple("${header.kafka.TOPIC}"));
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+        
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("CamelKafkaTopic", "topic1");
+                                            })
+                                            .setBody(simple("${header.CamelKafkaTopic}"));
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testDnsHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-dns",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-dns", CamelTestUtil.CamelVersion.v4_17)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+        
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("dns.name", "www.example.com");
+                                                exchange.getIn().setHeader("dns.server", "8.8.8.8");
+                                                exchange.getIn().setHeader("term", "example");
+                                            })
+                                            .setBody(simple("${header.term} ${header.dns.name}"))
+                                            .to("dns:lookup");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+        
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("CamelDnsName", "www.example.com");
+                                                exchange.getIn().setHeader("CamelDnsServer", "8.8.8.8");
+                                                exchange.getIn().setHeader("CamelDnsTerm", "example");
+                                            })
+                                            .setBody(simple("${header.CamelDnsTerm} ${header.CamelDnsName}"))
+                                            .to("dns:lookup");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testCxfHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-cxf",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-cxf-common", CamelTestUtil.CamelVersion.v4_17)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+                                            .recipientList(simple("direct:${header.operationName}"))
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("operationName", "greetMe");
+                                                exchange.getIn().setHeader("operationNamespace", "urn:hello");
+                                            })
+                                            .to("cxf:bean:helloService");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+                                            .recipientList(simple("direct:${header.CamelCxfOperationName}"))
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("CamelCxfOperationName", "greetMe");
+                                                exchange.getIn().setHeader("CamelCxfOperationNamespace", "urn:hello");
+                                            })
+                                            .to("cxf:bean:helloService");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testSalesforceHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-salesforce",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-salesforce", CamelTestUtil.CamelVersion.v4_17)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+            
+                                class Test {
+                                    void configure(Exchange exchange) {
+                                        exchange.getIn().setHeader("sObjectName", "Account");
+                                        exchange.getIn().setHeader("sObjectQuery", "SELECT Id FROM Account");
+                                        exchange.getIn().setHeader("apexMethod", "POST");
+                                        exchange.getIn().setHeader("apexQueryParam.foo", "bar");
+                                        exchange.getIn().setHeader("jobId", "job123");
+                                        exchange.getIn().setHeader("batchId", "batch456");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+            
+                                class Test {
+                                    void configure(Exchange exchange) {
+                                        exchange.getIn().setHeader("CamelSalesforceSObjectName", "Account");
+                                        exchange.getIn().setHeader("CamelSalesforceSObjectQuery", "SELECT Id FROM Account");
+                                        exchange.getIn().setHeader("CamelSalesforceApexMethod", "POST");
+                                        exchange.getIn().setHeader("CamelSalesforceApexQueryParam.foo", "bar");
+                                        exchange.getIn().setHeader("CamelSalesforceJobId", "job123");
+                                        exchange.getIn().setHeader("CamelSalesforceBatchId", "batch456");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
     }
 }

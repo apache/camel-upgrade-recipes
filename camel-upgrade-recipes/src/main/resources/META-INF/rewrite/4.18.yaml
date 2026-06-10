@@ -26,7 +26,7 @@
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel418.CamelMigrationRecipe
 displayName: Migrates `camel 4.17` application to `camel 4.18`
-description: Migrates `camel 4.17` application to `camel 4.18`.
+description: Migrates `camel 4.17` application to `camel 4.18`
 recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: org.apache.camel.component.qdrant.Qdrant.Headers
@@ -37,3 +37,121 @@ recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: org.eclipse.tahu.host.api.HostApplicationEventHandler
       newFullyQualifiedTypeName: org.eclipse.tahu.host.api.MultiHostApplicationEventHandler
+  # Header renames introduced in 4.18
+  - org.apache.camel.upgrade.camel418.upgradeKafkaRecipes
+  - org.apache.camel.upgrade.camel418.upgradeDnsHeaders
+  - org.apache.camel.upgrade.camel418.upgradeCxfHeaders
+  - org.apache.camel.upgrade.camel418.upgradeSalesforceHeaders
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-kafka---potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418.upgradeKafkaRecipes
+displayName: Migrate camel-kafka headers
+description: Renames Kafka header constants only if camel-kafka dependency is present.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-kafka
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        kafka.PARTITION_KEY: CamelKafkaPartitionKey
+        kafka.PARTITION: CamelKafkaPartition
+        kafka.KEY: CamelKafkaKey
+        kafka.TOPIC: CamelKafkaTopic
+        kafka.OVERRIDE_TOPIC: CamelKafkaOverrideTopic
+        kafka.OFFSET: CamelKafkaOffset
+        kafka.HEADERS: CamelKafkaHeaders
+        kafka.LAST_RECORD_BEFORE_COMMIT: CamelKafkaLastRecordBeforeCommit
+        kafka.LAST_POLL_RECORD: CamelKafkaLastPollRecord
+        kafka.TIMESTAMP: CamelKafkaTimestamp
+        kafka.OVERRIDE_TIMESTAMP: CamelKafkaOverrideTimestamp
+        kafka.RECORD_META: CamelKafkaRecordMeta
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-dns-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418.upgradeDnsHeaders
+displayName: Migrate camel-dns header constants to new naming convention
+description: Renames DNS header constants from dns.* pattern to CamelDns* pattern only if camel-dns dependency is present.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-dns
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        dns.class: CamelDnsClass
+        dns.name: CamelDnsName
+        dns.domain: CamelDnsDomain
+        dns.server: CamelDnsServer
+        dns.type: CamelDnsType
+        term: CamelDnsTerm
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-cxf-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418.upgradeCxfHeaders
+displayName: Migrate camel-cxf-common header constants to new naming convention
+description: Renames CXF header constants to CamelCxf* pattern when camel-cxf-common is present. camel-cxf and camel-cxfrs are documented as sharing these constants, but the exact dependency detection strategy should be revisited with Camel maintainers. Note - cross-transport propagation scenarios still require manual review.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-cxf-common
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        operationName: CamelCxfOperationName
+        operationNamespace: CamelCxfOperationNamespace
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-salesforce-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418.upgradeSalesforceHeaders
+displayName: Migrate camel-salesforce header constants to new naming convention
+description: Renames Salesforce header constants to CamelSalesforce* pattern when camel-salesforce is present. Routes using symbolic constants (e.g., SalesforceEndpointConfig.SOBJECT_QUERY) continue to work unchanged. Cross-transport propagation scenarios still require manual review.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-salesforce
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        sObjectName: CamelSalesforceSObjectName
+        sObjectId: CamelSalesforceSObjectId
+        sObjectIds: CamelSalesforceSObjectIds
+        sObjectFields: CamelSalesforceSObjectFields
+        sObjectIdName: CamelSalesforceSObjectIdName
+        sObjectIdValue: CamelSalesforceSObjectIdValue
+        sObjectBlobFieldName: CamelSalesforceSObjectBlobFieldName
+        sObjectClass: CamelSalesforceSObjectClass
+        sObjectQuery: CamelSalesforceSObjectQuery
+        streamQueryResult: CamelSalesforceStreamQueryResult
+        sObjectSearch: CamelSalesforceSObjectSearch
+        apexMethod: CamelSalesforceApexMethod
+        apexUrl: CamelSalesforceApexUrl
+        compositeMethod: CamelSalesforceCompositeMethod
+        limit: CamelSalesforceLimit
+        allOrNone: CamelSalesforceAllOrNone
+        eventName: CamelSalesforceEventName
+        eventSchemaId: CamelSalesforceEventSchemaId
+        eventSchemaFormat: CamelSalesforceEventSchemaFormat
+        contentType: CamelSalesforceContentType
+        jobId: CamelSalesforceJobId
+        batchId: CamelSalesforceBatchId
+        resultId: CamelSalesforceResultId
+        queryLocator: CamelSalesforceQueryLocator
+        locator: CamelSalesforceLocator
+        maxRecords: CamelSalesforceMaxRecords
+        pkChunking: CamelSalesforcePkChunking
+        pkChunkingChunkSize: CamelSalesforcePkChunkingChunkSize
+        pkChunkingParent: CamelSalesforcePkChunkingParent
+        pkChunkingStartRow: CamelSalesforcePkChunkingStartRow
+        reportId: CamelSalesforceReportId
+        includeDetails: CamelSalesforceIncludeDetails
+        reportMetadata: CamelSalesforceReportMetadata
+        instanceId: CamelSalesforceInstanceId
+        rawPath: CamelSalesforceRawPath
+        rawMethod: CamelSalesforceRawMethod
+        rawQueryParameters: CamelSalesforceRawQueryParameters
+        rawHttpHeaders: CamelSalesforceRawHttpHeaders
+  - org.apache.camel.upgrade.camel421.RenameHeaderPrefixes:
+      prefixMappings:
+        apexQueryParam.: CamelSalesforceApexQueryParam.

@@ -57,6 +57,10 @@ recipeList:
   - org.apache.camel.upgrade.camel421.removeCamelGuavaEventbusDependency
   - org.apache.camel.upgrade.camel421.removeCamelGrapeDependency
   - org.apache.camel.upgrade.camel421.removeCamelElytronDependency
+  - org.apache.camel.upgrade.camel421.removeCamelGithubDependency
+  - org.apache.camel.upgrade.camel421.migrateGrokDependency
+  - org.apache.camel.upgrade.camel421.migrateAws2S3ListObjectsApi
+  - org.apache.camel.upgrade.camel421.migrateErrorRegistryProperties
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-kafka---potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
@@ -117,6 +121,7 @@ recipeList:
         dns.domain: CamelDnsDomain
         dns.server: CamelDnsServer
         dns.type: CamelDnsType
+        term: CamelDnsTerm
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-jira-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
@@ -148,6 +153,8 @@ recipeList:
         IssueWatchersRemove: CamelJiraIssueWatchersRemove
         ParentIssueKey: CamelJiraParentIssueKey
         ChildIssueKey: CamelJiraChildIssueKey
+        linkType: CamelJiraLinkType
+        minutesSpent: CamelJiraMinutesSpent
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-couchdb
 type: specs.openrewrite.org/v1beta/recipe
@@ -525,3 +532,60 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: org.apache.camel
       artifactId: camel-elytron
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-github-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.removeCamelGithubDependency
+displayName: Remove camel-github dependency
+description: Removes the camel-github dependency which was removed in Camel 4.21 (deprecated in 4.18, replaced by camel-github2).
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-github
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-grok-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.migrateGrokDependency
+displayName: Migrate camel-grok dependency to new library
+description: Migrates the Grok library from unmaintained io.krakens:java-grok to its active fork io.github.whatap:java-grok.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: io.krakens
+      oldArtifactId: java-grok
+      newGroupId: io.github.whatap
+      newArtifactId: java-grok
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-aws2-s3
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.migrateAws2S3ListObjectsApi
+displayName: Migrate camel-aws2-s3 listObjects to V2 API
+description: Migrates ListObjectsRequest/Response to ListObjectsV2Request/Response for the listObjects operation (pojoRequest=true only).
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-aws2-s3
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: software.amazon.awssdk.services.s3.model.ListObjectsRequest
+      newFullyQualifiedTypeName: software.amazon.awssdk.services.s3.model.ListObjectsV2Request
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: software.amazon.awssdk.services.s3.model.ListObjectsResponse
+      newFullyQualifiedTypeName: software.amazon.awssdk.services.s3.model.ListObjectsV2Response
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#error-registry
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.migrateErrorRegistryProperties
+displayName: Migrate Error Registry configuration properties
+description: Migrates Error Registry configuration from camel.main.errorRegistryXxx to camel.errorRegistry.* pattern in .properties files. Note - errorRegistryStackTraceEnabled is removed (always captures full exception now). YAML files require manual migration.
+recipeList:
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: camel.main.errorRegistryEnabled
+      newPropertyKey: camel.errorRegistry.enabled
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: camel.main.errorRegistryMaximumEntries
+      newPropertyKey: camel.errorRegistry.maximumEntries
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: camel.main.errorRegistryTimeToLiveSeconds
+      newPropertyKey: camel.errorRegistry.timeToLiveSeconds
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: camel.main.errorRegistryStackTraceEnabled

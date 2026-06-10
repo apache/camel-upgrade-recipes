@@ -24,6 +24,8 @@ import org.openrewrite.test.TypeValidation;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.java.Assertions.mavenProject;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.xml.Assertions.xml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
 /**
  * Tests for migrating from Camel 4.18.1 to 4.18.3.
@@ -381,46 +383,6 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testKafkaHeadersMigration() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-kafka",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-kafka", CamelTestUtil.CamelVersion.v4_18)),
-                        java(
-                        """
-                        import org.apache.camel.Exchange;
-                        import org.apache.camel.builder.RouteBuilder;
-
-                        class Test extends RouteBuilder {
-                            public void configure() {
-                                from("direct:start")
-                                    .process(exchange -> {
-                                        exchange.getIn().setHeader("kafka.TOPIC", "topic1");
-                                    })
-                                    .setBody(simple("${header.kafka.TOPIC}"));
-                            }
-                        }
-                        """,
-                        """
-                        import org.apache.camel.Exchange;
-                        import org.apache.camel.builder.RouteBuilder;
-
-                        class Test extends RouteBuilder {
-                            public void configure() {
-                                from("direct:start")
-                                    .process(exchange -> {
-                                        exchange.getIn().setHeader("CamelKafkaTopic", "topic1");
-                                    })
-                                    .setBody(simple("${header.CamelKafkaTopic}"));
-                            }
-                        }
-                        """
-                )
-                )
-        );
-    }
-
-    @Test
     void testJGroupsHeadersMigration() {
         //language=java
         rewriteRun(
@@ -463,50 +425,6 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testDnsHeadersMigrationJava() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-dns",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-dns", CamelTestUtil.CamelVersion.v4_18)),
-                        java(
-                        """
-                        import org.apache.camel.Exchange;
-                        import org.apache.camel.builder.RouteBuilder;
-
-                        class Test extends RouteBuilder {
-                            public void configure() {
-                                from("direct:start")
-                                    .process(exchange -> {
-                                        exchange.getIn().setHeader("dns.name", "www.example.com");
-                                        exchange.getIn().setHeader("dns.server", "8.8.8.8");
-                                    })
-                                    .setBody(simple("${header.dns.name}"))
-                                    .to("dns:lookup");
-                            }
-                        }
-                        """,
-                        """
-                        import org.apache.camel.Exchange;
-                        import org.apache.camel.builder.RouteBuilder;
-
-                        class Test extends RouteBuilder {
-                            public void configure() {
-                                from("direct:start")
-                                    .process(exchange -> {
-                                        exchange.getIn().setHeader("CamelDnsName", "www.example.com");
-                                        exchange.getIn().setHeader("CamelDnsServer", "8.8.8.8");
-                                    })
-                                    .setBody(simple("${header.CamelDnsName}"))
-                                    .to("dns:lookup");
-                            }
-                        }
-                        """
-                )
-                )
-        );
-    }
-
-    @Test
     void testJiraHeadersMigrationJava() {
         //language=java
         rewriteRun(
@@ -524,6 +442,8 @@ public class CamelUpdate418_3Test implements RewriteTest {
                                         exchange.getIn().setHeader("IssueKey", "CAMEL-12345");
                                         exchange.getIn().setHeader("IssueSummary", "Bug fix");
                                         exchange.getIn().setHeader("ProjectKey", "CAMEL");
+                                        exchange.getIn().setHeader("linkType", "Relates");
+                                        exchange.getIn().setHeader("minutesSpent", 30);
                                     })
                                     .to("jira:addIssue");
                             }
@@ -540,6 +460,8 @@ public class CamelUpdate418_3Test implements RewriteTest {
                                         exchange.getIn().setHeader("CamelJiraIssueKey", "CAMEL-12345");
                                         exchange.getIn().setHeader("CamelJiraIssueSummary", "Bug fix");
                                         exchange.getIn().setHeader("CamelJiraIssueProjectKey", "CAMEL");
+                                        exchange.getIn().setHeader("CamelJiraLinkType", "Relates");
+                                        exchange.getIn().setHeader("CamelJiraMinutesSpent", 30);
                                     })
                                     .to("jira:addIssue");
                             }
@@ -649,11 +571,10 @@ public class CamelUpdate418_3Test implements RewriteTest {
                             public void configure() {
                                 from("direct:start")
                                     .process(exchange -> {
-                                        exchange.getIn().setHeader("SolrOperation", "INSERT");
-                                        exchange.getIn().setHeader("SolrCollection", "myCollection");
-                                        exchange.getIn().setHeader("SolrQueryString", "id:123");
                                         exchange.getIn().setHeader("SolrField.id", "doc123");
+                                        exchange.getIn().setHeader("SolrField.name", "Test Document");
                                         exchange.getIn().setHeader("SolrParam.commit", true);
+                                        exchange.getIn().setHeader("SolrParam.commitWithin", 1000);
                                     })
                                     .to("solr:http://localhost:8983/solr");
                             }
@@ -667,11 +588,10 @@ public class CamelUpdate418_3Test implements RewriteTest {
                             public void configure() {
                                 from("direct:start")
                                     .process(exchange -> {
-                                        exchange.getIn().setHeader("CamelSolrOperation", "INSERT");
-                                        exchange.getIn().setHeader("CamelSolrCollection", "myCollection");
-                                        exchange.getIn().setHeader("CamelSolrQueryString", "id:123");
                                         exchange.getIn().setHeader("CamelSolrField.id", "doc123");
+                                        exchange.getIn().setHeader("CamelSolrField.name", "Test Document");
                                         exchange.getIn().setHeader("CamelSolrParam.commit", true);
+                                        exchange.getIn().setHeader("CamelSolrParam.commitWithin", 1000);
                                     })
                                     .to("solr:http://localhost:8983/solr");
                             }
@@ -728,23 +648,6 @@ public class CamelUpdate418_3Test implements RewriteTest {
         rewriteRun(
                 mavenProject("test-github",
                         pomXml(
-                        """
-                        <project>
-                            <groupId>com.example</groupId>
-                            <artifactId>test</artifactId>
-                            <version>1.0.0</version>
-                            <properties>
-                                <maven.compiler.release>17</maven.compiler.release>
-                            </properties>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.apache.camel</groupId>
-                                    <artifactId>camel-github</artifactId>
-                                    <version>4.18.0</version>
-                                </dependency>
-                            </dependencies>
-                        </project>
-                        """,
                         """
                         <project>
                             <groupId>com.example</groupId>
@@ -878,40 +781,187 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testGithubToGithub2Migration() {
-        //language=xml
+    void testOpenstackHeadersMigrationJava() {
+        //language=java
         rewriteRun(
-                pomXml(
-                """
-                <project>
-                    <groupId>com.example</groupId>
-                    <artifactId>test</artifactId>
-                    <version>1.0.0</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-github</artifactId>
-                            <version>4.18.1</version>
-                        </dependency>
-                    </dependencies>
-                </project>
-                """,
-                """
-                <project>
-                    <groupId>com.example</groupId>
-                    <artifactId>test</artifactId>
-                    <version>1.0.0</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-github2</artifactId>
-                            <version>4.18.1</version>
-                        </dependency>
-                    </dependencies>
-                </project>
-                """
+                mavenProject("test-openstack",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-openstack", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("domainId", "default");
+                                                exchange.getIn().setHeader("FlavorId", "m1.small");
+                                                exchange.getIn().setHeader("containerName", "images");
+                                            })
+                                            .to("openstack-nova://host");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("CamelOpenstackKeystoneDomainId", "default");
+                                                exchange.getIn().setHeader("CamelOpenstackNovaFlavorId", "m1.small");
+                                                exchange.getIn().setHeader("CamelOpenstackSwiftContainerName", "images");
+                                            })
+                                            .to("openstack-nova://host");
+                                    }
+                                }
+                                """
+                        )
                 )
         );
     }
 
+    @Test
+    void testWeb3jHeadersMigrationJava() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-web3j",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-web3j", CamelTestUtil.CamelVersion.v4_18)),
+                        java(
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("FROM_ADDRESS", "0x123");
+                                                exchange.getIn().setHeader("TO_ADDRESS", "0x456");
+                                                exchange.getIn().setHeader("AT_BLOCK", "latest");
+                                            })
+                                            .to("web3j://http://localhost:8545");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.Exchange;
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                class Test extends RouteBuilder {
+                                    public void configure() {
+                                        from("direct:start")
+                                            .process(exchange -> {
+                                                exchange.getIn().setHeader("CamelWeb3jFromAddress", "0x123");
+                                                exchange.getIn().setHeader("CamelWeb3jToAddress", "0x456");
+                                                exchange.getIn().setHeader("CamelWeb3jAtBlock", "latest");
+                                            })
+                                            .to("web3j://http://localhost:8545");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testYamlDslRoutePolicyRename() {
+        //language=yaml
+        rewriteRun(
+            yaml(
+                """
+                - route:
+                    id: myRoute
+                    routePolicy: myPolicy
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: mock:result
+                """,
+                """
+                - route:
+                    id: myRoute
+                    routePolicyRef: myPolicy
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: mock:result
+                """
+            )
+        );
+    }
+
+    @Test
+    void testSagaEipXml() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <route>
+                    <from uri="direct:start"/>
+                    <saga sagaService="mySagaService">
+                        <compensation uri="mock:compensation"/>
+                        <completion uri="mock:completion"/>
+                        <option key="myOptionKey">
+                            <constant>myOptionValue</constant>
+                        </option>
+                    </saga>
+                    <to uri="mock:end"/>
+                </route>
+                """,
+                """
+                <route>
+                    <from uri="direct:start"/>
+                    <saga sagaService="mySagaService" compensation="mock:compensation" completion="mock:completion">
+                        <option key="myOptionKey">
+                            <constant>myOptionValue</constant>
+                        </option>
+                    </saga>
+                    <to uri="mock:end"/>
+                </route>
+                """
+            )
+        );
+    }
+
+    @Test
+    void testSagaEipYaml() {
+        //language=yaml
+        rewriteRun(
+            yaml(
+                """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - saga:
+                            compensation:
+                              uri: direct:compensate
+                            completion:
+                              uri: direct:complete
+                            steps:
+                              - to:
+                                  uri: direct:action
+                """,
+                """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - saga:
+                            compensation: direct:compensate
+                            completion: direct:complete
+                            steps:
+                              - to:
+                                  uri: direct:action
+                """
+            )
+        );
+    }
 }

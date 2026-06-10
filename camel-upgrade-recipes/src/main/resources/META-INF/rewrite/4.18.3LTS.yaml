@@ -16,20 +16,29 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.Camel418LTSMigrationRecipe
+name: org.apache.camel.upgrade.Camel4183LTSMigrationRecipe
 displayName: Migrate to Camel 4.18.3 LTS
-description: Migrates Apache Camel application to 4.18.3 LTS. This recipe aggregates all migration steps from 4.17.x to 4.18.3, including changes introduced in 4.18.0, 4.18.1, and 4.18.3.
+description: Migrates Apache Camel application to 4.18.3 LTS. This recipe aggregates all migration steps from 4.0 to 4.18.3.
 recipeList:
-  # 4.17 -> 4.18.0
-  - org.apache.camel.upgrade.camel418.CamelMigrationRecipe
-  # 4.18.0 -> 4.18.1 (from 4.19 recipes - these were backported)
-  - org.apache.camel.upgrade.camel419.removedComponents
-  - org.apache.camel.upgrade.camel419.XmlDsl419SagaRecipe
-  - org.apache.camel.upgrade.camel419.YamlDsl419SagaRecipe
-  - org.apache.camel.upgrade.camel419.YamlDsl419RoutePolicyRecipe
-  # 4.18.1 -> 4.18.3 (header renames from 4.21 - these were backported)
   - org.apache.camel.upgrade.camel418_3.CamelMigrationRecipe
-  # Update all Camel dependencies to 4.18.3
+  - org.apache.camel.upgrade.camel418.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel417.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel416.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel415.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel414.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel413.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel412.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel411.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel45.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
+  - org.apache.camel.upgrade.UpgradeToJava17
+  - org.apache.camel.upgrade.JavaVersion17
+  - org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'
@@ -42,3 +51,6 @@ recipeList:
       groupId: 'org.apache.camel'
       artifactId: '*'
       newVersion: 4.18.3
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.version
+      newValue: 4.18.3

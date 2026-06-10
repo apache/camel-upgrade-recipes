@@ -16,18 +16,17 @@
  */
 package org.apache.camel.upgrade;
 
-import org.apache.camel.upgrade.camel421.RenameHeaders;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.java.Assertions.mavenProject;
 import static org.openrewrite.maven.Assertions.pomXml;
-import static org.openrewrite.xml.Assertions.xml;
-import static org.openrewrite.yaml.Assertions.yaml;
+import static org.openrewrite.properties.Assertions.properties;
 
 //class has to stay public, because test is extended in project quarkus-updates
 public class CamelUpdate421Test implements RewriteTest {
@@ -39,7 +38,7 @@ public class CamelUpdate421Test implements RewriteTest {
         // based on which dependencies are present in the test's pom.xml
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_21)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_20,
-                        "camel-core-model", "camel-api"))
+                        "camel-core-model", "camel-api", "s3"))
                 .typeValidationOptions(TypeValidation.none())
                 // Explicitly set expected cycles to 1 to prevent other recipes from running
                 .expectedCyclesThatMakeChanges(1);
@@ -48,7 +47,7 @@ public class CamelUpdate421Test implements RewriteTest {
     @DocumentExample
     @Test
     void testKafkaHeadersMigration() {
-        new CamelUpdate418_3Test().testKafkaHeadersMigration();
+        new CamelUpdate418Test().testKafkaHeadersMigration();
     }
 
     @Test
@@ -58,12 +57,27 @@ public class CamelUpdate421Test implements RewriteTest {
 
     @Test
     void testDnsHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testDnsHeadersMigrationJava();
+        new CamelUpdate418Test().testDnsHeadersMigrationJava();
     }
 
     @Test
     void testJiraHeadersMigrationJava() {
         new CamelUpdate418_3Test().testJiraHeadersMigrationJava();
+    }
+
+    @Test
+    void testCxfHeadersMigrationJava() {
+        new CamelUpdate418Test().testCxfHeadersMigrationJava();
+    }
+
+    @Test
+    void testOpenstackHeadersMigrationJava() {
+        new CamelUpdate418_3Test().testOpenstackHeadersMigrationJava();
+    }
+
+    @Test
+    void testWeb3jHeadersMigrationJava() {
+        new CamelUpdate418_3Test().testWeb3jHeadersMigrationJava();
     }
 
     @Test
@@ -495,6 +509,121 @@ public class CamelUpdate421Test implements RewriteTest {
                     <version>1.0.0</version>
                 </project>
                 """
+                )
+        );
+    }
+
+    @Test
+    void testMigrateGrokDependency() {
+        //language=xml
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(1),
+                pomXml(
+                """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>io.krakens</groupId>
+                            <artifactId>java-grok</artifactId>
+                            <version>0.1.9</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """,
+                spec -> spec.after(after -> {
+                    assertThat(after).contains("<groupId>io.github.whatap</groupId>");
+                    assertThat(after).contains("<artifactId>java-grok</artifactId>");
+                    assertThat(after).doesNotContain("<groupId>io.krakens</groupId>");
+                    return after;
+                })
+                )
+        );
+    }
+
+    @Test
+    void testMigrateAws2S3ListObjectsApi() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-aws2-s3",
+                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-aws2-s3", CamelTestUtil.CamelVersion.v4_20)),
+                        java(
+                        """
+                        import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+                        import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+
+                        public class S3Example {
+                            public void example() {
+                                ListObjectsRequest request = ListObjectsRequest.builder().build();
+                                ListObjectsResponse response = null;
+                            }
+                        }
+                        """,
+                        """
+                        import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+                        import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+
+                        public class S3Example {
+                            public void example() {
+                                ListObjectsV2Request request = ListObjectsV2Request.builder().build();
+                                ListObjectsV2Response response = null;
+                            }
+                        }
+                        """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testRemoveCamelGithubDependency() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>camel-github</artifactId>
+                            <version>4.20.0</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """,
+                """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                </project>
+                """
+                )
+        );
+    }
+
+    @Test
+    void testErrorRegistryPropertiesFile() {
+        //language=properties
+        rewriteRun(
+                properties(
+                """
+                camel.main.errorRegistryEnabled=true
+                camel.main.errorRegistryMaximumEntries=100
+                camel.main.errorRegistryTimeToLiveSeconds=300
+                camel.main.errorRegistryStackTraceEnabled=false
+                """,
+                """
+                camel.errorRegistry.enabled=true
+                camel.errorRegistry.maximumEntries=100
+                camel.errorRegistry.timeToLiveSeconds=300
+                """,
+                spec -> spec.path("application.properties")
                 )
         );
     }
