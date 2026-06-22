@@ -187,50 +187,6 @@ public class CamelUpdate418Test implements RewriteTest {
     }
 
     @Test
-    void testCxfHeadersMigrationJava() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-cxf",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-cxf-common", CamelTestUtil.CamelVersion.v4_17)),
-                        java(
-                                """
-                                import org.apache.camel.Exchange;
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                class Test extends RouteBuilder {
-                                    public void configure() {
-                                        from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
-                                            .recipientList(simple("direct:${header.operationName}"))
-                                            .process(exchange -> {
-                                                exchange.getIn().setHeader("operationName", "greetMe");
-                                                exchange.getIn().setHeader("operationNamespace", "urn:hello");
-                                            })
-                                            .to("cxf:bean:helloService");
-                                    }
-                                }
-                                """,
-                                """
-                                import org.apache.camel.Exchange;
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                class Test extends RouteBuilder {
-                                    public void configure() {
-                                        from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
-                                            .recipientList(simple("direct:${header.CamelCxfOperationName}"))
-                                            .process(exchange -> {
-                                                exchange.getIn().setHeader("CamelCxfOperationName", "greetMe");
-                                                exchange.getIn().setHeader("CamelCxfOperationNamespace", "urn:hello");
-                                            })
-                                            .to("cxf:bean:helloService");
-                                    }
-                                }
-                                """
-                        )
-                )
-        );
-    }
-
-    @Test
     void testSalesforceHeadersMigrationJava() {
         //language=java
         rewriteRun(
@@ -239,29 +195,39 @@ public class CamelUpdate418Test implements RewriteTest {
                         java(
                                 """
                                 import org.apache.camel.Exchange;
-            
+
                                 class Test {
                                     void configure(Exchange exchange) {
+                                        // Only Salesforce-specific headers are migrated
                                         exchange.getIn().setHeader("sObjectName", "Account");
                                         exchange.getIn().setHeader("sObjectQuery", "SELECT Id FROM Account");
+                                        exchange.getIn().setHeader("sObjectId", "001xx000003DGYM");
                                         exchange.getIn().setHeader("apexMethod", "POST");
+                                        exchange.getIn().setHeader("apexUrl", "/services/apexrest/MyService");
                                         exchange.getIn().setHeader("apexQueryParam.foo", "bar");
+                                        exchange.getIn().setHeader("pkChunking", "true");
+                                        // Generic headers like jobId, batchId, limit, contentType are NOT migrated
                                         exchange.getIn().setHeader("jobId", "job123");
-                                        exchange.getIn().setHeader("batchId", "batch456");
+                                        exchange.getIn().setHeader("limit", "100");
                                     }
                                 }
                                 """,
                                 """
                                 import org.apache.camel.Exchange;
-            
+
                                 class Test {
                                     void configure(Exchange exchange) {
+                                        // Only Salesforce-specific headers are migrated
                                         exchange.getIn().setHeader("CamelSalesforceSObjectName", "Account");
                                         exchange.getIn().setHeader("CamelSalesforceSObjectQuery", "SELECT Id FROM Account");
+                                        exchange.getIn().setHeader("CamelSalesforceSObjectId", "001xx000003DGYM");
                                         exchange.getIn().setHeader("CamelSalesforceApexMethod", "POST");
+                                        exchange.getIn().setHeader("CamelSalesforceApexUrl", "/services/apexrest/MyService");
                                         exchange.getIn().setHeader("CamelSalesforceApexQueryParam.foo", "bar");
-                                        exchange.getIn().setHeader("CamelSalesforceJobId", "job123");
-                                        exchange.getIn().setHeader("CamelSalesforceBatchId", "batch456");
+                                        exchange.getIn().setHeader("CamelSalesforcePkChunking", "true");
+                                        // Generic headers like jobId, batchId, limit, contentType are NOT migrated
+                                        exchange.getIn().setHeader("jobId", "job123");
+                                        exchange.getIn().setHeader("limit", "100");
                                     }
                                 }
                                 """
