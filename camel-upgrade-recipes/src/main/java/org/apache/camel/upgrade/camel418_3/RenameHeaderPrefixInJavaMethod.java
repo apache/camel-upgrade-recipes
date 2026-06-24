@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel421;
+package org.apache.camel.upgrade.camel418_3;
 
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
@@ -28,67 +28,66 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Renames header references in Message.setHeader() and Message.getHeader() method calls.
- * This recipe only migrates string literals appearing as the first argument to these methods,
- * ensuring safe transformation without false positives.
+ * Renames header prefixes in Message.setHeader() and Message.getHeader() method calls.
+ * This recipe migrates string literals starting with a specific prefix to use a new prefix.
  */
-public class RenameHeaderInJavaMethod extends Recipe {
+public class RenameHeaderPrefixInJavaMethod extends Recipe {
 
-    @Option(displayName = "Old header name",
-            description = "The old header name to replace (as string literal)",
-            example = "kafka.TOPIC")
-    String oldHeaderName;
+    @Option(displayName = "Old header prefix",
+            description = "The old header prefix to replace",
+            example = "SolrField.")
+    String oldPrefix;
 
-    @Option(displayName = "New header name",
-            description = "The new header name to use",
-            example = "CamelKafkaTopic")
-    String newHeaderName;
+    @Option(displayName = "New header prefix",
+            description = "The new header prefix to use",
+            example = "CamelSolrField.")
+    String newPrefix;
 
-    public RenameHeaderInJavaMethod() {
+    public RenameHeaderPrefixInJavaMethod() {
     }
 
-    public RenameHeaderInJavaMethod(String oldHeaderName, String newHeaderName) {
-        this.oldHeaderName = oldHeaderName;
-        this.newHeaderName = newHeaderName;
+    public RenameHeaderPrefixInJavaMethod(String oldPrefix, String newPrefix) {
+        this.oldPrefix = oldPrefix;
+        this.newPrefix = newPrefix;
     }
 
-    public void setOldHeaderName(String oldHeaderName) {
-        this.oldHeaderName = oldHeaderName;
+    public void setOldPrefix(String oldPrefix) {
+        this.oldPrefix = oldPrefix;
     }
 
-    public void setNewHeaderName(String newHeaderName) {
-        this.newHeaderName = newHeaderName;
+    public void setNewPrefix(String newPrefix) {
+        this.newPrefix = newPrefix;
     }
 
     @Override
     public String getDisplayName() {
-        return "Rename header in .setHeader()/.getHeader() calls";
+        return "Rename header prefix in .setHeader()/.getHeader() calls";
     }
 
     @Override
     public String getDescription() {
-        return "Renames header references in Message.setHeader() and Message.getHeader() method calls. " +
+        return "Renames header prefixes in Message.setHeader() and Message.getHeader() method calls. " +
                "Only migrates string literals in safe contexts. Does NOT migrate dynamic header names or Map.get() calls.";
     }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return RecipesUtil.newVisitor(new RenameHeaderVisitor(oldHeaderName, newHeaderName));
+        return RecipesUtil.newVisitor(new RenameHeaderPrefixVisitor(oldPrefix, newPrefix));
     }
 
-    private static class RenameHeaderVisitor extends AbstractCamelJavaVisitor {
+    private static class RenameHeaderPrefixVisitor extends AbstractCamelJavaVisitor {
         private static final String MATCHER_SET_HEADER_2_ARGS = "org.apache.camel.Message setHeader(String, Object)";
         private static final String MATCHER_GET_HEADER_1_ARG = "org.apache.camel.Message getHeader(String)";
         private static final String MATCHER_GET_HEADER_2_ARGS = "org.apache.camel.Message getHeader(String, Class)";
         private static final String MATCHER_GET_HEADER_3_ARGS = "org.apache.camel.Message getHeader(String, Object, Class)";
         private static final String MATCHER_GET_HEADER_SUPPLIER = "org.apache.camel.Message getHeader(String, java.util.function.Supplier, Class)";
 
-        private final String oldHeaderName;
-        private final String newHeaderName;
+        private final String oldPrefix;
+        private final String newPrefix;
 
-        RenameHeaderVisitor(String oldHeaderName, String newHeaderName) {
-            this.oldHeaderName = oldHeaderName;
-            this.newHeaderName = newHeaderName;
+        RenameHeaderPrefixVisitor(String oldPrefix, String newPrefix) {
+            this.oldPrefix = oldPrefix;
+            this.newPrefix = newPrefix;
         }
 
         @Override
@@ -101,18 +100,23 @@ public class RenameHeaderInJavaMethod extends Recipe {
                 if (!mi.getArguments().isEmpty() && mi.getArguments().get(0) instanceof J.Literal) {
                     J.Literal literal = (J.Literal) mi.getArguments().get(0);
 
-                    // Check if it's a string literal with the old header name
-                    if (literal.getValue() instanceof String &&
-                        oldHeaderName.equals(literal.getValue())) {
+                    // Check if it's a string literal starting with the old prefix
+                    if (literal.getValue() instanceof String) {
+                        String headerName = (String) literal.getValue();
 
-                        // Replace the string literal with the new header name
-                        J.Literal newLiteral = literal.withValue(newHeaderName)
-                                                     .withValueSource("\"" + newHeaderName + "\"");
+                        if (headerName.startsWith(oldPrefix)) {
+                            // Replace the prefix
+                            String newHeaderName = newPrefix + headerName.substring(oldPrefix.length());
 
-                        List<org.openrewrite.java.tree.Expression> newArgs = new ArrayList<>(mi.getArguments());
-                        newArgs.set(0, newLiteral);
+                            // Replace the string literal with the new header name
+                            J.Literal newLiteral = literal.withValue(newHeaderName)
+                                                         .withValueSource("\"" + newHeaderName + "\"");
 
-                        return mi.withArguments(newArgs);
+                            List<org.openrewrite.java.tree.Expression> newArgs = new ArrayList<>(mi.getArguments());
+                            newArgs.set(0, newLiteral);
+
+                            return mi.withArguments(newArgs);
+                        }
                     }
                 }
             }

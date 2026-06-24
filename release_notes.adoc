@@ -34,7 +34,7 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#virtual-threads[Virtual Threads maxQueueSize Honored] | ❌ None | Runtime behavior change
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#new-block-rejected-policy[New Block Rejected Policy] | ❌ None | New feature
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#java-serialization[Java Serialization Type Converters Removed] | ❌ None | Removal without replacement
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#reifierstrategy[ReifierStrategy SPI Removed] | ✅ Full | Import removal automated for `org.apache.camel.spi.ReifierStrategy`
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#reifierstrategy[ReifierStrategy SPI Removed] | ❌ None | Class `org.apache.camel.spi.ReifierStrategy` was removed with no replacement
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#namednode-getchildren-method[NamedNode.getChildren() Method] | ❌ None | New method (additive)
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#namednode-level[NamedNode Level Calculation Changed] | ❌ None | Runtime behavior change
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jbang[camel-jbang] | ❌ None | CLI runtime behavior
@@ -52,7 +52,7 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-github-removal[camel-github Removed] | ✅ Full | Automated removal of `org.apache.camel:camel-github` dependency. Migration to `camel-github2` was automated in 4.18.3 (see 4.18.3 section below).
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-telemetry[camel-telemetry Processor Span Changes] | ❌ None | Interface signature changed
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-opentelemetry2[camel-opentelemetry2 Scope Management] | ❌ None | Internal implementation change
-| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-djl[camel-djl Word Embedding Removed] | ✅ Full | Import removal automated for `ZooWordEmbeddingPredictor`
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-djl[camel-djl Word Embedding Removed] | ❌ None | Class `ZooWordEmbeddingPredictor` was removed with no replacement
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-aws-bedrock[camel-aws-bedrock Guardrail Header] | ❌ None | New optional feature
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-jgroups-potential-breaking-change[camel-jgroups Headers] | ⚠️ Partial | Only basic header usage is migrated. Automated for `.setHeader()` and Simple expressions. Dynamic headers and Map operations require manual review.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html#camel-elasticsearch-rest-client[camel-elasticsearch-rest-client Headers] | ❌ None | Header values are too common, automatic upgrade is complicated.

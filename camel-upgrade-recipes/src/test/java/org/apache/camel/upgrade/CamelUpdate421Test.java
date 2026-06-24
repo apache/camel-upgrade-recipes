@@ -17,7 +17,6 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
-import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -41,35 +40,6 @@ public class CamelUpdate421Test implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none())
                 // Explicitly set expected cycles to 1 to prevent other recipes from running
                 .expectedCyclesThatMakeChanges(1);
-    }
-
-    @DocumentExample
-    @Test
-    void removeReifierStrategyImport() {
-        //language=java
-        rewriteRun(
-                java(
-                """
-                import org.apache.camel.builder.RouteBuilder;
-                import org.apache.camel.spi.ReifierStrategy;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start").to("log:test");
-                    }
-                }
-                """,
-                """
-                import org.apache.camel.builder.RouteBuilder;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start").to("log:test");
-                    }
-                }
-                """
-                )
-        );
     }
 
     @Test
@@ -279,34 +249,6 @@ public class CamelUpdate421Test implements RewriteTest {
                         """
                 )
         ));
-    }
-
-    @Test
-    void removeZooWordEmbeddingPredictorImport() {
-        //language=java
-        rewriteRun(
-                java(
-                """
-                import org.apache.camel.builder.RouteBuilder;
-                import org.apache.camel.component.djl.model.nlp.ZooWordEmbeddingPredictor;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start").to("log:test");
-                    }
-                }
-                """,
-                """
-                import org.apache.camel.builder.RouteBuilder;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start").to("log:test");
-                    }
-                }
-                """
-                )
-        );
     }
 
     @Test

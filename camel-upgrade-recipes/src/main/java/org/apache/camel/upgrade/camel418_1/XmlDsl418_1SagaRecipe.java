@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel419;
+package org.apache.camel.upgrade.camel418_1;
 
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.openrewrite.ExecutionContext;
@@ -33,7 +33,7 @@ import java.util.Optional;
  * Changed model for configuring completion and compensation URIs in XML DSL.
  * Converts child elements to attributes.
  */
-public class XmlDsl419SagaRecipe extends Recipe {
+public class XmlDsl418_1SagaRecipe extends Recipe {
 
     private static final XPathMatcher SAGA_MATCHER = new XPathMatcher("//saga");
 

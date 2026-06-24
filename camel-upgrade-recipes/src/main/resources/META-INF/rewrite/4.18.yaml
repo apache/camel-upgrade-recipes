@@ -52,7 +52,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-kafka
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         kafka.PARTITION_KEY: CamelKafkaPartitionKey
         kafka.PARTITION: CamelKafkaPartition
@@ -77,7 +77,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-dns
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         dns.class: CamelDnsClass
         dns.name: CamelDnsName
@@ -96,7 +96,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-salesforce
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         sObjectName: CamelSalesforceSObjectName
         sObjectId: CamelSalesforceSObjectId
@@ -114,6 +114,6 @@ recipeList:
         pkChunkingChunkSize: CamelSalesforcePkChunkingChunkSize
         pkChunkingParent: CamelSalesforcePkChunkingParent
         pkChunkingStartRow: CamelSalesforcePkChunkingStartRow
-  - org.apache.camel.upgrade.camel421.RenameHeaderPrefixes:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixes:
       prefixMappings:
         apexQueryParam.: CamelSalesforceApexQueryParam.

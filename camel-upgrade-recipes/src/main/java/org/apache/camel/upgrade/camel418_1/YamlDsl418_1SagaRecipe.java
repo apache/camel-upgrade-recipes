@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel419;
+package org.apache.camel.upgrade.camel418_1;
 
 import org.apache.camel.upgrade.AbstractCamelYamlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
@@ -32,7 +32,7 @@ import org.openrewrite.yaml.tree.Yaml;
  * Changed model for configuring completion and compensation URIs in YAML DSL.
  * Flattens nested uri fields to direct attribute values.
  */
-public class YamlDsl419SagaRecipe extends Recipe {
+public class YamlDsl418_1SagaRecipe extends Recipe {
 
     private static final JsonPathMatcher COMPENSATION_MATCHER = new JsonPathMatcher("$..saga.compensation");
     private static final JsonPathMatcher COMPLETION_MATCHER = new JsonPathMatcher("$..saga.completion");

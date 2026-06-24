@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel421;
+package org.apache.camel.upgrade.camel418_3;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
@@ -23,16 +23,16 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.yaml.Assertions.yaml;
 
-public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
+public class RenameHeaderInYamlDslTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new RenameHeaderPrefixInYamlDsl("SolrField.", "CamelSolrField."));
+        spec.recipe(new RenameHeaderInYamlDsl("kafka.TOPIC", "CamelKafkaTopic"));
     }
 
     @DocumentExample
     @Test
-    void setHeaderPrefixMigration() {
+    void setHeaderMigration() {
         //language=yaml
         rewriteRun(
             yaml(
@@ -42,8 +42,8 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - setHeader:
-                          name: SolrField.id
-                          constant: doc123
+                          name: kafka.TOPIC
+                          constant: my-topic
                 """,
                 """
                 - route:
@@ -51,15 +51,15 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - setHeader:
-                          name: CamelSolrField.id
-                          constant: doc123
+                          name: CamelKafkaTopic
+                          constant: my-topic
                 """
             )
         );
     }
 
     @Test
-    void headerPredicatePrefixMigration() {
+    void headerPredicateMigration() {
         //language=yaml
         rewriteRun(
             yaml(
@@ -71,7 +71,7 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       - choice:
                           when:
                             - header:
-                                name: SolrField.id
+                                name: kafka.TOPIC
                               steps:
                                 - to: "mock:found"
                 """,
@@ -83,7 +83,7 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       - choice:
                           when:
                             - header:
-                                name: CamelSolrField.id
+                                name: CamelKafkaTopic
                               steps:
                                 - to: "mock:found"
                 """
@@ -92,7 +92,7 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
     }
 
     @Test
-    void removeHeaderPrefixMigration() {
+    void removeHeaderMigration() {
         //language=yaml
         rewriteRun(
             yaml(
@@ -102,7 +102,8 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - removeHeader:
-                          name: SolrField.id
+                          name: kafka.TOPIC
+                      - to: "mock:result"
                 """,
                 """
                 - route:
@@ -110,14 +111,15 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - removeHeader:
-                          name: CamelSolrField.id
+                          name: CamelKafkaTopic
+                      - to: "mock:result"
                 """
             )
         );
     }
 
     @Test
-    void multipleHeadersPrefixMigration() {
+    void multipleHeadersMigration() {
         //language=yaml
         rewriteRun(
             yaml(
@@ -127,11 +129,13 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - setHeader:
-                          name: SolrField.id
-                          constant: "123"
+                          name: kafka.TOPIC
+                          constant: topic1
                       - setHeader:
-                          name: SolrField.name
-                          constant: "Test"
+                          name: other.header
+                          constant: value
+                      - removeHeader:
+                          name: kafka.TOPIC
                 """,
                 """
                 - route:
@@ -139,18 +143,20 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - setHeader:
-                          name: CamelSolrField.id
-                          constant: "123"
+                          name: CamelKafkaTopic
+                          constant: topic1
                       - setHeader:
-                          name: CamelSolrField.name
-                          constant: "Test"
+                          name: other.header
+                          constant: value
+                      - removeHeader:
+                          name: CamelKafkaTopic
                 """
             )
         );
     }
 
     @Test
-    void doesNotMigrateDifferentPrefix() {
+    void setHeaderWithSimpleExpression() {
         //language=yaml
         rewriteRun(
             yaml(
@@ -160,54 +166,8 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - setHeader:
-                          name: SolrParam.commit
-                          constant: true
-                """
-                // No change expected
-            )
-        );
-    }
-
-    @Test
-    void doesNotMigrateArbitraryYaml() {
-        //language=yaml
-        rewriteRun(
-            yaml(
-                """
-                - route:
-                    from:
-                      uri: "direct:start"
-                    steps:
-                      - log:
-                          message: "Header: SolrField.id"
-                """
-                // No change expected
-            )
-        );
-    }
-
-    @Test
-    void migratesVariousFieldNames() {
-        //language=yaml
-        rewriteRun(
-            yaml(
-                """
-                - route:
-                    from:
-                      uri: "direct:start"
-                    steps:
-                      - setHeader:
-                          name: SolrField.id
-                          constant: "1"
-                      - setHeader:
-                          name: SolrField.name
-                          constant: "Test"
-                      - setHeader:
-                          name: SolrField.description
-                          constant: "Desc"
-                      - setHeader:
-                          name: SolrField.custom_field_123
-                          constant: "Custom"
+                          name: kafka.TOPIC
+                          simple: "${header.myHeader}"
                 """,
                 """
                 - route:
@@ -215,18 +175,60 @@ public class RenameHeaderPrefixInYamlDslTest implements RewriteTest {
                       uri: "direct:start"
                     steps:
                       - setHeader:
-                          name: CamelSolrField.id
-                          constant: "1"
-                      - setHeader:
-                          name: CamelSolrField.name
-                          constant: "Test"
-                      - setHeader:
-                          name: CamelSolrField.description
-                          constant: "Desc"
-                      - setHeader:
-                          name: CamelSolrField.custom_field_123
-                          constant: "Custom"
+                          name: CamelKafkaTopic
+                          simple: "${header.myHeader}"
                 """
+            )
+        );
+    }
+
+    @Test
+    void doesNotMigrateDifferentHeader() {
+        //language=yaml
+        rewriteRun(
+            yaml(
+                """
+                - route:
+                    from:
+                      uri: "direct:start"
+                    steps:
+                      - setHeader:
+                          name: kafka.PARTITION
+                          constant: 0
+                """
+                // No change expected - different header name
+            )
+        );
+    }
+
+    @Test
+    void doesNotMigrateNonHeaderName() {
+        //language=yaml
+        rewriteRun(
+            yaml(
+                """
+                - route:
+                    from:
+                      uri: "kafka:kafka.TOPIC"
+                    steps:
+                      - to: "mock:result"
+                """
+                // No change expected - "kafka.TOPIC" is URI, not a header name
+            )
+        );
+    }
+
+    @Test
+    void doesNotMigrateNonCamelYaml() {
+        //language=yaml
+        rewriteRun(
+            yaml(
+                """
+                app:
+                  headers:
+                    kafka.TOPIC: my-topic
+                """
+                // No change expected - not Camel YAML DSL
             )
         );
     }
