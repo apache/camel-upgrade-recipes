@@ -37,8 +37,8 @@ name: org.apache.camel.upgrade.camel418_1.saga
 displayName: Migrate camel-sage model configuration
 description: The Saga EIP has fixed the model for how to configure completion and compensation URIs.
 recipeList:
-  - org.apache.camel.upgrade.camel419.XmlDsl419SagaRecipe
-  - org.apache.camel.upgrade.camel419.YamlDsl419SagaRecipe
+  - org.apache.camel.upgrade.camel418_1.XmlDsl418_1SagaRecipe
+  - org.apache.camel.upgrade.camel418_1.YamlDsl418_1SagaRecipe
   - org.apache.camel.upgrade.camel418_1.routePolicy
 ---
 ### https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_yaml_io_camel_xml_io

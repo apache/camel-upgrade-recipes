@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel421;
+package org.apache.camel.upgrade.camel418_3;
 
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * Example YAML configuration (bulk rename):
  * <pre>
- * - org.apache.camel.upgrade.camel421.RenameHeaders:
+ * - org.apache.camel.upgrade.camel418_3.RenameHeaders:
  *     headerMappings:
  *       kafka.TOPIC: CamelKafkaTopic
  *       kafka.PARTITION: CamelKafkaPartition
@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * Example YAML configuration (single rename):
  * <pre>
- * - org.apache.camel.upgrade.camel421.RenameHeaders:
+ * - org.apache.camel.upgrade.camel418_3.RenameHeaders:
  *     oldHeaderName: kafka.TOPIC
  *     newHeaderName: CamelKafkaTopic
  * </pre>

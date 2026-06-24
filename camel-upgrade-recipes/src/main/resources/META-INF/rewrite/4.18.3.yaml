@@ -54,7 +54,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-jgroups
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         JGROUPS_CHANNEL_ADDRESS: CamelJGroupsChannelAddress
         JGROUPS_DEST: CamelJGroupsDest
@@ -71,7 +71,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-jira
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         IssueAssigneeId: CamelJiraIssueAssigneeId
         IssueAssignee: CamelJiraIssueAssignee
@@ -104,7 +104,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-jgroups-raft
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         JGROUPSRAFT_LOG_SIZE: CamelJGroupsRaftLogSize
         JGROUPSRAFT_COMMIT_INDEX: CamelJGroupsRaftCommitIndex
@@ -129,7 +129,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-shiro
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         SHIRO_SECURITY_TOKEN: CamelShiroSecurityToken
         SHIRO_SECURITY_USERNAME: CamelShiroSecurityUsername
@@ -145,7 +145,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-solr
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaderPrefixes:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixes:
       prefixMappings:
         SolrField.: CamelSolrField.
         SolrParam.: CamelSolrParam.
@@ -160,7 +160,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-github2
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GitHubPullRequest: CamelGitHubPullRequest
         GitHubInResponseTo: CamelGitHubInResponseTo
@@ -177,7 +177,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-google-functions
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GoogleCloudFunctionsOperation: CamelGoogleCloudFunctionsOperation
         GoogleCloudFunctionsEntryPoint: CamelGoogleCloudFunctionsEntryPoint
@@ -195,7 +195,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-google-secret-manager
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GoogleSecretManagerOperation: CamelGoogleSecretManagerOperation
 ---
@@ -209,7 +209,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-mongodb-gridfs
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         gridfs.operation: CamelGridFsOperation
         gridfs.metadata: CamelGridFsMetadata
@@ -227,7 +227,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-lucene
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         RETURN_LUCENE_DOCS: CamelLuceneReturnLuceneDocs
 ---
@@ -241,7 +241,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-openstack
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         FlavorId: CamelOpenstackNovaFlavorId
         RAM: CamelOpenstackNovaRam
@@ -278,7 +278,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-web3j
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         AT_BLOCK: CamelWeb3jAtBlock
         FROM_ADDRESS: CamelWeb3jFromAddress

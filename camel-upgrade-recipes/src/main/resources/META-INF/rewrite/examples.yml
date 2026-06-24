@@ -1,6 +1,6 @@
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInJavaMethod
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderInJavaMethod
 examples:
 - description: ''
   parameters:
@@ -26,7 +26,7 @@ examples:
     language: java
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInSimpleExpression
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderInSimpleExpression
 examples:
 - description: ''
   parameters:
@@ -54,7 +54,7 @@ examples:
     language: java
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInXmlDsl
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderInXmlDsl
 examples:
 - description: ''
   parameters:
@@ -78,7 +78,7 @@ examples:
     language: xml
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderInYamlDsl
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderInYamlDsl
 examples:
 - description: ''
   parameters:
@@ -104,7 +104,7 @@ examples:
     language: yaml
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInJavaMethod
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixInJavaMethod
 examples:
 - description: ''
   parameters:
@@ -132,7 +132,7 @@ examples:
     language: java
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInSimpleExpression
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixInSimpleExpression
 examples:
 - description: ''
   parameters:
@@ -160,7 +160,7 @@ examples:
     language: java
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInXmlDsl
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixInXmlDsl
 examples:
 - description: ''
   parameters:
@@ -184,7 +184,7 @@ examples:
     language: xml
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaderPrefixInYamlDsl
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixInYamlDsl
 examples:
 - description: ''
   parameters:
@@ -210,7 +210,7 @@ examples:
     language: yaml
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.apache.camel.upgrade.camel421.RenameHeaders
+recipeName: org.apache.camel.upgrade.camel418_3.RenameHeaders
 examples:
 - description: ''
   parameters:

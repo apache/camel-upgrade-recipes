@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel421;
+package org.apache.camel.upgrade.camel418_3;
 
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * Example YAML configuration:
  * <pre>
- * - org.apache.camel.upgrade.camel421.RenameHeaderPrefixes:
+ * - org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixes:
  *     prefixMappings:
  *       SolrField.: CamelSolrField.
  *       SolrParam.: CamelSolrParam.

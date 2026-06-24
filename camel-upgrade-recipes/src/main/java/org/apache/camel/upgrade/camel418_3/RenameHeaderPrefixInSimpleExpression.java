@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel421;
+package org.apache.camel.upgrade.camel418_3;
 
 import org.apache.camel.upgrade.AbstractCamelJavaVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
@@ -27,69 +27,70 @@ import org.openrewrite.java.tree.J;
 import java.util.regex.Pattern;
 
 /**
- * Renames header references in Simple expressions like ${header.oldName} or ${headers.oldName}.
+ * Renames header prefixes in Simple expressions like ${header.SolrField.id} → ${header.CamelSolrField.id}.
  * This recipe only transforms strings inside simple() method calls to avoid false positives.
  */
-public class RenameHeaderInSimpleExpression extends Recipe {
+public class RenameHeaderPrefixInSimpleExpression extends Recipe {
 
-    @Option(displayName = "Old header name",
-            description = "The old header name in Simple expression",
-            example = "kafka.TOPIC")
-    String oldHeaderName;
+    @Option(displayName = "Old header prefix",
+            description = "The old header prefix in Simple expression",
+            example = "SolrField.")
+    String oldPrefix;
 
-    @Option(displayName = "New header name",
-            description = "The new header name to use",
-            example = "CamelKafkaTopic")
-    String newHeaderName;
+    @Option(displayName = "New header prefix",
+            description = "The new header prefix to use",
+            example = "CamelSolrField.")
+    String newPrefix;
 
-    public RenameHeaderInSimpleExpression() {
+    public RenameHeaderPrefixInSimpleExpression() {
     }
 
-    public RenameHeaderInSimpleExpression(String oldHeaderName, String newHeaderName) {
-        this.oldHeaderName = oldHeaderName;
-        this.newHeaderName = newHeaderName;
+    public RenameHeaderPrefixInSimpleExpression(String oldPrefix, String newPrefix) {
+        this.oldPrefix = oldPrefix;
+        this.newPrefix = newPrefix;
     }
 
-    public void setOldHeaderName(String oldHeaderName) {
-        this.oldHeaderName = oldHeaderName;
+    public void setOldPrefix(String oldPrefix) {
+        this.oldPrefix = oldPrefix;
     }
 
-    public void setNewHeaderName(String newHeaderName) {
-        this.newHeaderName = newHeaderName;
+    public void setNewPrefix(String newPrefix) {
+        this.newPrefix = newPrefix;
     }
 
     @Override
     public String getDisplayName() {
-        return "Rename header in Simple expressions";
+        return "Rename header prefix in Simple expressions";
     }
 
     @Override
     public String getDescription() {
-        return "Renames header references in Simple expressions like ${header.oldName} → ${header.newName}. " +
+        return "Renames header prefixes in Simple expressions like ${header.SolrField.id} → ${header.CamelSolrField.id}. " +
                "Only migrates expressions inside simple() method calls.";
     }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return RecipesUtil.newVisitor(new SimpleExpressionVisitor(oldHeaderName, newHeaderName));
+        return RecipesUtil.newVisitor(new SimpleExpressionVisitor(oldPrefix, newPrefix));
     }
 
     private static class SimpleExpressionVisitor extends AbstractCamelJavaVisitor {
-        private final String oldHeaderName;
-        private final String newHeaderName;
+        private final String oldPrefix;
+        private final String newPrefix;
         private final Pattern headerPattern;
         private final Pattern headersPattern;
 
-        SimpleExpressionVisitor(String oldHeaderName, String newHeaderName) {
-            this.oldHeaderName = oldHeaderName;
-            this.newHeaderName = newHeaderName;
+        SimpleExpressionVisitor(String oldPrefix, String newPrefix) {
+            this.oldPrefix = oldPrefix;
+            this.newPrefix = newPrefix;
 
-            // Escape dots in header name for regex, but keep them in the pattern
-            String escapedOldName = Pattern.quote(oldHeaderName);
+            // Escape dots in prefix for regex
+            String escapedOldPrefix = Pattern.quote(oldPrefix);
 
-            // Match ${header.oldName} or ${headers.oldName}
-            this.headerPattern = Pattern.compile("(\\$\\{header\\.)" + escapedOldName + "(\\})");
-            this.headersPattern = Pattern.compile("(\\$\\{headers\\.)" + escapedOldName + "(\\})");
+            // Match ${header.SolrField.xxx} or ${headers.SolrField.xxx}
+            // Captures: group1=${header. or ${headers., group2=rest after old prefix, group3=}
+            this.headerPattern = Pattern.compile("(\\$\\{header\\.)" + escapedOldPrefix + "([^}]+)(\\})");
+            this.headersPattern = Pattern.compile("(\\$\\{headers\\.)" + escapedOldPrefix + "([^}]+)(\\})");
         }
 
         @Override
@@ -106,11 +107,11 @@ public class RenameHeaderInSimpleExpression extends Recipe {
                         String expression = (String) literal.getValue();
                         String newExpression = expression;
 
-                        // Replace ${header.oldName} with ${header.newName}
-                        newExpression = headerPattern.matcher(newExpression).replaceAll("$1" + newHeaderName + "$2");
+                        // Replace ${header.SolrField.xxx} with ${header.CamelSolrField.xxx}
+                        newExpression = headerPattern.matcher(newExpression).replaceAll("$1" + newPrefix + "$2$3");
 
-                        // Replace ${headers.oldName} with ${headers.newName}
-                        newExpression = headersPattern.matcher(newExpression).replaceAll("$1" + newHeaderName + "$2");
+                        // Replace ${headers.SolrField.xxx} with ${headers.CamelSolrField.xxx}
+                        newExpression = headersPattern.matcher(newExpression).replaceAll("$1" + newPrefix + "$2$3");
 
                         // If changed, update the literal
                         if (!expression.equals(newExpression)) {

@@ -57,8 +57,6 @@ recipeList:
   - org.apache.camel.upgrade.camel421.upgradeMiloHeaders
   - org.apache.camel.upgrade.camel421.upgradeOpensearchHeaders
   - org.apache.camel.upgrade.camel421.upgradeIrcHeaders
-  - org.apache.camel.upgrade.camel421.RemoveReifierStrategyImport
-  - org.apache.camel.upgrade.camel421.RemoveZooWordEmbeddingPredictorImport
   - org.apache.camel.upgrade.camel421.removeCamelStompDependency
   - org.apache.camel.upgrade.camel421.removeCamelAwsXrayDependency
   - org.apache.camel.upgrade.camel421.removeCamelGuavaEventbusDependency
@@ -78,7 +76,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-kafka
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         kafka.PARTITION_KEY: CamelKafkaPartitionKey
         kafka.PARTITION: CamelKafkaPartition
@@ -103,7 +101,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-dns
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         dns.class: CamelDnsClass
         dns.name: CamelDnsName
@@ -122,7 +120,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-couchdb
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         CouchDbDatabase: CamelCouchDbDatabase
         CouchDbSeq: CamelCouchDbSeq
@@ -140,7 +138,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-couchbase
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         CCB_KEY: CamelCouchbaseKey
         CCB_ID: CamelCouchbaseId
@@ -158,7 +156,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-github
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GitHubPullRequest: CamelGitHubPullRequest
         GitHubInResponseTo: CamelGitHubInResponseTo
@@ -175,7 +173,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-google-vision
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GoogleCloudVisionOperation: CamelGoogleCloudVisionOperation
         GoogleCloudVisionResponseObject: CamelGoogleCloudVisionResponseObject
@@ -190,7 +188,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-google-text-to-speech
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GoogleCloudTextToSpeechOperation: CamelGoogleCloudTextToSpeechOperation
         GoogleCloudTextToSpeechResponseObject: CamelGoogleCloudTextToSpeechResponseObject
@@ -205,7 +203,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-google-speech-to-text
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         GoogleCloudSpeechToTextOperation: CamelGoogleCloudSpeechToTextOperation
         GoogleCloudSpeechToTextResponseObject: CamelGoogleCloudSpeechToTextResponseObject
@@ -220,7 +218,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-irc
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         irc.messageType: CamelIrcMessageType
         irc.target: CamelIrcTarget
@@ -243,7 +241,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-pdf
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         protection-policy: CamelPdfProtectionPolicy
         pdf-document: CamelPdfDocument
@@ -260,7 +258,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-arangodb
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         key: CamelArangoDbKey
         ResultClassType: CamelArangoDbResultClassType
@@ -275,7 +273,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-jt400
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         KEY: CamelJt400Key
         SENDER_INFORMATION: CamelJt400SenderInformation
@@ -290,7 +288,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-mail
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         copyTo: CamelMailCopyTo
         moveTo: CamelMailMoveTo
@@ -306,7 +304,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-milo
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         await: CamelMiloAwait
 ---
@@ -320,7 +318,7 @@ preconditions:
       groupIdPattern: org.apache.camel
       artifactIdPattern: camel-opensearch
 recipeList:
-  - org.apache.camel.upgrade.camel421.RenameHeaders:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       headerMappings:
         operation: CamelOpensearchOperation
         indexId: CamelOpensearchIndexId

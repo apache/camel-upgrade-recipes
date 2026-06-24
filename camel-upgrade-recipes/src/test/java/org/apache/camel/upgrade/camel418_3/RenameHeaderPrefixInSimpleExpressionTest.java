@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.upgrade.camel421;
+package org.apache.camel.upgrade.camel418_3;
 
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
@@ -25,11 +25,11 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
+public class RenameHeaderPrefixInSimpleExpressionTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new RenameHeaderInSimpleExpression("kafka.TOPIC", "CamelKafkaTopic"))
+        spec.recipe(new RenameHeaderPrefixInSimpleExpression("SolrField.", "CamelSolrField."))
             .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_20,
                     "camel-core-model", "camel-api"))
             .typeValidationOptions(TypeValidation.none());
@@ -37,7 +37,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
 
     @DocumentExample
     @Test
-    void simpleExpressionHeaderMigration() {
+    void simpleExpressionHeaderPrefixMigration() {
         //language=java
         rewriteRun(
             java(
@@ -47,7 +47,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${header.kafka.TOPIC}"));
+                            .setBody(simple("${header.SolrField.id}"));
                     }
                 }
                 """,
@@ -57,7 +57,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${header.CamelKafkaTopic}"));
+                            .setBody(simple("${header.CamelSolrField.id}"));
                     }
                 }
                 """
@@ -66,7 +66,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
     }
 
     @Test
-    void simpleExpressionHeadersVariantMigration() {
+    void simpleExpressionHeadersVariantPrefixMigration() {
         //language=java
         rewriteRun(
             java(
@@ -76,7 +76,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${headers.kafka.TOPIC}"));
+                            .setBody(simple("${headers.SolrField.id}"));
                     }
                 }
                 """,
@@ -86,7 +86,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${headers.CamelKafkaTopic}"));
+                            .setBody(simple("${headers.CamelSolrField.id}"));
                     }
                 }
                 """
@@ -105,7 +105,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setHeader("myHeader", simple("${header.kafka.TOPIC}"));
+                            .setHeader("result", simple("Value: ${header.SolrField.name}"));
                     }
                 }
                 """,
@@ -115,7 +115,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setHeader("myHeader", simple("${header.CamelKafkaTopic}"));
+                            .setHeader("result", simple("Value: ${header.CamelSolrField.name}"));
                     }
                 }
                 """
@@ -124,7 +124,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
     }
 
     @Test
-    void simpleExpressionWithOtherText() {
+    void multipleHeaderReferencesInOneExpression() {
         //language=java
         rewriteRun(
             java(
@@ -134,7 +134,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("Topic: ${header.kafka.TOPIC}, Partition: ${header.kafka.PARTITION}"));
+                            .setBody(simple("ID: ${header.SolrField.id}, Name: ${header.SolrField.name}"));
                     }
                 }
                 """,
@@ -144,7 +144,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("Topic: ${header.CamelKafkaTopic}, Partition: ${header.kafka.PARTITION}"));
+                            .setBody(simple("ID: ${header.CamelSolrField.id}, Name: ${header.CamelSolrField.name}"));
                     }
                 }
                 """
@@ -153,7 +153,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
     }
 
     @Test
-    void multipleSimpleExpressions() {
+    void doesNotMigrateDifferentPrefix() {
         //language=java
         rewriteRun(
             java(
@@ -163,38 +163,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${header.kafka.TOPIC}"))
-                            .setHeader("copy", simple("${headers.kafka.TOPIC}"));
-                    }
-                }
-                """,
-                """
-                import org.apache.camel.builder.RouteBuilder;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start")
-                            .setBody(simple("${header.CamelKafkaTopic}"))
-                            .setHeader("copy", simple("${headers.CamelKafkaTopic}"));
-                    }
-                }
-                """
-            )
-        );
-    }
-
-    @Test
-    void doesNotMigrateNonSimpleStrings() {
-        //language=java
-        rewriteRun(
-            java(
-                """
-                import org.apache.camel.builder.RouteBuilder;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        String expression = "${header.kafka.TOPIC}"; // Not inside simple() call
-                        System.out.println("Expression: ${header.kafka.TOPIC}");
+                            .setBody(simple("${header.SolrParam.commit}")); // Different prefix, should NOT be changed
                     }
                 }
                 """
@@ -204,7 +173,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
     }
 
     @Test
-    void doesNotMigrateDifferentHeader() {
+    void doesNotMigrateArbitraryStrings() {
         //language=java
         rewriteRun(
             java(
@@ -214,7 +183,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${header.kafka.PARTITION}")); // Different header
+                            .log("Header: SolrField.id"); // Should NOT be changed
                     }
                 }
                 """
@@ -224,7 +193,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
     }
 
     @Test
-    void doesNotMigratePartialMatch() {
+    void doesNotMigrateOutsideSimpleMethod() {
         //language=java
         rewriteRun(
             java(
@@ -234,11 +203,46 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
                 class Test extends RouteBuilder {
                     public void configure() {
                         from("direct:start")
-                            .setBody(simple("${header.kafka.TOPIC.name}")); // Has extra suffix
+                            .setBody("${header.SolrField.id}"); // Not inside simple() call, should NOT be changed
                     }
                 }
                 """
-                // No change expected - doesn't match exact pattern
+                // No change expected
+            )
+        );
+    }
+
+    @Test
+    void migratesVariousFieldNames() {
+        //language=java
+        rewriteRun(
+            java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .setHeader("h1", simple("${header.SolrField.id}"))
+                            .setHeader("h2", simple("${header.SolrField.name}"))
+                            .setHeader("h3", simple("${header.SolrField.description}"))
+                            .setHeader("h4", simple("${header.SolrField.custom_field_123}"));
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .setHeader("h1", simple("${header.CamelSolrField.id}"))
+                            .setHeader("h2", simple("${header.CamelSolrField.name}"))
+                            .setHeader("h3", simple("${header.CamelSolrField.description}"))
+                            .setHeader("h4", simple("${header.CamelSolrField.custom_field_123}"));
+                    }
+                }
+                """
             )
         );
     }
