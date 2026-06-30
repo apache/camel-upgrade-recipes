@@ -57,6 +57,9 @@ recipeList:
   - org.apache.camel.upgrade.camel421.upgradeMiloHeaders
   - org.apache.camel.upgrade.camel421.upgradeOpensearchHeaders
   - org.apache.camel.upgrade.camel421.upgradeIrcHeaders
+  - org.apache.camel.upgrade.camel421.upgradeCxfHeaders
+  - org.apache.camel.upgrade.camel421.upgradeElasticsearchHeaders
+  - org.apache.camel.upgrade.camel421.upgradeGrokDependency
   - org.apache.camel.upgrade.camel421.RemoveReifierStrategyImport
   - org.apache.camel.upgrade.camel421.RemoveZooWordEmbeddingPredictorImport
   - org.apache.camel.upgrade.camel421.removeCamelStompDependency
@@ -232,6 +235,48 @@ recipeList:
         irc.user.username: CamelIrcUserUsername
         irc.num: CamelIrcNum
         irc.value: CamelIrcValue
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-cxf-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.upgradeCxfHeaders
+displayName: Migrate camel-cxf header constants to new naming convention
+description: Renames CXF header constants to CamelCxf* pattern only if camel-cxf dependency is present.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-cxf
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        OPERATION_NAME: CamelCxfOperationName
+        OPERATION_NAMESPACE: CamelCxfOperationNamespace
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-elasticsearch-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.upgradeElasticsearchHeaders
+displayName: Migrate camel-elasticsearch header constants to new naming convention
+description: Renames Elasticsearch header constants to CamelElasticsearch* pattern only if camel-elasticsearch dependency is present.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-elasticsearch
+recipeList:
+  - org.apache.camel.upgrade.camel421.RenameHeaders:
+      headerMappings:
+        PARAM_SCROLL: CamelElasticsearchParamScroll
+        OPERATION: CamelElasticsearchOperation
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-grok-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel421.upgradeGrokDependency
+displayName: Migrate camel-grok library dependency
+description: Migrates the Grok library dependency from io.krakens:java-grok to io.github.whatap:java-grok. The camel-grok component now uses the new library maintained by whatap.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: io.krakens
+      oldArtifactId: java-grok
+      newGroupId: io.github.whatap
+      newArtifactId: java-grok
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-pdf-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
