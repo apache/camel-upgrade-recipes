@@ -59,7 +59,6 @@ recipeList:
   - org.apache.camel.upgrade.camel421.upgradeIrcHeaders
   - org.apache.camel.upgrade.camel421.upgradeCxfHeaders
   - org.apache.camel.upgrade.camel421.upgradeElasticsearchHeaders
-  - org.apache.camel.upgrade.camel421.upgradeGrokDependency
   - org.apache.camel.upgrade.camel421.RemoveReifierStrategyImport
   - org.apache.camel.upgrade.camel421.RemoveZooWordEmbeddingPredictorImport
   - org.apache.camel.upgrade.camel421.removeCamelStompDependency
@@ -265,18 +264,7 @@ recipeList:
       headerMappings:
         PARAM_SCROLL: CamelElasticsearchParamScroll
         OPERATION: CamelElasticsearchOperation
----
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-grok-potential-breaking-change
-type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel421.upgradeGrokDependency
-displayName: Migrate camel-grok library dependency
-description: Migrates the Grok library dependency from io.krakens:java-grok to io.github.whatap:java-grok. The camel-grok component now uses the new library maintained by whatap.
-recipeList:
-  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
-      oldGroupId: io.krakens
-      oldArtifactId: java-grok
-      newGroupId: io.github.whatap
-      newArtifactId: java-grok
+
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_21.adoc#camel-pdf-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
