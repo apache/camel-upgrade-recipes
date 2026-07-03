@@ -25,6 +25,13 @@ $ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifact
 ```
 
 
+To upgrade to the latest version of Camel 4.18 (LTS), you can execute the following script:
+
+```
+$ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.Camel418LTSMigrationRecipe
+```
+
+
 To apply specific recipes you can use the following script:
 
 ```

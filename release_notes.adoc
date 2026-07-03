@@ -6,6 +6,15 @@
 
 This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.21.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_21.html[migration guide]).
 
+This release also introduces migration recipes for *Camel 4.18.3 LTS*. A dedicated `Camel418LTSMigrationRecipe` is available for users staying on the 4.18 LTS line (see README for usage). The 4.18.3 recipes cover changes backported to the 4.18.x maintenance branch, primarily:
+
+* *Header renames* for camel-jgroups, camel-jira, camel-jgroups-raft, camel-shiro, camel-solr, camel-github2, camel-google-cloud (functions, secret-manager), camel-mongodb-gridfs, camel-openstack, camel-web3j, camel-lucene
+* *Saga EIP* structure changes (XML and YAML DSL)
+* *YAML DSL* `routePolicy` renamed to `routePolicyRef`
+* *camel-elasticsearch* `enableDocumentOnlyMode` header migration
+
+All recipes included in the 4.18.3 migration are also part of the 4.21.0 migration path — there are no 4.18.3-specific recipes missing from 4.21.0. For the detailed 4.18.3 migration coverage, see the <<4.18.3>> section below.
+
 === Safety Features
 
 All header rename recipes now include dependency-based preconditions using `ModuleHasDependency`. This ensures headers are only renamed when the corresponding Camel component is actually present in the project, preventing false positives and accidental renaming of unrelated headers.
