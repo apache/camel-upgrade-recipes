@@ -24,7 +24,6 @@ import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.java.Assertions.mavenProject;
-import static org.openrewrite.maven.Assertions.pomXml;
 
 //class has to stay public, because test is extended in project quarkus-updates
 public class CamelUpdate418Test implements RewriteTest {
@@ -42,7 +41,7 @@ public class CamelUpdate418Test implements RewriteTest {
      */
     @DocumentExample
     @Test
-    void testQdrantHeadersChange() {
+    void qdrantHeadersChange() {
         //language=java
         rewriteRun(java(
                 """
@@ -71,7 +70,7 @@ public class CamelUpdate418Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_tahu">camel-tahu changes</a>
      */
     @Test
-    void testTahuChange() {
+    void tahuChange() {
         //language=java
         rewriteRun(java(
                 """
@@ -101,11 +100,11 @@ public class CamelUpdate418Test implements RewriteTest {
     }
 
     @Test
-    void testKafkaHeadersMigration() {
+    void kafkaHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-kafka",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-kafka", CamelTestUtil.CamelVersion.v4_17)),
+                        CamelTestUtil.pomXmlSpec("camel-kafka", CamelTestUtil.CamelVersion.v4_17),
                         java(
                                 """
                                 import org.apache.camel.Exchange;
@@ -141,11 +140,11 @@ public class CamelUpdate418Test implements RewriteTest {
     }
 
     @Test
-    void testDnsHeadersMigrationJava() {
+    void dnsHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-dns",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-dns", CamelTestUtil.CamelVersion.v4_17)),
+                        CamelTestUtil.pomXmlSpec("camel-dns", CamelTestUtil.CamelVersion.v4_17),
                         java(
                                 """
                                 import org.apache.camel.Exchange;
@@ -187,11 +186,11 @@ public class CamelUpdate418Test implements RewriteTest {
     }
 
     @Test
-    void testSalesforceHeadersMigrationJava() {
+    void salesforceHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-salesforce",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-salesforce", CamelTestUtil.CamelVersion.v4_17)),
+                        CamelTestUtil.pomXmlSpec("camel-salesforce", CamelTestUtil.CamelVersion.v4_17),
                         java(
                                 """
                                 import org.apache.camel.Exchange;

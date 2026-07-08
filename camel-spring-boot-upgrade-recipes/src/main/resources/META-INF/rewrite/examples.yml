@@ -38,3 +38,31 @@ examples:
       camel.main.include-non-singletons=something
       camel.main.warn-on-early-shutdown=something
     language: properties
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.apache.camel.upgrade.spring.UpgradeSpringBoot3To4
+examples:
+- description: ''
+  sources:
+  - before: |
+      <project>
+          <modelVersion>4.0.0</modelVersion>
+          <groupId>com.example</groupId>
+          <artifactId>test</artifactId>
+          <version>1.0.0</version>
+          <properties>
+              <java.version>11</java.version>
+          </properties>
+      </project>
+    after: |
+      <project>
+          <modelVersion>4.0.0</modelVersion>
+          <groupId>com.example</groupId>
+          <artifactId>test</artifactId>
+          <version>1.0.0</version>
+          <properties>
+              <java.version>17</java.version>
+          </properties>
+      </project>
+    path: pom.xml
+    language: xml

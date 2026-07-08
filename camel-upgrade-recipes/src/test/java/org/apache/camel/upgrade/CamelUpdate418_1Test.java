@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -39,8 +40,9 @@ public class CamelUpdate418_1Test implements RewriteTest {
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_saga_eip">Saga EIP</a>
      */
+    @DocumentExample
     @Test
-    void testSagaEipXml() {
+    void sagaEipXml() {
         //language=xml
         rewriteRun(xml(
           """
@@ -91,7 +93,7 @@ public class CamelUpdate418_1Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_saga_eip">Saga EIP</a>
      */
     @Test
-    void testSagaEipYaml() {
+    void sagaEipYaml() {
         //language=yaml
         rewriteRun(yaml(
           """
@@ -126,7 +128,7 @@ public class CamelUpdate418_1Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_yaml_io_camel_xml_io">YAML DSL</a>
      */
     @Test
-    void testYamlDslRoutePolicyRename() {
+    void yamlDslRoutePolicyRename() {
         //language=yaml
         rewriteRun(yaml(
                 """
