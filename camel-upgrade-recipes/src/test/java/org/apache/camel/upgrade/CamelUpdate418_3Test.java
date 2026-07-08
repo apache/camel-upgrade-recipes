@@ -17,16 +17,12 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
-import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.java.Assertions.mavenProject;
-import static org.openrewrite.maven.Assertions.pomXml;
-import static org.openrewrite.xml.Assertions.xml;
-import static org.openrewrite.yaml.Assertions.yaml;
 
 /**
  * Tests for migrating from Camel 4.18.1 to 4.18.3.
@@ -43,11 +39,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testLuceneHeadersMigrationJava() {
+    void luceneHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-lucene",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-lucene", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-lucene", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -89,11 +85,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testJGroupsHeadersMigration() {
+    void jGroupsHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-jgroups",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-jgroups", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-jgroups", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -131,11 +127,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testJiraHeadersMigrationJava() {
+    void jiraHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-jira",
-                        pomXml(
+                        CamelTestUtil.pomXmlSpec(
                         """
                         <project>
                             <groupId>com.example</groupId>
@@ -165,7 +161,7 @@ public class CamelUpdate418_3Test implements RewriteTest {
                                 </dependency>
                             </dependencies>
                         </project>
-                        """
+                        """, CamelTestUtil.CamelVersion.v4_18.getVersion()
                         ),
                         java(
                         """
@@ -210,11 +206,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testJGroupsRaftHeadersMigration() {
+    void jGroupsRaftHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-jgroups-raft",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-jgroups-raft", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-jgroups-raft", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -252,11 +248,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testShiroHeadersMigration() {
+    void shiroHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-shiro",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-shiro", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-shiro", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -294,11 +290,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testSolrHeadersMigration() {
+    void solrHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-solr",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-solr", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-solr", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -340,11 +336,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testGitHub2HeadersMigrationJava() {
+    void gitHub2HeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-github",
-                        pomXml(
+                        CamelTestUtil.pomXmlSpec(
                         """
                         <project>
                             <groupId>com.example</groupId>
@@ -361,7 +357,7 @@ public class CamelUpdate418_3Test implements RewriteTest {
                                 </dependency>
                             </dependencies>
                         </project>
-                        """
+                        """, CamelTestUtil.CamelVersion.v4_18.getVersion()
                         ),
                         java(
                         """
@@ -398,11 +394,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testGoogleCloudHeadersMigrationJava() {
+    void googleCloudHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-google-cloud",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-google-functions", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-google-functions", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -438,11 +434,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testMongoDbGridFsHeadersMigrationJava() {
+    void mongoDbGridFsHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-mongodb",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-mongodb-gridfs", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-mongodb-gridfs", CamelTestUtil.CamelVersion.v4_18),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -478,11 +474,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testOpenstackHeadersMigrationJava() {
+    void openstackHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-openstack",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-openstack", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-openstack", CamelTestUtil.CamelVersion.v4_18),
                         java(
                                 """
                                 import org.apache.camel.Exchange;
@@ -530,11 +526,11 @@ public class CamelUpdate418_3Test implements RewriteTest {
     }
 
     @Test
-    void testWeb3jHeadersMigrationJava() {
+    void web3jHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-web3j",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-web3j", CamelTestUtil.CamelVersion.v4_18)),
+                        CamelTestUtil.pomXmlSpec("camel-web3j", CamelTestUtil.CamelVersion.v4_18),
                         java(
                                 """
                                 import org.apache.camel.Exchange;

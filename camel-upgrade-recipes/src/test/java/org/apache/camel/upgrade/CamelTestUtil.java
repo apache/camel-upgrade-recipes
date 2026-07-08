@@ -20,6 +20,7 @@ import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.Parser;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
+import org.openrewrite.test.SourceSpecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,8 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static org.openrewrite.maven.Assertions.pomXml;
 
 public class CamelTestUtil {
     public static final String PROPERTY_USE_RECIPE = "camelUpgradeRecipes-useRecipe";
@@ -217,6 +220,56 @@ public class CamelTestUtil {
                     </dependencies>
                 </project>
                 """.formatted(artifactId, version.getVersion());
+    }
+
+    /**
+     * Returns the target Camel version when running under a suite recipe that includes
+     * UpgradeDependencyVersion, or null when no version upgrade is expected.
+     */
+    private static String getTargetVersionFromRecipe() {
+        String useRecipe = System.getProperty(PROPERTY_USE_RECIPE);
+        if (useRecipe == null || useRecipe.isEmpty()) {
+            return null;
+        }
+        switch (useRecipe) {
+            case "org.apache.camel.upgrade.CamelMigrationRecipe":
+                return getCamelLatestVersion();
+            case "org.apache.camel.upgrade.Camel418LTSMigrationRecipe":
+                return getCamel418LtsVersion();
+            case "org.apache.camel.upgrade.Camel410LTSMigrationRecipe":
+                return getCamel410LtsVersion();
+            default:
+                return null;
+        }
+    }
+
+    public static boolean isRecipeOverridden() {
+        return getTargetVersionFromRecipe() != null;
+    }
+
+    /**
+     * Creates a pomXml SourceSpecs that expects the camel dependency version to be upgraded
+     * when running under a suite recipe (UpgradeDependencyVersion), or no POM change when
+     * running standalone.
+     */
+    public static SourceSpecs pomXmlSpec(String artifactId, CamelVersion sourceVersion) {
+        return pomXmlSpec(pomXmlWithDependency(artifactId, sourceVersion), sourceVersion.getVersion());
+    }
+
+    /**
+     * Creates a pomXml SourceSpecs from a raw POM string, expecting the camel dependency version
+     * to be upgraded when running under a suite recipe.
+     */
+    public static SourceSpecs pomXmlSpec(String pomBefore, String sourceVersion) {
+        String targetVersion = getTargetVersionFromRecipe();
+        if (targetVersion != null && !targetVersion.equals(sourceVersion)) {
+            String pomAfter = pomBefore.replace(
+                    "<version>" + sourceVersion + "</version>",
+                    "<version>" + targetVersion + "</version>"
+            );
+            return pomXml(pomBefore, pomAfter);
+        }
+        return pomXml(pomBefore);
     }
 
 }

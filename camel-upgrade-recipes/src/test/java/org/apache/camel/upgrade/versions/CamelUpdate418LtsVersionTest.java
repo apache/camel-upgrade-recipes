@@ -18,11 +18,9 @@ package org.apache.camel.upgrade.versions;
 
 import org.apache.camel.upgrade.AbstractCamelUpdateVersionTest;
 import org.apache.camel.upgrade.CamelTestUtil;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 //class has to stay public, because test is extended in project quarkus-updates
-@Disabled //until 4.18.3 is released
 @EnabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = "org.apache.camel.upgrade.Camel418LTSMigrationRecipe")
 public class CamelUpdate418LtsVersionTest extends AbstractCamelUpdateVersionTest {
 

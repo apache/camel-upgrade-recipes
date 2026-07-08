@@ -108,7 +108,7 @@ public class CamelUpdate419Test implements RewriteTest {
      */
     @Test
     void sagaEipXml() {
-        new CamelUpdate418_1Test().testSagaEipXml();
+        new CamelUpdate418_1Test().sagaEipXml();
     }
 
     /**
@@ -116,7 +116,7 @@ public class CamelUpdate419Test implements RewriteTest {
      */
     @Test
     void sagaEipYaml() {
-        new CamelUpdate418_1Test().testSagaEipYaml();
+        new CamelUpdate418_1Test().sagaEipYaml();
     }
 
 
@@ -191,7 +191,7 @@ public class CamelUpdate419Test implements RewriteTest {
      */
     @Test
     void yamlDslRoutePolicyRename() {
-        new CamelUpdate418_1Test().testYamlDslRoutePolicyRename();
+        new CamelUpdate418_1Test().yamlDslRoutePolicyRename();
     }
     /**
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html#_camel_bom">camel-bom</a>

@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -42,37 +43,66 @@ public class CamelUpdate421Test implements RewriteTest {
                 .expectedCyclesThatMakeChanges(1);
     }
 
+    @DocumentExample
     @Test
-    void testJGroupsHeadersMigration() {
-        new CamelUpdate418_3Test().testJGroupsHeadersMigration();
+    void removeReifierStrategyImport() {
+        //language=java
+        rewriteRun(
+                java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+                import org.apache.camel.spi.ReifierStrategy;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start").to("log:test");
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start").to("log:test");
+                    }
+                }
+                """
+                )
+        );
     }
 
     @Test
-    void testDnsHeadersMigrationJava() {
-        new CamelUpdate418Test().testDnsHeadersMigrationJava();
+    void jGroupsHeadersMigration() {
+        new CamelUpdate418_3Test().jGroupsHeadersMigration();
     }
 
     @Test
-    void testJiraHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testJiraHeadersMigrationJava();
+    void dnsHeadersMigrationJava() {
+        new CamelUpdate418Test().dnsHeadersMigrationJava();
     }
 
     @Test
-    void testOpenstackHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testOpenstackHeadersMigrationJava();
+    void jiraHeadersMigrationJava() {
+        new CamelUpdate418_3Test().jiraHeadersMigrationJava();
     }
 
     @Test
-    void testWeb3jHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testWeb3jHeadersMigrationJava();
+    void openstackHeadersMigrationJava() {
+        new CamelUpdate418_3Test().openstackHeadersMigrationJava();
     }
 
     @Test
-    void testCouchdbHeadersMigration() {
+    void web3jHeadersMigrationJava() {
+        new CamelUpdate418_3Test().web3jHeadersMigrationJava();
+    }
+
+    @Test
+    void couchdbHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-couchdb",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-couchdb", CamelTestUtil.CamelVersion.v4_20)),
+                        CamelTestUtil.pomXmlSpec("camel-couchdb", CamelTestUtil.CamelVersion.v4_20),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -110,11 +140,11 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testCouchbaseHeadersMigration() {
+    void couchbaseHeadersMigration() {
         //language=java
         rewriteRun(
                 mavenProject("test-couchbase",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-couchbase", CamelTestUtil.CamelVersion.v4_20)),
+                        CamelTestUtil.pomXmlSpec("camel-couchbase", CamelTestUtil.CamelVersion.v4_20),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -152,43 +182,43 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testJGroupsRaftHeadersMigration() {
-        new CamelUpdate418_3Test().testJGroupsRaftHeadersMigration();
+    void jGroupsRaftHeadersMigration() {
+        new CamelUpdate418_3Test().jGroupsRaftHeadersMigration();
     }
 
     @Test
-    void testShiroHeadersMigration() {
-        new CamelUpdate418_3Test().testShiroHeadersMigration();
+    void shiroHeadersMigration() {
+        new CamelUpdate418_3Test().shiroHeadersMigration();
     }
 
     @Test
-    void testSolrHeadersMigration() {
-        new CamelUpdate418_3Test().testSolrHeadersMigration();
+    void solrHeadersMigration() {
+        new CamelUpdate418_3Test().solrHeadersMigration();
     }
 
     @Test
-    void testGitHub2HeadersMigrationJava() {
-        new CamelUpdate418_3Test().testGitHub2HeadersMigrationJava();
+    void gitHub2HeadersMigrationJava() {
+        new CamelUpdate418_3Test().gitHub2HeadersMigrationJava();
     }
 
     @Test
-    void testGoogleCloudHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testGoogleCloudHeadersMigrationJava();
+    void googleCloudHeadersMigrationJava() {
+        new CamelUpdate418_3Test().googleCloudHeadersMigrationJava();
     }
 
     //todo more google - vision, text-to=speech, speech-to-text
 
     @Test
-    void testMongoDbGridFsHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testMongoDbGridFsHeadersMigrationJava();
+    void mongoDbGridFsHeadersMigrationJava() {
+        new CamelUpdate418_3Test().mongoDbGridFsHeadersMigrationJava();
     }
 
     @Test
-    void testIrcHeadersMigrationJava() {
+    void ircHeadersMigrationJava() {
         //language=java
         rewriteRun(
                 mavenProject("test-irc",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-irc", CamelTestUtil.CamelVersion.v4_20)),
+                        CamelTestUtil.pomXmlSpec("camel-irc", CamelTestUtil.CamelVersion.v4_20),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -224,15 +254,15 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testPreconditionBlocksWithoutDependency() {
+    void preconditionBlocksWithoutDependency() {
         // Test that the Kafka recipe does NOT run when camel-kafka dependency is absent
         // This verifies the ModuleHasDependency precondition works correctly
         // Using camel-core instead of camel-kafka means the precondition will block the recipe
         //language=java
         rewriteRun(
-                spec -> spec.expectedCyclesThatMakeChanges(0),
+                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
                 mavenProject("test-negative",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-core", CamelTestUtil.CamelVersion.v4_20)),
+                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_20),
                         java(
                         """
                         import org.apache.camel.Exchange;
@@ -252,35 +282,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testRemoveReifierStrategyImport() {
-        //language=java
-        rewriteRun(
-                java(
-                """
-                import org.apache.camel.builder.RouteBuilder;
-                import org.apache.camel.spi.ReifierStrategy;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start").to("log:test");
-                    }
-                }
-                """,
-                """
-                import org.apache.camel.builder.RouteBuilder;
-
-                class Test extends RouteBuilder {
-                    public void configure() {
-                        from("direct:start").to("log:test");
-                    }
-                }
-                """
-                )
-        );
-    }
-
-    @Test
-    void testRemoveZooWordEmbeddingPredictorImport() {
+    void removeZooWordEmbeddingPredictorImport() {
         //language=java
         rewriteRun(
                 java(
@@ -308,12 +310,12 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testLuceneHeadersMigrationJava() {
-        new CamelUpdate418_3Test().testLuceneHeadersMigrationJava();
+    void luceneHeadersMigrationJava() {
+        new CamelUpdate418_3Test().luceneHeadersMigrationJava();
     }
 
     @Test
-    void testRemoveCamelStompDependency() {
+    void removeCamelStompDependency() {
         //language=xml
         rewriteRun(
                 pomXml(
@@ -349,7 +351,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testRemoveCamelAwsXrayDependency() {
+    void removeCamelAwsXrayDependency() {
         //language=xml
         rewriteRun(
                 pomXml(
@@ -385,7 +387,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testRemoveCamelGuavaEventbusDependency() {
+    void removeCamelGuavaEventbusDependency() {
         //language=xml
         rewriteRun(
                 pomXml(
@@ -421,7 +423,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testRemoveCamelGrapeDependency() {
+    void removeCamelGrapeDependency() {
         //language=xml
         rewriteRun(
                 pomXml(
@@ -457,7 +459,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testRemoveCamelElytronDependency() {
+    void removeCamelElytronDependency() {
         //language=xml
         rewriteRun(
                 pomXml(
@@ -493,11 +495,11 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testMigrateAws2S3ListObjectsApi() {
+    void migrateAws2S3ListObjectsApi() {
         //language=java
         rewriteRun(
                 mavenProject("test-aws2-s3",
-                        pomXml(CamelTestUtil.pomXmlWithDependency("camel-aws2-s3", CamelTestUtil.CamelVersion.v4_20)),
+                        CamelTestUtil.pomXmlSpec("camel-aws2-s3", CamelTestUtil.CamelVersion.v4_20),
                         java(
                         """
                         import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
@@ -527,7 +529,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testRemoveCamelGithubDependency() {
+    void removeCamelGithubDependency() {
         //language=xml
         rewriteRun(
                 pomXml(
@@ -563,7 +565,7 @@ public class CamelUpdate421Test implements RewriteTest {
     }
 
     @Test
-    void testErrorRegistryPropertiesFile() {
+    void errorRegistryPropertiesFile() {
         //language=properties
         rewriteRun(
                 properties(
