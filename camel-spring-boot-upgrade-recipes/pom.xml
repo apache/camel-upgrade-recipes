@@ -31,6 +31,18 @@
     <name>Camel Spring Boot Upgrades Recipes</name>
     <description>Migration recipes (using openrewrite) for Camel Spring Boot to make Maven migrations easier</description>
 
+    <properties>
+        <!-- versions for camel-spring-boot latest, has to be kept aligned to the latest camel-spring-boot release -->
+        <spring-boot-version>4.1.0</spring-boot-version>
+        <springframework-version>7.0.8</springframework-version>
+        <spring-security-version>7.1.0</spring-security-version>
+        <spring-batch-version>6.0.4</spring-batch-version>
+
+        <!-- Spring versions for CSB 4.18 LTS, has to be kept aligned to camel-spring-boot 4.18.x -->
+        <spring-boot-4.18-lts-version>3.5.16</spring-boot-4.18-lts-version>
+        <springframework-4.18-lts-version>6.2.19</springframework-4.18-lts-version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

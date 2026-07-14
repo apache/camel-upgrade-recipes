@@ -32,6 +32,20 @@ $ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifact
 ```
 
 
+To upgrade a Camel Spring Boot application to the latest version:
+
+```
+$ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-spring-boot-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.CamelSpringBootMigrationRecipe
+```
+
+
+To upgrade a Camel Spring Boot application to the 4.18 LTS (staying on Spring Boot 3.x):
+
+```
+$ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-spring-boot-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.CamelSpringBoot418LTSMigrationRecipe
+```
+
+
 To apply specific recipes you can use the following script:
 
 ```
