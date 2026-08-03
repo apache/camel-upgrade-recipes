@@ -49,6 +49,8 @@ recipeList:
   - org.apache.camel.upgrade.camel40.ChangeTypes
   - org.apache.camel.upgrade.camel40.ChangeManagedChoiceMBeanMethodName
   - org.apache.camel.upgrade.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
+  - org.apache.camel.upgrade.camel40.renamedDependencies
+  - org.apache.camel.upgrade.camel40.removedDependencies
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel40.ChangeTypes
@@ -108,3 +110,114 @@ recipeList:
       oldMethodName: getModelToXMLDumper
   - org.apache.camel.upgrade.customRecipes.MoveGetterToPluginHelper:
       oldMethodName: getRoutesLoader
+---
+#https://camel.apache.org/manual/camel-4-migration-guide.html#_removed_components
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel40.renamedDependencies
+displayName: Rename removed Camel 3.x dependencies to their Camel 4.0 replacements
+description: Rename removed Camel 3.x dependencies to their Camel 4.0 replacements.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-swagger-java
+      newGroupId: org.apache.camel
+      newArtifactId: camel-openapi-java
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-rest-swagger
+      newGroupId: org.apache.camel
+      newArtifactId: camel-rest-openapi
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-directvm
+      newGroupId: org.apache.camel
+      newArtifactId: camel-direct
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-dozer
+      newGroupId: org.apache.camel
+      newArtifactId: camel-mapstruct
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-elasticsearch-rest
+      newGroupId: org.apache.camel
+      newArtifactId: camel-elasticsearch
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-rabbitmq
+      newGroupId: org.apache.camel
+      newArtifactId: camel-spring-rabbitmq
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-websocket
+      newGroupId: org.apache.camel
+      newArtifactId: camel-vertx-websocket
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-websocket-jsr356
+      newGroupId: org.apache.camel
+      newArtifactId: camel-vertx-websocket
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-vertx-kafka
+      newGroupId: org.apache.camel
+      newArtifactId: camel-kafka
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-vm
+      newGroupId: org.apache.camel
+      newArtifactId: camel-seda
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-xstream
+      newGroupId: org.apache.camel
+      newArtifactId: camel-jacksonxml
+---
+#https://camel.apache.org/manual/camel-4-migration-guide.html#_removed_components
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel40.removedDependencies
+displayName: Remove Camel 3.x dependencies that have been removed in Camel 4.0 with no direct replacement
+description: Remove Camel 3.x dependencies that have been removed in Camel 4.0 with no single direct replacement.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-any23
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-atlasmap
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-atmos
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-corda
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-gora
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-hbase
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-hyperledger-aries
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-iota
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-ipfs
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-jbpm
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-jclouds
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-spark
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-spring-integration
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-weka
