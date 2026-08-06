@@ -28,16 +28,16 @@ import org.openrewrite.xml.tree.Xml;
 public class ReplacePropertyInDataFormatXml extends Recipe {
 
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Component",
+    @Option(example = "crypto", displayName = "Component",
             description = "Component name.")
     String component;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Old property key",
+    @Option(example = "algorithmParameterRef", displayName = "Old property key",
             description = "The property key to rename.")
     String oldPropertyKey;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "New prefix before any group",
-            description = "The prefix to be replaced with.")
+    @Option(example = "algorithmParameterSpec", displayName = "New property key",
+            description = "The property key to be replaced with.")
     String newPropertyKey;
 
     public ReplacePropertyInDataFormatXml() {

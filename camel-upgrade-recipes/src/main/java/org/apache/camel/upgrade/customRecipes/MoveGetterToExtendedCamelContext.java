@@ -30,7 +30,7 @@ import org.openrewrite.java.tree.J;
  */
 public class MoveGetterToExtendedCamelContext extends Recipe {
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Method name",
+    @Option(example = "getStartupStepRecorder", displayName = "Method name",
             description = "Name of the method on external camel context.")
     public String oldMethodName;
 

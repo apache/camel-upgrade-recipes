@@ -30,16 +30,16 @@ import java.util.Optional;
 
 public class ReplacePropertyInComponentYaml extends Recipe {
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Component",
+    @Option(example = "netty", displayName = "Component",
             description = "Component name.")
     String component;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Old property key",
+    @Option(example = "keyStoreFile", displayName = "Old property key",
             description = "The property key to rename.")
     String oldPropertyKey;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "New prefix before any group",
-            description = "The prefix to be replaced with.")
+    @Option(example = "keyStoreResource", displayName = "New property key",
+            description = "The property key to be replaced with.")
     String newPropertyKey;
 
     @Option(example = "file:", displayName = "New prefix before value of the changed property",

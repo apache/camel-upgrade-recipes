@@ -32,11 +32,11 @@ import java.util.regex.Matcher;
  */
 public class LiteralRegexpConverterRecipe extends Recipe {
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Literal regexp name",
+    @Option(example = "(\\{\\{aws:[^/]+)/([^/]+}})", displayName = "Literal regexp name",
             description = "Regexp for matching a literal.")
     public String regexp;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Replacement to use",
+    @Option(example = "${1}#${2}", displayName = "Replacement to use",
             description = "Replacement to use.")
     public String replacement;
 

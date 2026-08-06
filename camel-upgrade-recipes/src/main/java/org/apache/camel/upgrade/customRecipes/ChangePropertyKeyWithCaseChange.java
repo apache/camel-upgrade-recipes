@@ -30,11 +30,11 @@ import java.util.List;
  */
 public class ChangePropertyKeyWithCaseChange extends Recipe {
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Old property key",
+    @Option(example = "camel.main.routeController(.*)", displayName = "Old property key",
             description = "The property key to rename.")
     String oldPropertyKey;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "New prefix before any group",
+    @Option(example = "camel.routeController.", displayName = "New prefix before any group",
             description = "The prefix to be replaced with.")
     String newPrefix;
 

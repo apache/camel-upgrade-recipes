@@ -8,11 +8,11 @@ import java.util.List;
 
 public class PropertiesAndYamlKeyUpdate extends Recipe {
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Old configuration key",
+    @Option(example = "camel.springboot.routeControllerSuperviseEnabled", displayName = "Old configuration key",
             description = "The configuration key to rename.")
     String oldPropertyKey;
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "New configuration key",
+    @Option(example = "camel.routecontroller.enabled", displayName = "New configuration key",
             description = "The configuration to be replaced with.")
     String newPropertyKey;
 

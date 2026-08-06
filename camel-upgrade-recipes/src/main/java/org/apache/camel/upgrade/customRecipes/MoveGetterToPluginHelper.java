@@ -35,7 +35,7 @@ public class MoveGetterToPluginHelper extends Recipe {
     private static final Pattern EXTERNAL_CONTEXT_TYPE = Pattern.compile("org.apache.camel.ExtendedCamelContext");
     private static final String MATCHER_CONTEXT_GET_EXT = "org.apache.camel.CamelContext getExtension(java.lang.Class)";
 
-    @Option(example = "TODO Provide a usage example for the docs", displayName = "Method name",
+    @Option(example = "getRoutesLoader", displayName = "Method name",
             description = "Name of the method on external camel context.")
     public String oldMethodName;
 
