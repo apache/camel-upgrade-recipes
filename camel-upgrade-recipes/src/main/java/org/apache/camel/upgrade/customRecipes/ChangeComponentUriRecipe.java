@@ -58,6 +58,14 @@ public class ChangeComponentUriRecipe extends Recipe {
     )
     public String replacement;
 
+    @Option(
+        displayName = "Consumer only",
+        description = "When true, only consumer endpoints (from) are transformed; producer endpoints (to) are left unchanged.",
+        example = "true",
+        required = false
+    )
+    public Boolean consumerOnly;
+
     public ChangeComponentUriRecipe() {
     }
 
@@ -72,6 +80,10 @@ public class ChangeComponentUriRecipe extends Recipe {
 
     public void setReplacement(String replacement) {
         this.replacement = replacement;
+    }
+
+    public void setConsumerOnly(Boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
     }
 
     @Override
@@ -90,9 +102,9 @@ public class ChangeComponentUriRecipe extends Recipe {
         List<Recipe> recipes = new ArrayList<>();
 
         // Apply transformation to all three DSL types
-        recipes.add(new ChangeJavaComponentUriRecipe(uriPattern, replacement));
-        recipes.add(new ChangeXmlComponentUriRecipe(uriPattern, replacement));
-        recipes.add(new ChangeYamlComponentUriRecipe(uriPattern, replacement));
+        recipes.add(new ChangeJavaComponentUriRecipe(uriPattern, replacement, consumerOnly));
+        recipes.add(new ChangeXmlComponentUriRecipe(uriPattern, replacement, consumerOnly));
+        recipes.add(new ChangeYamlComponentUriRecipe(uriPattern, replacement, consumerOnly));
 
         return recipes;
     }

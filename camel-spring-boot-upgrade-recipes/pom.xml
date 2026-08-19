@@ -76,7 +76,6 @@
             <artifactId>rewrite-maven</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-yaml</artifactId>

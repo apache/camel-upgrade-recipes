@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 public class ChangeYamlComponentUriRecipe extends Recipe {
 
     private static final JsonPathMatcher YAML_URI_MATCHER = new JsonPathMatcher("$..uri");
+    private static final JsonPathMatcher YAML_FROM_URI_MATCHER = new JsonPathMatcher("$..from.uri");
 
     @Option(
         displayName = "URI pattern",
@@ -49,12 +50,25 @@ public class ChangeYamlComponentUriRecipe extends Recipe {
     )
     public String replacement;
 
+    @Option(
+        displayName = "Consumer only",
+        description = "When true, only from.uri endpoints are transformed; other uri fields are left unchanged.",
+        example = "true",
+        required = false
+    )
+    public Boolean consumerOnly;
+
     public ChangeYamlComponentUriRecipe() {
     }
 
     public ChangeYamlComponentUriRecipe(String uriPattern, String replacement) {
+        this(uriPattern, replacement, null);
+    }
+
+    public ChangeYamlComponentUriRecipe(String uriPattern, String replacement, Boolean consumerOnly) {
         this.uriPattern = uriPattern;
         this.replacement = replacement;
+        this.consumerOnly = consumerOnly;
     }
 
     public void setUriPattern(String uriPattern) {
@@ -63,6 +77,10 @@ public class ChangeYamlComponentUriRecipe extends Recipe {
 
     public void setReplacement(String replacement) {
         this.replacement = replacement;
+    }
+
+    public void setConsumerOnly(Boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
     }
 
     @Override
@@ -90,7 +108,8 @@ public class ChangeYamlComponentUriRecipe extends Recipe {
                 Yaml.Mapping.Entry e = super.doVisitMappingEntry(entry, ctx);
 
                 // Check if this is a uri field
-                if (YAML_URI_MATCHER.matches(getCursor()) && e.getValue() instanceof Yaml.Scalar) {
+                JsonPathMatcher uriMatcher = Boolean.TRUE.equals(consumerOnly) ? YAML_FROM_URI_MATCHER : YAML_URI_MATCHER;
+                if (uriMatcher.matches(getCursor()) && e.getValue() instanceof Yaml.Scalar) {
                     Yaml.Scalar scalar = (Yaml.Scalar) e.getValue();
                     return RecipesUtil.transform(scalar.getValue(), pattern, replacement)
                             .map(newValue -> e.withValue(scalar.withValue(newValue)))

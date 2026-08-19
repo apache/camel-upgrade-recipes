@@ -1,5 +1,62 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.22.0
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.22.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html[migration guide]).
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_reactive_executor_tomcat[camel-reactive-executor-tomcat: component deprecated]
+| ✅ Full
+| Automated via `RemoveDependency` — the component is functionally identical to the built-in default reactive executor since JDK 17, Camel falls back to it automatically
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_route_tools_now_use_ai_tool[camel-langchain4j-agent: tool routes `langchain4j-tools:` → `ai-tool:`]
+| ⚠️ Partial
+| Consumer route URIs renamed via `ChangeComponentUriRecipe` across Java, XML and YAML DSL and the `camel-ai-tool` dependency added automatically (gated on `camel-langchain4j-tools`); producer endpoints are preserved and must be migrated to `langchain4j-agent` manually
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_langchain4j_tools_deprecated[camel-langchain4j-tools: component deprecated]
+| ⚠️ Partial
+| Tool definition (consumer) route URIs `langchain4j-tools:` → `ai-tool:` automated via `ChangeComponentUriRecipe` and the `camel-ai-tool` dependency added automatically (gated on `camel-langchain4j-tools`); direct tool-calling producer endpoints are preserved and must be migrated to `langchain4j-agent` manually
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_openai[camel-openai: ChatCompletion type moved]
+| ⚠️ Partial
+| Automated via `ChangeType` for `com.openai.models.ChatCompletion` → `com.openai.models.chat.completions.ChatCompletion` (gated on the `camel-openai` dependency)
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_azure_component_specific_credentialtype_enums_removed[camel-azure: component-specific CredentialType enums removed]
+| ✅ Full
+| Automated via `ChangeType` for all 10 component-specific enums → `org.apache.camel.component.azure.common.CredentialType`
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_spring_ai_chat[camel-spring-ai-chat: camel-spring-ai-tools component removed]
+| ✅ Full
+| Automated via `ChangeDependencyGroupIdAndArtifactId` for `camel-spring-ai-tools` → `camel-ai-tool` (and `camel-spring-ai-tools-starter` → `camel-ai-tool-starter` in the Spring Boot recipe). Tool route URIs are covered by the `spring-ai-tools:` → `ai-tool:` URI recipe (see below)
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_route_tools_now_use_ai_tool_2[camel-spring-ai-chat: tool routes `spring-ai-tools:` → `ai-tool:`]
+| ✅ Full
+| Automated via `ChangeComponentUriRecipe` for `spring-ai-tools:` → `ai-tool:` across Java, XML and YAML DSL, applied without a dependency gate so already-renamed projects are still migrated; dependency and starter renames are covered by the dedicated recipes
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_aws_migrated_from_apache_client_to_apache5_client[camel-aws: apache-client → apache5-client]
+| ✅ Full
+| Automated via `ChangeDependencyGroupIdAndArtifactId` for `software.amazon.awssdk:apache-client` → `software.amazon.awssdk:apache5-client`, gated on a `camel-aws*` dependency; explicit versions are bumped to 2.46.0 (the first AWS SDK release using apache5-client by default), BOM-managed versions are untouched
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_minio_upgraded_to_minio_9_0_3_breaking_changes[camel-minio: type renames (minio 8.x → 9.0)]
+| ⚠️ Partial
+| `CopySource` → `SourceObject` automated via `ChangeType`. Inner class renames (`ServerSideEncryptionCustomerKey` → `ServerSideEncryption.CustomerKey`, `http.Method` → `Http.Method`, `messages.Bucket` → `ListAllMyBucketsResult.Bucket`, `DeleteObject` → `DeleteRequest.Object`) not automatable — OpenRewrite `ChangeType` to inner classes is not idempotent. Requires manual migration.
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_atmosphere_websocket_potential_breaking_change[camel-atmosphere-websocket: Exchange header values renamed]
+| ⚠️ Partial
+| Literal `websocket.*` → `CamelAtmosphereWebsocket*` header values automated via the 4.18.3 `RenameHeaders` custom recipe (gated on `camel-atmosphere-websocket`); symbolic `WebsocketConstants` usages need no change, cross-transport propagation of the now-`Camel*`-prefixed headers requires manual review
+
+
+|===
+
 == 4.21.0
 
 === Summary

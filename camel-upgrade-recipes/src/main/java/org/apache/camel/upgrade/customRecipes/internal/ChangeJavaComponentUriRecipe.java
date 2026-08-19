@@ -46,12 +46,25 @@ public class ChangeJavaComponentUriRecipe extends Recipe {
     )
     public String replacement;
 
+    @Option(
+        displayName = "Consumer only",
+        description = "When true, only URIs passed to from(...)/fromF(...) are transformed; producer endpoints are left unchanged.",
+        example = "true",
+        required = false
+    )
+    public Boolean consumerOnly;
+
     public ChangeJavaComponentUriRecipe() {
     }
 
     public ChangeJavaComponentUriRecipe(String uriPattern, String replacement) {
+        this(uriPattern, replacement, null);
+    }
+
+    public ChangeJavaComponentUriRecipe(String uriPattern, String replacement, Boolean consumerOnly) {
         this.uriPattern = uriPattern;
         this.replacement = replacement;
+        this.consumerOnly = consumerOnly;
     }
 
     public void setUriPattern(String uriPattern) {
@@ -60,6 +73,10 @@ public class ChangeJavaComponentUriRecipe extends Recipe {
 
     public void setReplacement(String replacement) {
         this.replacement = replacement;
+    }
+
+    public void setConsumerOnly(Boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
     }
 
     @Override
@@ -80,6 +97,14 @@ public class ChangeJavaComponentUriRecipe extends Recipe {
             @Override
             protected J.Literal doVisitLiteral(J.Literal literal, ExecutionContext ctx) {
                 J.Literal l = super.doVisitLiteral(literal, ctx);
+
+                if (Boolean.TRUE.equals(consumerOnly)) {
+                    J.MethodInvocation enclosing = getCursor().firstEnclosing(J.MethodInvocation.class);
+                    if (enclosing == null
+                            || !("from".equals(enclosing.getSimpleName()) || "fromF".equals(enclosing.getSimpleName()))) {
+                        return l;
+                    }
+                }
 
                 if (JavaType.Primitive.String == l.getType() && l.getValue() != null) {
                     String value = (String) l.getValue();

@@ -22,6 +22,7 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.tree.J;
 
 import java.util.ArrayList;
@@ -82,6 +83,11 @@ public class RenameHeaderInJavaMethod extends Recipe {
         private static final String MATCHER_GET_HEADER_2_ARGS = "org.apache.camel.Message getHeader(String, Class)";
         private static final String MATCHER_GET_HEADER_3_ARGS = "org.apache.camel.Message getHeader(String, Object, Class)";
         private static final String MATCHER_GET_HEADER_SUPPLIER = "org.apache.camel.Message getHeader(String, java.util.function.Supplier, Class)";
+        // matchOverrides=true: the DSL methods are invoked on ProcessorDefinition subtypes (RouteDefinition, ...)
+        private static final MethodMatcher DSL_SET_HEADER_MATCHER =
+                new MethodMatcher("org.apache.camel.model.ProcessorDefinition setHeader(String, ..)", true);
+        private static final MethodMatcher DSL_REMOVE_HEADER_MATCHER =
+                new MethodMatcher("org.apache.camel.model.ProcessorDefinition removeHeader(String)", true);
 
         private final String oldHeaderName;
         private final String newHeaderName;
@@ -125,7 +131,9 @@ public class RenameHeaderInJavaMethod extends Recipe {
                    getMethodMatcher(MATCHER_GET_HEADER_1_ARG).matches(mi) ||
                    getMethodMatcher(MATCHER_GET_HEADER_2_ARGS).matches(mi) ||
                    getMethodMatcher(MATCHER_GET_HEADER_3_ARGS).matches(mi) ||
-                   getMethodMatcher(MATCHER_GET_HEADER_SUPPLIER).matches(mi);
+                   getMethodMatcher(MATCHER_GET_HEADER_SUPPLIER).matches(mi) ||
+                   DSL_SET_HEADER_MATCHER.matches(mi) ||
+                   DSL_REMOVE_HEADER_MATCHER.matches(mi);
         }
     }
 }

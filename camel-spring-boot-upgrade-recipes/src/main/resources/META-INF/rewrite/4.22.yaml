@@ -1,0 +1,38 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.CamelSpringBootMigrationRecipe
+displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.22
+description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.22.
+recipeList:
+  - org.apache.camel.upgrade.camel421.CamelSpringBootMigrationRecipe
+  - org.apache.camel.upgrade.camel422.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel422.migrateSpringAiToolsStarterDependency
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-spring-ai-chat
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateSpringAiToolsStarterDependency
+displayName: Migrate camel-spring-ai-tools-starter to camel-ai-tool-starter
+description: Migrates the camel-spring-ai-tools-starter dependency, removed in Camel Spring Boot 4.22, to camel-ai-tool-starter. Route URIs using the spring-ai-tools scheme must be migrated to ai-tool manually.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel.springboot
+      oldArtifactId: camel-spring-ai-tools-starter
+      newGroupId: org.apache.camel.springboot
+      newArtifactId: camel-ai-tool-starter
+      newVersion: 4.22.0

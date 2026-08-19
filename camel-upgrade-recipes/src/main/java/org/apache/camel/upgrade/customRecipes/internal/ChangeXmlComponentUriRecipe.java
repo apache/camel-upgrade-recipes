@@ -50,12 +50,25 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
     )
     public String replacement;
 
+    @Option(
+        displayName = "Consumer only",
+        description = "When true, only <from> endpoints are transformed; <to> endpoints are left unchanged.",
+        example = "true",
+        required = false
+    )
+    public Boolean consumerOnly;
+
     public ChangeXmlComponentUriRecipe() {
     }
 
     public ChangeXmlComponentUriRecipe(String uriPattern, String replacement) {
+        this(uriPattern, replacement, null);
+    }
+
+    public ChangeXmlComponentUriRecipe(String uriPattern, String replacement, Boolean consumerOnly) {
         this.uriPattern = uriPattern;
         this.replacement = replacement;
+        this.consumerOnly = consumerOnly;
     }
 
     public void setUriPattern(String uriPattern) {
@@ -64,6 +77,10 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
 
     public void setReplacement(String replacement) {
         this.replacement = replacement;
+    }
+
+    public void setConsumerOnly(Boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
     }
 
     @Override
@@ -85,7 +102,8 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
             public Xml.Tag doVisitTag(Xml.Tag tag, ExecutionContext ctx) {
                 Xml.Tag t = super.doVisitTag(tag, ctx);
 
-                if (FROM_MATCHER.matches(getCursor()) || TO_MATCHER.matches(getCursor())) {
+                if (FROM_MATCHER.matches(getCursor())
+                        || (!Boolean.TRUE.equals(consumerOnly) && TO_MATCHER.matches(getCursor()))) {
                     return transformXmlUri(t, pattern, replacement);
                 }
 

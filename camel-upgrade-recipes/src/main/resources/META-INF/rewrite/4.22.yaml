@@ -1,0 +1,195 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html
+#####
+
+#####
+# Update the Camel project from 4.21 to 4.22
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.CamelMigrationRecipe
+displayName: Migrates `camel 4.21` application to `camel 4.22`
+description: Migrates `camel 4.21` application to `camel 4.22`.
+recipeList:
+  - org.apache.camel.upgrade.camel422.migrateAzureCredentialTypes
+  - org.apache.camel.upgrade.camel422.migrateAwsApacheClient
+  - org.apache.camel.upgrade.camel422.migrateMinioTypes
+  - org.apache.camel.upgrade.camel422.removeCamelReactiveExecutorTomcatDependency
+  - org.apache.camel.upgrade.camel422.migrateSpringAiToolsDependency
+  - org.apache.camel.upgrade.camel422.migrateOpenAiChatCompletion
+  - org.apache.camel.upgrade.camel422.migrateLangchain4jToolsUris
+  - org.apache.camel.upgrade.camel422.migrateSpringAiToolsUris
+  - org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-azure---component-specific-credentialtype-enums-removed
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateAzureCredentialTypes
+displayName: Migrate Azure component-specific CredentialType enums to common enum
+description: Migrates removed component-specific CredentialType enums to the shared org.apache.camel.component.azure.common.CredentialType enum.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.cosmosdb.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.eventgrid.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.eventhubs.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.file.azure.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.functions.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.key.vault.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.servicebus.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.storage.blob.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.storage.datalake.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.azure.storage.queue.CredentialType
+      newFullyQualifiedTypeName: org.apache.camel.component.azure.common.CredentialType
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-aws---migrated-from-apache-client-to-apache5-client
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateAwsApacheClient
+displayName: Migrate AWS SDK apache-client to apache5-client
+description: Migrates software.amazon.awssdk:apache-client to software.amazon.awssdk:apache5-client for projects using Camel AWS components. Explicit versions are set to 2.46.0, the AWS SDK release that made apache5-client the default; BOM-managed dependencies keep their managed version.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-aws*
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: software.amazon.awssdk
+      oldArtifactId: apache-client
+      newGroupId: software.amazon.awssdk
+      newArtifactId: apache5-client
+      # Applied to explicitly pinned versions only; BOM-managed dependencies keep their managed version
+      newVersion: 2.46.0
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-minio---upgraded-to-minio-903---breaking-changes
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateMinioTypes
+displayName: Migrate Minio types for minio 9.0 upgrade
+description: Migrates Minio types that were renamed or moved in the minio 8.x to 9.0 upgrade.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-minio
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.minio.CopySource
+      newFullyQualifiedTypeName: io.minio.SourceObject
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-reactive-executor-tomcat
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.removeCamelReactiveExecutorTomcatDependency
+displayName: Remove camel-reactive-executor-tomcat dependency
+description: Removes the camel-reactive-executor-tomcat dependency which was deprecated in Camel 4.22 (functionally identical to the built-in default reactive executor since JDK 17, Camel falls back to it automatically).
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-reactive-executor-tomcat
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-spring-ai-chat
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateSpringAiToolsDependency
+displayName: Migrate camel-spring-ai-tools to camel-ai-tool
+description: Migrates the camel-spring-ai-tools dependency, removed in Camel 4.22, to camel-ai-tool. Route URIs using the spring-ai-tools scheme must be migrated to ai-tool manually.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-spring-ai-tools
+      newGroupId: org.apache.camel
+      newArtifactId: camel-ai-tool
+      newVersion: 4.22.0
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-openai
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateOpenAiChatCompletion
+displayName: Migrate OpenAI ChatCompletion type to its new package
+description: Migrates com.openai.models.ChatCompletion to com.openai.models.chat.completions.ChatCompletion, matching the javaType declared for the CamelOpenAIResponse exchange property since Camel 4.22.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-openai
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.openai.models.ChatCompletion
+      newFullyQualifiedTypeName: com.openai.models.chat.completions.ChatCompletion
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-langchain4j-tools-deprecated
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateLangchain4jToolsUris
+displayName: Migrate langchain4j-tools endpoint URIs to ai-tool
+description: Renames the langchain4j-tools URI scheme to ai-tool on consumer endpoints (tool definition routes) in Java, XML and YAML DSL, and adds the camel-ai-tool dependency. Producer endpoints for direct tool calling are left unchanged and must be migrated to langchain4j-agent manually.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-langchain4j-tools
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^langchain4j-tools:(.*)$"
+      replacement: "ai-tool:${1}"
+      consumerOnly: true
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.apache.camel
+      artifactId: camel-ai-tool
+      # Fallback for poms with explicit versions only: when a BOM manages camel-ai-tool,
+      # AddDependency omits the version tag and the BOM-managed version wins. The latest
+      # migration chain additionally bumps org.apache.camel:* to its target version.
+      version: 4.22.0
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-spring-ai-chat
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateSpringAiToolsUris
+displayName: Migrate spring-ai-tools endpoint URIs to ai-tool
+description: Renames the spring-ai-tools URI scheme to ai-tool in Java, XML and YAML DSL routes, following the removal of the camel-spring-ai-tools component. Applies without a dependency precondition so that projects whose camel-spring-ai-tools dependency was already renamed (manually or by the dependency recipe) still get their routes migrated; the scheme is unique to the removed component.
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^spring-ai-tools:(.*)$"
+      replacement: "ai-tool:${1}"
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-atmosphere-websocket---potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders
+displayName: Migrate camel-atmosphere-websocket header values to new naming convention
+description: Renames the atmosphere-websocket Exchange header string values from websocket.* to CamelAtmosphereWebsocket*, only when the camel-atmosphere-websocket dependency is present. Symbolic WebsocketConstants references are unaffected and need no migration.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-atmosphere-websocket
+recipeList:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      headerMappings:
+        websocket.connectionKey.list: CamelAtmosphereWebsocketConnectionKeyList
+        websocket.connectionKey: CamelAtmosphereWebsocketConnectionKey
+        websocket.sendToAll: CamelAtmosphereWebsocketSendToAll
+        websocket.eventType: CamelAtmosphereWebsocketEventType
+        websocket.errorType: CamelAtmosphereWebsocketErrorType

@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -40,6 +41,43 @@ public class CamelUpdate421Test implements RewriteTest {
                 .typeValidationOptions(TypeValidation.none())
                 // Explicitly set expected cycles to 1 to prevent other recipes from running
                 .expectedCyclesThatMakeChanges(1);
+    }
+
+    @DocumentExample
+    @Test
+    void removeCamelStompDependency() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                    <properties>
+                        <maven.compiler.release>17</maven.compiler.release>
+                    </properties>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>camel-stomp</artifactId>
+                            <version>4.20.0</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """,
+                """
+                <project>
+                    <groupId>com.example</groupId>
+                    <artifactId>test</artifactId>
+                    <version>1.0.0</version>
+                    <properties>
+                        <maven.compiler.release>17</maven.compiler.release>
+                    </properties>
+                </project>
+                """
+                )
+        );
     }
 
     @Test
@@ -254,42 +292,6 @@ public class CamelUpdate421Test implements RewriteTest {
     @Test
     void luceneHeadersMigrationJava() {
         new CamelUpdate418_3Test().luceneHeadersMigrationJava();
-    }
-
-    @Test
-    void removeCamelStompDependency() {
-        //language=xml
-        rewriteRun(
-                pomXml(
-                """
-                <project>
-                    <groupId>com.example</groupId>
-                    <artifactId>test</artifactId>
-                    <version>1.0.0</version>
-                    <properties>
-                        <maven.compiler.release>17</maven.compiler.release>
-                    </properties>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-stomp</artifactId>
-                            <version>4.20.0</version>
-                        </dependency>
-                    </dependencies>
-                </project>
-                """,
-                """
-                <project>
-                    <groupId>com.example</groupId>
-                    <artifactId>test</artifactId>
-                    <version>1.0.0</version>
-                    <properties>
-                        <maven.compiler.release>17</maven.compiler.release>
-                    </properties>
-                </project>
-                """
-                )
-        );
     }
 
     @Test
