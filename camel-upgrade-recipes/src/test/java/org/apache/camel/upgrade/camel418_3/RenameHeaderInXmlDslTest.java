@@ -201,4 +201,105 @@ public class RenameHeaderInXmlDslTest implements RewriteTest {
             )
         );
     }
+
+    @Test
+    void simpleExpressionInElementTextMigration() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <routes xmlns="http://camel.apache.org/schema/spring">
+                    <route>
+                        <from uri="direct:start"/>
+                        <setBody>
+                            <simple>${header.kafka.TOPIC}</simple>
+                        </setBody>
+                    </route>
+                </routes>
+                """,
+                """
+                <routes xmlns="http://camel.apache.org/schema/spring">
+                    <route>
+                        <from uri="direct:start"/>
+                        <setBody>
+                            <simple>${header.CamelKafkaTopic}</simple>
+                        </setBody>
+                    </route>
+                </routes>
+                """
+            )
+        );
+    }
+
+    @Test
+    void simpleExpressionInAttributeMigration() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <routes xmlns="http://camel.apache.org/schema/spring">
+                    <route>
+                        <from uri="direct:start"/>
+                        <log message="topic is ${header.kafka.TOPIC}"/>
+                    </route>
+                </routes>
+                """,
+                """
+                <routes xmlns="http://camel.apache.org/schema/spring">
+                    <route>
+                        <from uri="direct:start"/>
+                        <log message="topic is ${header.CamelKafkaTopic}"/>
+                    </route>
+                </routes>
+                """
+            )
+        );
+    }
+
+
+    @Test
+    void doesNotMigrateNonCamelXml() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <beans xmlns="http://www.springframework.org/schema/beans">
+                    <bean id="example" class="com.example.Example">
+                        <property name="topic" value="${header.kafka.TOPIC}"/>
+                    </bean>
+                </beans>
+                """
+            )
+        );
+    }
+
+    @Test
+    void migratesCamelRoutesNestedInBeans() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <beans>
+                    <route>
+                        <from uri="direct:start"/>
+                        <setHeader name="kafka.TOPIC">
+                            <constant>my-topic</constant>
+                        </setHeader>
+                    </route>
+                </beans>
+                """,
+                """
+                <beans>
+                    <route>
+                        <from uri="direct:start"/>
+                        <setHeader name="CamelKafkaTopic">
+                            <constant>my-topic</constant>
+                        </setHeader>
+                    </route>
+                </beans>
+                """
+            )
+        );
+    }
+
 }

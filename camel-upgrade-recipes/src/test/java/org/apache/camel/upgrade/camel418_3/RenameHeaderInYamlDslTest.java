@@ -232,4 +232,32 @@ public class RenameHeaderInYamlDslTest implements RewriteTest {
             )
         );
     }
+
+    @Test
+    void simpleExpressionInScalarMigration() {
+        //language=yaml
+        rewriteRun(
+            yaml(
+                """
+                - route:
+                    from:
+                      uri: "direct:start"
+                    steps:
+                      - setBody:
+                          simple: "${header.kafka.TOPIC}"
+                      - log: "topic is ${header.kafka.TOPIC}"
+                """,
+                """
+                - route:
+                    from:
+                      uri: "direct:start"
+                    steps:
+                      - setBody:
+                          simple: "${header.CamelKafkaTopic}"
+                      - log: "topic is ${header.CamelKafkaTopic}"
+                """
+            )
+        );
+    }
+
 }

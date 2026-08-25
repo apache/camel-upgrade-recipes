@@ -23,6 +23,7 @@ recipeList:
   - org.apache.camel.upgrade.camel421.CamelSpringBootMigrationRecipe
   - org.apache.camel.upgrade.camel422.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel422.migrateSpringAiToolsStarterDependency
+  - org.apache.camel.upgrade.camel422.migrateAiToolStarterDependency
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-spring-ai-chat
 type: specs.openrewrite.org/v1beta/recipe
@@ -33,6 +34,25 @@ recipeList:
   - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
       oldGroupId: org.apache.camel.springboot
       oldArtifactId: camel-spring-ai-tools-starter
+      newGroupId: org.apache.camel.springboot
+      newArtifactId: camel-ai-tool-starter
+      newVersion: 4.22.0
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-langchain4j-tools-deprecated
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateAiToolStarterDependency
+displayName: Use camel-ai-tool-starter instead of camel-ai-tool
+description: Replaces the plain camel-ai-tool dependency with camel-ai-tool-starter, so that a Spring Boot application gets the component auto-configuration. The plain artifact is what the Camel recipe adds when migrating langchain4j-tools routes. Only modules that use Spring Boot are rewritten, so the plain Camel modules of a multi-module build keep the non-starter artifact.
+preconditions:
+  # FindDependency marks the pom that declares the dependency, so the swap is scoped to the modules
+  # that actually use Spring Boot rather than to every module of a multi-module build
+  - org.openrewrite.maven.search.FindDependency:
+      groupId: org.springframework.boot
+      artifactId: '*'
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-ai-tool
       newGroupId: org.apache.camel.springboot
       newArtifactId: camel-ai-tool-starter
       newVersion: 4.22.0

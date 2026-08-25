@@ -34,7 +34,7 @@ public class CamelUpdate422Test implements RewriteTest {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_22, true)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_21,
                         "camel-core-model", "camel-api", "camel-support", "camel-azure-storage-blob", "minio",
-                        "openai-java-core", "jakarta.xml.bind-api"))
+                        "jakarta.xml.bind-api"))
                 .typeValidationOptions(TypeValidation.none())
                 .expectedCyclesThatMakeChanges(1);
     }
@@ -256,36 +256,6 @@ public class CamelUpdate422Test implements RewriteTest {
                             </dependencies>
                         </project>
                         """
-                )
-        );
-    }
-
-    @Test
-    void migrateOpenAiChatCompletion() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-openai",
-                        CamelTestUtil.pomXmlSpec("camel-openai", CamelTestUtil.CamelVersion.v4_21),
-                        java(
-                                """
-                                import com.openai.models.ChatCompletion;
-
-                                public class OpenAiExample {
-                                    public void example() {
-                                        ChatCompletion completion = null;
-                                    }
-                                }
-                                """,
-                                """
-                                import com.openai.models.chat.completions.ChatCompletion;
-
-                                public class OpenAiExample {
-                                    public void example() {
-                                        ChatCompletion completion = null;
-                                    }
-                                }
-                                """
-                        )
                 )
         );
     }

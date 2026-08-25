@@ -22,6 +22,7 @@ import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.marker.SearchResult;
+import org.openrewrite.xml.XmlIsoVisitor;
 import org.openrewrite.xml.tree.Xml;
 import org.openrewrite.yaml.YamlIsoVisitor;
 import org.openrewrite.yaml.tree.Yaml;
@@ -82,6 +83,54 @@ public class RecipesUtil {
                     .anyMatch(RecipesUtil::hasCamelRootKey);
         }
         return false;
+    }
+
+    // ---------------- Camel XML DSL precondition
+    private static final Set<String> CAMEL_XML_DSL_ROOT_TAGS = Set.of(
+            "routes", "route", "routeConfiguration", "routeTemplate", "templatedRoute",
+            "rests", "rest", "restConfiguration", "camelContext", "routeContext", "bean", "beans");
+
+    private static final String SPRING_BEANS_NAMESPACE = "springframework.org/schema/beans";
+
+    /**
+     * Matches documents whose root element belongs to the Camel XML DSL, so that Simple expressions are
+     * not rewritten in unrelated XML such as Spring bean definitions, where ${...} is a property placeholder.
+     */
+    public static TreeVisitor<?, ExecutionContext> camelXmlDslPrecondition() {
+        return new XmlIsoVisitor<ExecutionContext>() {
+            @Override
+            public Xml.Document visitDocument(Xml.Document document, ExecutionContext ctx) {
+                if (isCamelXmlDsl(document.getRoot())) {
+                    return SearchResult.found(document);
+                }
+                return document;
+            }
+        };
+    }
+
+    public static boolean isCamelXmlDsl(Xml.@Nullable Tag root) {
+        if (root == null) {
+            return false;
+        }
+
+        // <bean> and <beans> are shared with Spring, whose namespace rules the document out
+        if (declaresNamespace(root, SPRING_BEANS_NAMESPACE)) {
+            return false;
+        }
+
+        // A Camel namespace is conclusive, whatever the root element is
+        if (declaresNamespace(root, "camel.apache.org")) {
+            return true;
+        }
+
+        // Camel XML DSL files are commonly written without any namespace, so fall back on the root element
+        return CAMEL_XML_DSL_ROOT_TAGS.contains(root.getName());
+    }
+
+    private static boolean declaresNamespace(Xml.Tag root, String namespaceFragment) {
+        return root.getAttributes().stream()
+                .anyMatch(a -> a.getKeyAsString().startsWith("xmlns")
+                               && a.getValueAsString().contains(namespaceFragment));
     }
 
     //---------------- annotations helpers

@@ -17,16 +17,23 @@
 package org.apache.camel.upgrade.camel418_3;
 
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
+import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.internal.ListUtils;
 import org.openrewrite.marker.Markers;
 import org.openrewrite.xml.tree.Xml;
 
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
- * Renames header references in XML DSL <setHeader name="..."> and <header name="..."> elements.
+ * Renames header references in XML DSL <setHeader name="..."> and <header name="..."> elements,
+ * and in the Simple expressions carried by element text and attribute values.
  */
 public class RenameHeaderInXmlDsl extends Recipe {
 
@@ -64,21 +71,31 @@ public class RenameHeaderInXmlDsl extends Recipe {
     @Override
     public String getDescription() {
         return "Renames header references in XML DSL <setHeader name=\"...\">, <header name=\"...\">, " +
-               "and <removeHeader name=\"...\"> elements.";
+               "and <removeHeader name=\"...\"> elements, and the ${header.oldName} placeholder wherever it " +
+               "appears in element text (<simple>) or in an attribute value.";
     }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new XmlHeaderVisitor(oldHeaderName, newHeaderName);
+        return Preconditions.check(RecipesUtil.camelXmlDslPrecondition(),
+                                   new XmlHeaderVisitor(oldHeaderName, newHeaderName));
     }
 
     private static class XmlHeaderVisitor extends AbstractCamelXmlVisitor {
         private final String oldHeaderName;
         private final String newHeaderName;
+        private final Pattern headerPattern;
+        private final Pattern headersPattern;
+        private final String replacement;
 
         XmlHeaderVisitor(String oldHeaderName, String newHeaderName) {
             this.oldHeaderName = oldHeaderName;
             this.newHeaderName = newHeaderName;
+
+            String escapedOldName = Pattern.quote(oldHeaderName);
+            this.headerPattern = Pattern.compile("(\\$\\{header\\.)" + escapedOldName + "(\\})");
+            this.headersPattern = Pattern.compile("(\\$\\{headers\\.)" + escapedOldName + "(\\})");
+            this.replacement = "$1" + Matcher.quoteReplacement(newHeaderName) + "$2";
         }
 
         @Override
@@ -87,27 +104,54 @@ public class RenameHeaderInXmlDsl extends Recipe {
 
             // Check if this is a setHeader, header, or removeHeader tag
             String tagName = t.getName();
-            if ("setHeader".equals(tagName) || "header".equals(tagName) || "removeHeader".equals(tagName)) {
-                // Look for the "name" attribute with oldHeaderName value
-                return t.withAttributes(ListUtils.map(t.getAttributes(), attr -> {
-                    if ("name".equals(attr.getKeyAsString()) &&
-                        oldHeaderName.equals(attr.getValueAsString())) {
-                        // Replace with new header name
-                        return attr.withValue(
-                            new Xml.Attribute.Value(
-                                attr.getValue().getId(),
-                                "",
-                                Markers.EMPTY,
-                                attr.getValue().getQuote(),
-                                newHeaderName
-                            )
-                        );
-                    }
+            boolean headerTag = "setHeader".equals(tagName) || "header".equals(tagName) || "removeHeader".equals(tagName);
+
+            t = t.withAttributes(ListUtils.map(t.getAttributes(), attr -> {
+                String value = attr.getValueAsString();
+                if (value == null) {
                     return attr;
-                }));
+                }
+
+                // The "name" attribute of a header element holds the header name itself
+                if (headerTag && "name".equals(attr.getKeyAsString()) && oldHeaderName.equals(value)) {
+                    return withValue(attr, newHeaderName);
+                }
+
+                // Any other attribute may carry a Simple expression, e.g. <log message="${header.x}"/>
+                String renamed = rename(value);
+                return value.equals(renamed) ? attr : withValue(attr, renamed);
+            }));
+
+            // Element text holds Simple expressions too, e.g. <simple>${header.x}</simple>.
+            // Only leaf elements have text content of their own.
+            if (t.getChildren().isEmpty()) {
+                Optional<String> value = t.getValue();
+                if (value.isPresent()) {
+                    String renamed = rename(value.get());
+                    if (!value.get().equals(renamed)) {
+                        t = t.withValue(renamed);
+                    }
+                }
             }
 
             return t;
+        }
+
+        private static Xml.Attribute withValue(Xml.Attribute attr, String newValue) {
+            return attr.withValue(
+                    new Xml.Attribute.Value(
+                            attr.getValue().getId(),
+                            "",
+                            Markers.EMPTY,
+                            attr.getValue().getQuote(),
+                            newValue
+                    )
+            );
+        }
+
+        private String rename(String value) {
+            String renamed = headerPattern.matcher(value).replaceAll(replacement);
+            return headersPattern.matcher(renamed).replaceAll(replacement);
         }
     }
 }

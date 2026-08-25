@@ -80,7 +80,8 @@ public class ReplacePropertyInComponentYaml extends Recipe {
 
     @Override
     public String getDescription() {
-        return "ARenames property of the component.";
+        return "Renames a property of the component in the YAML DSL, both in the parameters mapping and " +
+               "when the property is inlined in the endpoint uri.";
     }
 
     @Override
@@ -121,6 +122,16 @@ public class ReplacePropertyInComponentYaml extends Recipe {
 
                             return newEntry;
                         }
+                    }
+                }
+
+                // The same options can be inlined in the uri, e.g. uri: "netty-http:https://host/path?keyStoreFile=..."
+                if (valuePrefix != null && "uri".equals(e.getKey().getValue()) && e.getValue() instanceof Yaml.Scalar) {
+                    Yaml.Scalar uriScalar = (Yaml.Scalar) e.getValue();
+                    String newUri = RecipesUtil.replacePropertyInUrl(uriScalar.getValue(), component, oldPropertyKey,
+                            newPropertyKey, valuePrefix);
+                    if (newUri != null) {
+                        return e.withValue(uriScalar.withValue(newUri));
                     }
                 }
 

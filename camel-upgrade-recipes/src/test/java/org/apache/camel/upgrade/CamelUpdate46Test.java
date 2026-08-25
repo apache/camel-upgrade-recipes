@@ -157,6 +157,19 @@ public class CamelUpdate46Test implements RewriteTest {
             """));
     }
 
+    @Test
+    void xmlPropertiesNotMigratedInSpringBeans() {
+        //language=xml
+        rewriteRun(xml(
+          """
+            <beans xmlns="http://www.springframework.org/schema/beans">
+               <bean id="beanFromProps" class="com.acme.MyBean">
+                  <property name="msg1" value="messageString1"/>
+               </bean>
+            </beans>
+            """));
+    }
+
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     @Test
     void renamedDependencies() {
