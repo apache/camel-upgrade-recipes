@@ -19,6 +19,7 @@ package org.apache.camel.upgrade.xml;
 import org.apache.camel.upgrade.CamelTestUtil;
 import org.apache.camel.upgrade.camel410.XmlDsl410Recipe;
 import org.apache.camel.upgrade.camel418_1.XmlDsl418_1SagaRecipe;
+import org.apache.camel.upgrade.camel43.CamelResequenceEIPXmlRecipe;
 import org.apache.camel.upgrade.camel418_3.RenameHeaderInXmlDsl;
 import org.apache.camel.upgrade.camel418_3.RenameHeaderPrefixInXmlDsl;
 import org.apache.camel.upgrade.camel46.XmlDsl46Recipe;
@@ -222,4 +223,139 @@ class CamelXmlDslPreconditionTest implements RewriteTest {
             )
         );
     }
+
+    @Test
+    void resequenceLeavesNonCamelXmlAlone() {
+        //language=xml
+        rewriteRun(
+            spec -> spec.recipe(new CamelResequenceEIPXmlRecipe()),
+            xml(
+                """
+                <pipeline xmlns="http://example.com/schema/pipeline">
+                    <resequence>
+                        <stream-config timeout="1000"/>
+                    </resequence>
+                </pipeline>
+                """
+            )
+        );
+    }
+
+    // ---- documents that must still be recognised as Camel ----
+
+    @Test
+    void springXmlLayoutIsMigrated() {
+        //language=xml
+        rewriteRun(
+            spec -> spec.recipe(new RenameHeaderInXmlDsl("kafka.TOPIC", "CamelKafkaTopic")),
+            xml(
+                """
+                <beans xmlns="http://www.springframework.org/schema/beans">
+                    <camelContext xmlns="http://camel.apache.org/schema/spring">
+                        <route>
+                            <from uri="direct:start"/>
+                            <setHeader name="kafka.TOPIC">
+                                <constant>orders</constant>
+                            </setHeader>
+                        </route>
+                    </camelContext>
+                </beans>
+                """,
+                """
+                <beans xmlns="http://www.springframework.org/schema/beans">
+                    <camelContext xmlns="http://camel.apache.org/schema/spring">
+                        <route>
+                            <from uri="direct:start"/>
+                            <setHeader name="CamelKafkaTopic">
+                                <constant>orders</constant>
+                            </setHeader>
+                        </route>
+                    </camelContext>
+                </beans>
+                """
+            )
+        );
+    }
+
+    @Test
+    void camelRootIsMigrated() {
+        //language=xml
+        rewriteRun(
+            spec -> spec.recipe(new RenameHeaderInXmlDsl("kafka.TOPIC", "CamelKafkaTopic")),
+            xml(
+                """
+                <camel>
+                    <route>
+                        <from uri="direct:start"/>
+                        <setHeader name="kafka.TOPIC">
+                            <constant>orders</constant>
+                        </setHeader>
+                    </route>
+                </camel>
+                """,
+                """
+                <camel>
+                    <route>
+                        <from uri="direct:start"/>
+                        <setHeader name="CamelKafkaTopic">
+                            <constant>orders</constant>
+                        </setHeader>
+                    </route>
+                </camel>
+                """
+            )
+        );
+    }
+
+    @Test
+    void pluralWrapperRootIsMigrated() {
+        //language=xml
+        rewriteRun(
+            spec -> spec.recipe(new RenameHeaderInXmlDsl("kafka.TOPIC", "CamelKafkaTopic")),
+            xml(
+                """
+                <routeConfigurations>
+                    <routeConfiguration>
+                        <onException>
+                            <setHeader name="kafka.TOPIC">
+                                <constant>dlq</constant>
+                            </setHeader>
+                        </onException>
+                    </routeConfiguration>
+                </routeConfigurations>
+                """,
+                """
+                <routeConfigurations>
+                    <routeConfiguration>
+                        <onException>
+                            <setHeader name="CamelKafkaTopic">
+                                <constant>dlq</constant>
+                            </setHeader>
+                        </onException>
+                    </routeConfiguration>
+                </routeConfigurations>
+                """
+            )
+        );
+    }
+
+    @Test
+    void springStyleBeansInACamelDocumentAreLeftAlone() {
+        // a Camel XML file legitimately carries Spring bean definitions next to its routes, and a Spring
+        // bean declares its class with class= where a Camel bean uses type=
+        //language=xml
+        rewriteRun(
+            spec -> spec.recipe(new XmlDsl46Recipe()),
+            xml(
+                """
+                <camel>
+                    <bean id="bean1" class="org.apache.camel.main.app.Bean1">
+                        <property name="bean" ref="bean2"/>
+                    </bean>
+                </camel>
+                """
+            )
+        );
+    }
+
 }

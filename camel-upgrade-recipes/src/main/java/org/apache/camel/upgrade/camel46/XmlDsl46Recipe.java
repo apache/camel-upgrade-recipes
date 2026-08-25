@@ -19,6 +19,7 @@ package org.apache.camel.upgrade.camel46;
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
 import org.jspecify.annotations.Nullable;
+import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
@@ -61,7 +62,7 @@ public class XmlDsl46Recipe extends Recipe {
 
                 //save all properties into a list placed to the bean tag
                 //and the first property rename to properties and strip content
-                if (BEAN_PROPERTY_XPATH_MATCHER.matches(getCursor())) {
+                if (BEAN_PROPERTY_XPATH_MATCHER.matches(getCursor()) && isCamelBean(getCursor().getParent())) {
 
                     List<Xml.Tag> sb = getCursor().getParent().getMessage("properties");
                     if(sb == null) {
@@ -88,6 +89,19 @@ public class XmlDsl46Recipe extends Recipe {
                 }
 
                 return t;
+            }
+
+            /**
+             * A Camel bean declares its class with {@code type}, while a Spring bean definition uses
+             * {@code class}. Camel XML files legitimately carry Spring bean definitions alongside routes,
+             * and rewriting those into {@code <properties>} would break them.
+             */
+            private boolean isCamelBean(@Nullable Cursor beanCursor) {
+                if (beanCursor == null || !(beanCursor.getValue() instanceof Xml.Tag)) {
+                    return false;
+                }
+                Xml.Tag bean = (Xml.Tag) beanCursor.getValue();
+                return bean.getAttributes().stream().anyMatch(a -> "type".equals(a.getKeyAsString()));
             }
 
         });
