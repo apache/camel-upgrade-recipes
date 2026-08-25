@@ -16,7 +16,9 @@
  */
 package org.apache.camel.upgrade.camel410;
 
+import org.apache.camel.upgrade.RecipesUtil;
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
+import org.openrewrite.Preconditions;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
@@ -50,7 +52,7 @@ public class XmlDsl410Recipe extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new AbstractCamelXmlVisitor() {
+        return Preconditions.check(RecipesUtil.camelXmlDslPrecondition(), new AbstractCamelXmlVisitor() {
 
             @Override
             public Xml.Tag doVisitTag(final Xml.Tag tag, final ExecutionContext ctx) {
@@ -64,6 +66,6 @@ public class XmlDsl410Recipe extends Recipe {
                         .findAny()
                         .orElse(t);
             }
-        };
+        });
     }
 }

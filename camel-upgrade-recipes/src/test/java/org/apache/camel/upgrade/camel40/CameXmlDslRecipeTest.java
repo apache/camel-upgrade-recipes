@@ -86,7 +86,7 @@ public class CameXmlDslRecipeTest implements RewriteTest {
         //language=xml
         rewriteRun(xml(
           """
-            <differentContext>
+            <camelContext>
                 <circuitBreaker>
                     <resilience4jConfiguration>
                         <bulkheadEnabled>5643</bulkheadEnabled>
@@ -98,15 +98,15 @@ public class CameXmlDslRecipeTest implements RewriteTest {
                         <timeoutCancelRunningFuture></timeoutCancelRunningFuture>
                     </resilience4jConfiguration>
                 </circuitBreaker>
-            </differentContext>
+            </camelContext>
             """,
           """
-            <differentContext>
+            <camelContext>
                 <circuitBreaker>
                     <resilience4jConfiguration bulkheadEnabled="5643" bulkheadMaxConcurrentCalls="aaaa" bulkheadMaxWaitDuration="1" timeoutEnabled="true" timeoutExecutorService="1" timeoutDuration="1">
                     </resilience4jConfiguration>
                 </circuitBreaker>
-            </differentContext>
+            </camelContext>
             """));
     }
 

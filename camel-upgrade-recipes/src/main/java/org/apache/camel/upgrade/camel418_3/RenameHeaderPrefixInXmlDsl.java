@@ -16,7 +16,9 @@
  */
 package org.apache.camel.upgrade.camel418_3;
 
+import org.apache.camel.upgrade.RecipesUtil;
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
+import org.openrewrite.Preconditions;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -69,7 +71,8 @@ public class RenameHeaderPrefixInXmlDsl extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new XmlHeaderPrefixVisitor(oldPrefix, newPrefix);
+        return Preconditions.check(RecipesUtil.camelXmlDslPrecondition(),
+                                   new XmlHeaderPrefixVisitor(oldPrefix, newPrefix));
     }
 
     private static class XmlHeaderPrefixVisitor extends AbstractCamelXmlVisitor {
