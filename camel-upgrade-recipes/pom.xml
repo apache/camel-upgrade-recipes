@@ -635,14 +635,6 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
-                                <!-- OpenAI SDK with the pre-4.22 package layout for ChatCompletion migration tests (4.22) -->
-                                <artifactItem>
-                                    <groupId>com.openai</groupId>
-                                    <artifactId>openai-java-core</artifactId>
-                                    <version>0.8.1</version>
-                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
-                                </artifactItem>
-
                             </artifactItems>
                         </configuration>
                     </execution>

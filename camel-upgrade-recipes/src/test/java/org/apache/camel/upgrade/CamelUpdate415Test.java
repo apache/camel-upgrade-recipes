@@ -411,6 +411,30 @@ public class CamelUpdate415Test implements RewriteTest {
      * <a href="https://camel.apache.org/manual/camel-4x-upgrade-guide-4_15.html#_data_formats">Data Formats</a> in DSL
      */
     @Test
+    void nettyKeyStoreInlineUriTestYaml() {
+        //language=yaml
+        rewriteRun(yaml(
+                """
+                - route:
+                    id: route-3277
+                    from:
+                      uri: "netty-http:tcp:12345?keyStoreFile=/testFile"
+                      steps:
+                        - to:
+                            uri: "netty:tcp:12346?trustStoreFile=/testFile"
+                """,
+                """
+                - route:
+                    id: route-3277
+                    from:
+                      uri: "netty-http:tcp:12345?keyStoreResource=file:/testFile"
+                      steps:
+                        - to:
+                            uri: "netty:tcp:12346?trustStoreResource=file:/testFile"
+                """));
+    }
+
+    @Test
     void nettyKeyStoreTestYaml() {
         //language=yaml
         rewriteRun(yaml(

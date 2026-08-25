@@ -68,7 +68,8 @@ public class RenameHeaderInJavaMethod extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Renames header references in Message.setHeader() and Message.getHeader() method calls. " +
+        return "Renames header references in Message.setHeader(), Message.getHeader(), and in the " +
+               "setHeader(), removeHeader() and header() DSL methods. " +
                "Only migrates string literals in safe contexts. Does NOT migrate dynamic header names or Map.get() calls.";
     }
 
@@ -88,6 +89,10 @@ public class RenameHeaderInJavaMethod extends Recipe {
                 new MethodMatcher("org.apache.camel.model.ProcessorDefinition setHeader(String, ..)", true);
         private static final MethodMatcher DSL_REMOVE_HEADER_MATCHER =
                 new MethodMatcher("org.apache.camel.model.ProcessorDefinition removeHeader(String)", true);
+        // header("name") builds a predicate/expression on the header, it is declared on BuilderSupport
+        // and therefore available on RouteBuilder and the expression clauses
+        private static final MethodMatcher BUILDER_HEADER_MATCHER =
+                new MethodMatcher("org.apache.camel.builder.BuilderSupport header(String)", true);
 
         private final String oldHeaderName;
         private final String newHeaderName;
@@ -133,7 +138,8 @@ public class RenameHeaderInJavaMethod extends Recipe {
                    getMethodMatcher(MATCHER_GET_HEADER_3_ARGS).matches(mi) ||
                    getMethodMatcher(MATCHER_GET_HEADER_SUPPLIER).matches(mi) ||
                    DSL_SET_HEADER_MATCHER.matches(mi) ||
-                   DSL_REMOVE_HEADER_MATCHER.matches(mi);
+                   DSL_REMOVE_HEADER_MATCHER.matches(mi) ||
+                   BUILDER_HEADER_MATCHER.matches(mi);
         }
     }
 }

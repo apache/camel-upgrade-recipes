@@ -251,4 +251,36 @@ public class RenameHeaderInJavaMethodTest implements RewriteTest {
             )
         );
     }
+
+    @Test
+    void headerPredicateMigration() {
+        //language=java
+        rewriteRun(
+            java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .filter(header("kafka.TOPIC").isEqualTo("orders"))
+                            .to("mock:result");
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .filter(header("CamelKafkaTopic").isEqualTo("orders"))
+                            .to("mock:result");
+                    }
+                }
+                """
+            )
+        );
+    }
+
 }

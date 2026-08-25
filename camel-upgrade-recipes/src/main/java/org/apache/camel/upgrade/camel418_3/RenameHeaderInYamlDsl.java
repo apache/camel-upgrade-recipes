@@ -25,8 +25,12 @@ import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.yaml.tree.Yaml;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
- * Renames header references in YAML DSL setHeader.name, header.name, and removeHeader.name entries.
+ * Renames header references in YAML DSL setHeader.name, header.name, and removeHeader.name entries,
+ * and in the Simple expressions carried by scalar values.
  */
 public class RenameHeaderInYamlDsl extends Recipe {
 
@@ -63,7 +67,8 @@ public class RenameHeaderInYamlDsl extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Renames header references in YAML DSL setHeader.name, header.name, and removeHeader.name entries.";
+        return "Renames header references in YAML DSL setHeader.name, header.name, and removeHeader.name entries, " +
+               "and the ${header.oldName} placeholder wherever it appears in a scalar value.";
     }
 
     @Override
@@ -75,10 +80,18 @@ public class RenameHeaderInYamlDsl extends Recipe {
     private static class YamlHeaderVisitor extends AbstractCamelYamlVisitor {
         private final String oldHeaderName;
         private final String newHeaderName;
+        private final Pattern headerPattern;
+        private final Pattern headersPattern;
+        private final String replacement;
 
         YamlHeaderVisitor(String oldHeaderName, String newHeaderName) {
             this.oldHeaderName = oldHeaderName;
             this.newHeaderName = newHeaderName;
+
+            String escapedOldName = Pattern.quote(oldHeaderName);
+            this.headerPattern = Pattern.compile("(\\$\\{header\\.)" + escapedOldName + "(\\})");
+            this.headersPattern = Pattern.compile("(\\$\\{headers\\.)" + escapedOldName + "(\\})");
+            this.replacement = "$1" + Matcher.quoteReplacement(newHeaderName) + "$2";
         }
 
         @Override
@@ -103,7 +116,21 @@ public class RenameHeaderInYamlDsl extends Recipe {
                 }
             }
 
+            // Any scalar may carry a Simple expression, e.g. simple: "${header.x}"
+            if (e.getValue() instanceof Yaml.Scalar) {
+                Yaml.Scalar scalarValue = (Yaml.Scalar) e.getValue();
+                String renamed = rename(scalarValue.getValue());
+                if (!scalarValue.getValue().equals(renamed)) {
+                    return e.withValue(scalarValue.withValue(renamed));
+                }
+            }
+
             return e;
+        }
+
+        private String rename(String value) {
+            String renamed = headerPattern.matcher(value).replaceAll(replacement);
+            return headersPattern.matcher(renamed).replaceAll(replacement);
         }
 
         /**

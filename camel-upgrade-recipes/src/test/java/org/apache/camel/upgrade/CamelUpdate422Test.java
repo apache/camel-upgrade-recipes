@@ -34,7 +34,7 @@ public class CamelUpdate422Test implements RewriteTest {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_22, true)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_21,
                         "camel-core-model", "camel-api", "camel-support", "camel-azure-storage-blob", "minio",
-                        "openai-java-core", "jakarta.xml.bind-api"))
+                        "jakarta.xml.bind-api"))
                 .typeValidationOptions(TypeValidation.none())
                 .expectedCyclesThatMakeChanges(1);
     }
@@ -251,41 +251,11 @@ public class CamelUpdate422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-ai-tool</artifactId>
-                                    <version>4.22.0</version>
+                                    <version>%s</version>
                                 </dependency>
                             </dependencies>
                         </project>
-                        """
-                )
-        );
-    }
-
-    @Test
-    void migrateOpenAiChatCompletion() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-openai",
-                        CamelTestUtil.pomXmlSpec("camel-openai", CamelTestUtil.CamelVersion.v4_21),
-                        java(
-                                """
-                                import com.openai.models.ChatCompletion;
-
-                                public class OpenAiExample {
-                                    public void example() {
-                                        ChatCompletion completion = null;
-                                    }
-                                }
-                                """,
-                                """
-                                import com.openai.models.chat.completions.ChatCompletion;
-
-                                public class OpenAiExample {
-                                    public void example() {
-                                        ChatCompletion completion = null;
-                                    }
-                                }
-                                """
-                        )
+                        """.formatted(CamelTestUtil.getCamelLatestVersion())
                 )
         );
     }
@@ -326,7 +296,7 @@ public class CamelUpdate422Test implements RewriteTest {
                                         <dependency>
                                             <groupId>org.apache.camel</groupId>
                                             <artifactId>camel-ai-tool</artifactId>
-                                            <version>4.22.0</version>
+                                            <version>%s</version>
                                         </dependency>
                                         <dependency>
                                             <groupId>org.apache.camel</groupId>
@@ -335,7 +305,7 @@ public class CamelUpdate422Test implements RewriteTest {
                                         </dependency>
                                     </dependencies>
                                 </project>
-                                """
+                                """.formatted(CamelTestUtil.getCamelLatestVersion())
                         ),
                         //language=java
                         java(
@@ -406,11 +376,11 @@ public class CamelUpdate422Test implements RewriteTest {
                                         <dependency>
                                             <groupId>org.apache.camel</groupId>
                                             <artifactId>camel-ai-tool</artifactId>
-                                            <version>4.22.0</version>
+                                            <version>%s</version>
                                         </dependency>
                                     </dependencies>
                                 </project>
-                                """
+                                """.formatted(CamelTestUtil.getCamelLatestVersion())
                         ),
                         //language=java
                         java(

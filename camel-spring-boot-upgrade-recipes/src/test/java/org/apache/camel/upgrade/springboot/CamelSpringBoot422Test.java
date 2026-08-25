@@ -16,6 +16,7 @@
  */
 package org.apache.camel.upgrade.springboot;
 
+import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.config.Environment;
@@ -69,11 +70,102 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-ai-tool-starter</artifactId>
+                                    <version>%s</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """.formatted(CamelTestUtil.getCamelSpringBootVersion())
+                )
+        );
+    }
+
+    @Test
+    void migrateAiToolStarterDependency() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-ai-tool</artifactId>
                                     <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
                         </project>
+                        """,
                         """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-ai-tool-starter</artifactId>
+                                    <version>%s</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """.formatted(CamelTestUtil.getCamelSpringBootVersion())
+                )
+        );
+    }
+
+    @Test
+    void aiToolStarterIsNotDuplicated() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-ai-tool</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-spring-ai-tools-starter</artifactId>
+                                    <version>4.21.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-ai-tool-starter</artifactId>
+                                    <version>%s</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """.formatted(CamelTestUtil.getCamelSpringBootVersion())
                 )
         );
     }

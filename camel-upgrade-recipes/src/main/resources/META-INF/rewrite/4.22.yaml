@@ -33,7 +33,6 @@ recipeList:
   - org.apache.camel.upgrade.camel422.migrateMinioTypes
   - org.apache.camel.upgrade.camel422.removeCamelReactiveExecutorTomcatDependency
   - org.apache.camel.upgrade.camel422.migrateSpringAiToolsDependency
-  - org.apache.camel.upgrade.camel422.migrateOpenAiChatCompletion
   - org.apache.camel.upgrade.camel422.migrateLangchain4jToolsUris
   - org.apache.camel.upgrade.camel422.migrateSpringAiToolsUris
   - org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders
@@ -128,21 +127,7 @@ recipeList:
       oldArtifactId: camel-spring-ai-tools
       newGroupId: org.apache.camel
       newArtifactId: camel-ai-tool
-      newVersion: 4.22.0
----
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-openai
-type: specs.openrewrite.org/v1beta/recipe
-name: org.apache.camel.upgrade.camel422.migrateOpenAiChatCompletion
-displayName: Migrate OpenAI ChatCompletion type to its new package
-description: Migrates com.openai.models.ChatCompletion to com.openai.models.chat.completions.ChatCompletion, matching the javaType declared for the CamelOpenAIResponse exchange property since Camel 4.22.
-preconditions:
-  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
-      groupIdPattern: org.apache.camel
-      artifactIdPattern: camel-openai
-recipeList:
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: com.openai.models.ChatCompletion
-      newFullyQualifiedTypeName: com.openai.models.chat.completions.ChatCompletion
+      newVersion: @camel-latest-version@
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-langchain4j-tools-deprecated
 type: specs.openrewrite.org/v1beta/recipe
@@ -164,7 +149,7 @@ recipeList:
       # Fallback for poms with explicit versions only: when a BOM manages camel-ai-tool,
       # AddDependency omits the version tag and the BOM-managed version wins. The latest
       # migration chain additionally bumps org.apache.camel:* to its target version.
-      version: 4.22.0
+      version: @camel-latest-version@
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-spring-ai-chat
 type: specs.openrewrite.org/v1beta/recipe

@@ -184,7 +184,7 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
     }
 
     @Test
-    void doesNotMigrateNonSimpleStrings() {
+    void migratesSimpleExpressionHeldInAVariable() {
         //language=java
         rewriteRun(
             java(
@@ -193,12 +193,23 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
 
                 class Test extends RouteBuilder {
                     public void configure() {
-                        String expression = "${header.kafka.TOPIC}"; // Not inside simple() call
-                        System.out.println("Expression: ${header.kafka.TOPIC}");
+                        String expression = "${header.kafka.TOPIC}";
+                        from("direct:start")
+                            .setBody(simple(expression));
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        String expression = "${header.CamelKafkaTopic}";
+                        from("direct:start")
+                            .setBody(simple(expression));
                     }
                 }
                 """
-                // No change expected
             )
         );
     }
@@ -242,4 +253,82 @@ public class RenameHeaderInSimpleExpressionTest implements RewriteTest {
             )
         );
     }
+
+    @Test
+    void logMessageMigration() {
+        //language=java
+        rewriteRun(
+            java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .log("topic is ${header.kafka.TOPIC}");
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .log("topic is ${header.CamelKafkaTopic}");
+                    }
+                }
+                """
+            )
+        );
+    }
+
+    @Test
+    void endpointUriMigration() {
+        //language=java
+        rewriteRun(
+            java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .toD("mock:${header.kafka.TOPIC}");
+                    }
+                }
+                """,
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .toD("mock:${header.CamelKafkaTopic}");
+                    }
+                }
+                """
+            )
+        );
+    }
+
+    @Test
+    void plainOccurrenceOfTheNameIsLeftAlone() {
+        //language=java
+        rewriteRun(
+            java(
+                """
+                import org.apache.camel.builder.RouteBuilder;
+
+                class Test extends RouteBuilder {
+                    public void configure() {
+                        from("direct:start")
+                            .log("kafka.TOPIC and ${header.kafka.TOPIC.suffix}");
+                    }
+                }
+                """
+            )
+        );
+    }
+
 }
