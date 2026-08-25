@@ -36,7 +36,7 @@ recipeList:
       oldArtifactId: camel-spring-ai-tools-starter
       newGroupId: org.apache.camel.springboot
       newArtifactId: camel-ai-tool-starter
-      newVersion: @camel-spring-boot-version@
+      newVersion: 4.22.0
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-langchain4j-tools-deprecated
 type: specs.openrewrite.org/v1beta/recipe
@@ -55,4 +55,4 @@ recipeList:
       oldArtifactId: camel-ai-tool
       newGroupId: org.apache.camel.springboot
       newArtifactId: camel-ai-tool-starter
-      newVersion: @camel-spring-boot-version@
+      newVersion: 4.22.0

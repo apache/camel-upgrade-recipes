@@ -251,11 +251,11 @@ public class CamelUpdate422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-ai-tool</artifactId>
-                                    <version>%s</version>
+                                    <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
                         </project>
-                        """.formatted(CamelTestUtil.getCamelLatestVersion())
+                        """
                 )
         );
     }
@@ -296,7 +296,7 @@ public class CamelUpdate422Test implements RewriteTest {
                                         <dependency>
                                             <groupId>org.apache.camel</groupId>
                                             <artifactId>camel-ai-tool</artifactId>
-                                            <version>%s</version>
+                                            <version>4.22.0</version>
                                         </dependency>
                                         <dependency>
                                             <groupId>org.apache.camel</groupId>
@@ -305,7 +305,7 @@ public class CamelUpdate422Test implements RewriteTest {
                                         </dependency>
                                     </dependencies>
                                 </project>
-                                """.formatted(CamelTestUtil.getCamelLatestVersion())
+                                """
                         ),
                         //language=java
                         java(
@@ -376,11 +376,11 @@ public class CamelUpdate422Test implements RewriteTest {
                                         <dependency>
                                             <groupId>org.apache.camel</groupId>
                                             <artifactId>camel-ai-tool</artifactId>
-                                            <version>%s</version>
+                                            <version>4.22.0</version>
                                         </dependency>
                                     </dependencies>
                                 </project>
-                                """.formatted(CamelTestUtil.getCamelLatestVersion())
+                                """
                         ),
                         //language=java
                         java(

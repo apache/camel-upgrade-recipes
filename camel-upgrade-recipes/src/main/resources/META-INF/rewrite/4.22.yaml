@@ -127,7 +127,7 @@ recipeList:
       oldArtifactId: camel-spring-ai-tools
       newGroupId: org.apache.camel
       newArtifactId: camel-ai-tool
-      newVersion: @camel-latest-version@
+      newVersion: 4.22.0
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-langchain4j-tools-deprecated
 type: specs.openrewrite.org/v1beta/recipe
@@ -149,7 +149,7 @@ recipeList:
       # Fallback for poms with explicit versions only: when a BOM manages camel-ai-tool,
       # AddDependency omits the version tag and the BOM-managed version wins. The latest
       # migration chain additionally bumps org.apache.camel:* to its target version.
-      version: @camel-latest-version@
+      version: 4.22.0
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-spring-ai-chat
 type: specs.openrewrite.org/v1beta/recipe

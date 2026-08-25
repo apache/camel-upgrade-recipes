@@ -16,7 +16,6 @@
  */
 package org.apache.camel.upgrade.springboot;
 
-import org.apache.camel.upgrade.CamelTestUtil;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.config.Environment;
@@ -70,11 +69,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-ai-tool-starter</artifactId>
-                                    <version>%s</version>
+                                    <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
                         </project>
-                        """.formatted(CamelTestUtil.getCamelSpringBootVersion())
+                        """
                 )
         );
     }
@@ -125,11 +124,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-ai-tool-starter</artifactId>
-                                    <version>%s</version>
+                                    <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
                         </project>
-                        """.formatted(CamelTestUtil.getCamelSpringBootVersion())
+                        """
                 )
         );
     }
@@ -183,11 +182,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-ai-tool-starter</artifactId>
-                                    <version>%s</version>
+                                    <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
                         </project>
-                        """.formatted(CamelTestUtil.getCamelSpringBootVersion())
+                        """
                 )
         );
     }
