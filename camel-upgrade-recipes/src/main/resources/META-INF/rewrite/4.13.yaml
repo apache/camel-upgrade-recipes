@@ -71,6 +71,20 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel413.furyDsl
 displayName: Change dataformat fury to fury in xml/java dsl.
 recipeList:
+  - org.apache.camel.upgrade.camel413.furyXmlDsl
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.DataFormatClause fury(..)
+      newMethodName: fory
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_13.html#_camel_fury
+# Split from furyDsl so that the Camel XML DSL precondition does not gate the Java DSL change too
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel413.furyXmlDsl
+displayName: Change dataformat fury to fory in xml dsl.
+description: Change dataformat fury to fory in the Camel XML DSL.
+preconditions:
+  - org.apache.camel.upgrade.customRecipes.FindCamelXmlDsl
+recipeList:
   - org.openrewrite.xml.ChangeTagName:
       elementName: dataFormats/fury
       newName: fory
@@ -80,8 +94,5 @@ recipeList:
   - org.openrewrite.xml.ChangeTagName:
       elementName: marshal/fury
       newName: fory
-  - org.openrewrite.java.ChangeMethodName:
-      methodPattern: org.apache.camel.builder.DataFormatClause fury(..)
-      newMethodName: fory
 
 

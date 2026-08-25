@@ -16,7 +16,9 @@
  */
 package org.apache.camel.upgrade.camel43;
 
+import org.apache.camel.upgrade.RecipesUtil;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.xml.XPathMatcher;
@@ -75,7 +77,7 @@ public class CamelResequenceEIPXmlRecipe extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new XmlIsoVisitor<>() {
+        return Preconditions.check(RecipesUtil.camelXmlDslPrecondition(), new XmlIsoVisitor<ExecutionContext>() {
 
             @Override
             public Xml.Tag visitTag(final Xml.Tag tag, final ExecutionContext ctx) {
@@ -89,6 +91,6 @@ public class CamelResequenceEIPXmlRecipe extends Recipe {
 
                 return t;
             }
-        };
+        });
     }
 }

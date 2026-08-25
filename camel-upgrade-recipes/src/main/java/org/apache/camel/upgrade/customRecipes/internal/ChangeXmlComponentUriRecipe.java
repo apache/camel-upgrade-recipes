@@ -18,6 +18,7 @@ package org.apache.camel.upgrade.customRecipes.internal;
 
 import org.apache.camel.upgrade.AbstractCamelXmlVisitor;
 import org.apache.camel.upgrade.RecipesUtil;
+import org.openrewrite.Preconditions;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -97,7 +98,7 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         Pattern pattern = Pattern.compile(uriPattern);
 
-        return new AbstractCamelXmlVisitor() {
+        return Preconditions.check(RecipesUtil.camelXmlDslPrecondition(), new AbstractCamelXmlVisitor() {
             @Override
             public Xml.Tag doVisitTag(Xml.Tag tag, ExecutionContext ctx) {
                 Xml.Tag t = super.doVisitTag(tag, ctx);
@@ -109,7 +110,7 @@ public class ChangeXmlComponentUriRecipe extends Recipe {
 
                 return t;
             }
-        };
+        });
     }
 
     private static Xml.Tag transformXmlUri(Xml.Tag tag, Pattern pattern, String replacement) {

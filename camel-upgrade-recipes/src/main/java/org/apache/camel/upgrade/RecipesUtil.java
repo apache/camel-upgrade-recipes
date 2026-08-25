@@ -87,8 +87,17 @@ public class RecipesUtil {
 
     // ---------------- Camel XML DSL precondition
     private static final Set<String> CAMEL_XML_DSL_ROOT_TAGS = Set.of(
-            "routes", "route", "routeConfiguration", "routeTemplate", "templatedRoute",
-            "rests", "rest", "restConfiguration", "camelContext", "routeContext", "bean", "beans");
+            "camel", "routes", "route",
+            "routeConfigurations", "routeConfiguration",
+            "routeTemplates", "routeTemplate",
+            "templatedRoutes", "templatedRoute",
+            "rests", "rest", "restConfiguration",
+            "camelContext", "routeContext", "bean", "beans");
+
+    // Elements that only ever appear in a Camel document, wherever they happen to be nested
+    private static final Set<String> CAMEL_CONTEXT_TAGS = Set.of("camelContext", "routeContext");
+
+    private static final String CAMEL_NAMESPACE = "camel.apache.org";
 
     private static final String SPRING_BEANS_NAMESPACE = "springframework.org/schema/beans";
 
@@ -113,18 +122,23 @@ public class RecipesUtil {
             return false;
         }
 
-        // <bean> and <beans> are shared with Spring, whose namespace rules the document out
-        if (declaresNamespace(root, SPRING_BEANS_NAMESPACE)) {
-            return false;
-        }
-
-        // A Camel namespace is conclusive, whatever the root element is
-        if (declaresNamespace(root, "camel.apache.org")) {
+        // A Camel namespace or a Camel context element is conclusive wherever it sits in the document.
+        // This is what makes the classic Spring and Blueprint layouts work, where a <camelContext> is
+        // nested in a <beans> or <blueprint> root that carries a foreign namespace.
+        if (hasCamelMarker(root)) {
             return true;
         }
 
-        // Camel XML DSL files are commonly written without any namespace, so fall back on the root element
-        return CAMEL_XML_DSL_ROOT_TAGS.contains(root.getName());
+        // Otherwise fall back on the root element. Camel XML is frequently written without any
+        // namespace, but <bean> and <beans> are shared with Spring, whose namespace rules them out.
+        return !declaresNamespace(root, SPRING_BEANS_NAMESPACE) && CAMEL_XML_DSL_ROOT_TAGS.contains(root.getName());
+    }
+
+    private static boolean hasCamelMarker(Xml.Tag tag) {
+        if (declaresNamespace(tag, CAMEL_NAMESPACE) || CAMEL_CONTEXT_TAGS.contains(tag.getName())) {
+            return true;
+        }
+        return tag.getChildren().stream().anyMatch(RecipesUtil::hasCamelMarker);
     }
 
     private static boolean declaresNamespace(Xml.Tag root, String namespaceFragment) {
