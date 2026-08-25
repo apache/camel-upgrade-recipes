@@ -256,4 +256,50 @@ public class RenameHeaderInXmlDslTest implements RewriteTest {
         );
     }
 
+
+    @Test
+    void doesNotMigrateNonCamelXml() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <beans xmlns="http://www.springframework.org/schema/beans">
+                    <bean id="example" class="com.example.Example">
+                        <property name="topic" value="${header.kafka.TOPIC}"/>
+                    </bean>
+                </beans>
+                """
+            )
+        );
+    }
+
+    @Test
+    void migratesCamelRoutesNestedInBeans() {
+        //language=xml
+        rewriteRun(
+            xml(
+                """
+                <beans>
+                    <route>
+                        <from uri="direct:start"/>
+                        <setHeader name="kafka.TOPIC">
+                            <constant>my-topic</constant>
+                        </setHeader>
+                    </route>
+                </beans>
+                """,
+                """
+                <beans>
+                    <route>
+                        <from uri="direct:start"/>
+                        <setHeader name="CamelKafkaTopic">
+                            <constant>my-topic</constant>
+                        </setHeader>
+                    </route>
+                </beans>
+                """
+            )
+        );
+    }
+
 }

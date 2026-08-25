@@ -81,6 +81,8 @@ class CamelSpringBoot422Test implements RewriteTest {
 
     @Test
     void migrateAiToolStarterDependency() {
+        // spring-boot-starter is pinned to the version the migration targets, so that the assertion
+        // covers the ai-tool swap only and is not disturbed by the Spring Boot upgrade in the same chain
         //language=xml
         rewriteRun(
                 pomXml(
@@ -93,6 +95,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <maven.compiler.release>17</maven.compiler.release>
                             </properties>
                             <dependencies>
+                                <dependency>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-starter</artifactId>
+                                    <version>4.1.0</version>
+                                </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-ai-tool</artifactId>
@@ -110,6 +117,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <maven.compiler.release>17</maven.compiler.release>
                             </properties>
                             <dependencies>
+                                <dependency>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-starter</artifactId>
+                                    <version>4.1.0</version>
+                                </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-ai-tool-starter</artifactId>
@@ -137,6 +149,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                             </properties>
                             <dependencies>
                                 <dependency>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-starter</artifactId>
+                                    <version>4.1.0</version>
+                                </dependency>
+                                <dependency>
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-ai-tool</artifactId>
                                     <version>4.22.0</version>
@@ -159,6 +176,11 @@ class CamelSpringBoot422Test implements RewriteTest {
                             </properties>
                             <dependencies>
                                 <dependency>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-starter</artifactId>
+                                    <version>4.1.0</version>
+                                </dependency>
+                                <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-ai-tool-starter</artifactId>
                                     <version>%s</version>
@@ -170,4 +192,29 @@ class CamelSpringBoot422Test implements RewriteTest {
         );
     }
 
+    @Test
+    void doesNotSwapAiToolInNonBootModule() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-ai-tool</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """
+                )
+        );
+    }
 }

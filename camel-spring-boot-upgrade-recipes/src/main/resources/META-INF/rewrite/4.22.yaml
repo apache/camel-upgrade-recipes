@@ -42,7 +42,13 @@ recipeList:
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel422.migrateAiToolStarterDependency
 displayName: Use camel-ai-tool-starter instead of camel-ai-tool
-description: Replaces the plain camel-ai-tool dependency with camel-ai-tool-starter, so that a Spring Boot application gets the component auto-configuration. The plain artifact is what the Camel recipe adds when migrating langchain4j-tools routes; duplicates are removed when the starter is already declared.
+description: Replaces the plain camel-ai-tool dependency with camel-ai-tool-starter, so that a Spring Boot application gets the component auto-configuration. The plain artifact is what the Camel recipe adds when migrating langchain4j-tools routes. Only modules that use Spring Boot are rewritten, so the plain Camel modules of a multi-module build keep the non-starter artifact.
+preconditions:
+  # FindDependency marks the pom that declares the dependency, so the swap is scoped to the modules
+  # that actually use Spring Boot rather than to every module of a multi-module build
+  - org.openrewrite.maven.search.FindDependency:
+      groupId: org.springframework.boot
+      artifactId: '*'
 recipeList:
   - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
       oldGroupId: org.apache.camel
@@ -50,4 +56,3 @@ recipeList:
       newGroupId: org.apache.camel.springboot
       newArtifactId: camel-ai-tool-starter
       newVersion: @camel-spring-boot-version@
-  - org.openrewrite.maven.RemoveDuplicateDependencies

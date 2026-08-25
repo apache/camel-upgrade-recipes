@@ -27,8 +27,8 @@ The following table lists migration topics and indicates the level of coverage (
 | Tool definition (consumer) route URIs `langchain4j-tools:` → `ai-tool:` automated via `ChangeComponentUriRecipe` and the `camel-ai-tool` dependency added automatically (gated on `camel-langchain4j-tools`); direct tool-calling producer endpoints are preserved and must be migrated to `langchain4j-agent` manually
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_openai[camel-openai: ChatCompletion type moved]
-| ⚠️ Partial
-| Automated via `ChangeType` for `com.openai.models.ChatCompletion` → `com.openai.models.chat.completions.ChatCompletion` (gated on the `camel-openai` dependency)
+| ❌ None
+| No migration is required. The change is to the `javaType` declared in the component metadata for the `CamelOpenAIResponse` exchange property; the runtime type was always the nested SDK class. `com.openai.models.ChatCompletion` exists only in openai-java 0.8.1, while every `camel-openai` release ships 4.13.0 or newer, so no project can hold the old import
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_azure_component_specific_credentialtype_enums_removed[camel-azure: component-specific CredentialType enums removed]
 | ✅ Full
