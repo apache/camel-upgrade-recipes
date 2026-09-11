@@ -51,6 +51,10 @@ recipeList:
       groupId: 'org.apache.camel'
       artifactId: '*'
       newVersion: @camel4.18-lts-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel.springboot'
+      artifactId: '*'
+      newVersion: @camel4.18-lts-version@
   - org.openrewrite.maven.ChangePropertyValue:
       key: camel.version
       newValue: @camel4.18-lts-version@
