@@ -29,7 +29,7 @@ import org.openrewrite.yaml.tree.Yaml;
  * Scoped to documents that belong to the Camel YAML DSL, so an unrelated YAML file that happens to
  * contain a {@code csimple} key is left untouched.
  */
-public class YamlDslCSimpleRecipe extends Recipe {
+public class YamlDsl423CSimpleRecipe extends Recipe {
 
     @Override
     public String getDisplayName() {
