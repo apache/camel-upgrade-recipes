@@ -643,6 +643,14 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
+                                <!-- camel-zeebe for the zeebe to camunda ChangeType migration tests (4.23) -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-zeebe</artifactId>
+                                    <version>${camel4.18-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
                             </artifactItems>
                         </configuration>
                     </execution>
