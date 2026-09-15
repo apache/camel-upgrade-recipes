@@ -91,7 +91,7 @@ name: org.apache.camel.upgrade.camel423.migrateCSimpleYamlDsl
 displayName: Migrate csimple YAML DSL expression key to simple
 description: Renames the removed csimple expression key to simple in YAML DSL documents, without touching unrelated YAML files that happen to contain a csimple key.
 recipeList:
-  - org.apache.camel.upgrade.camel423.YamlDslCSimpleRecipe
+  - org.apache.camel.upgrade.camel423.YamlDsl423CSimpleRecipe
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
 type: specs.openrewrite.org/v1beta/recipe
