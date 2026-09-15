@@ -1,0 +1,76 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.CamelSpringBootMigrationRecipe
+displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.23
+description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.23.
+recipeList:
+  - org.apache.camel.upgrade.camel422.CamelSpringBootMigrationRecipe
+  - org.apache.camel.upgrade.camel423.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel423.removeCSimpleJoorStarterDependency
+  - org.apache.camel.upgrade.camel423.migrateLangchain4jToolsStarterDependency
+  - org.apache.camel.upgrade.camel423.migrateZeebeStarterDependency
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeCSimpleJoorStarterDependency
+displayName: Remove camel-csimple-joor-starter dependency
+description: camel-csimple-joor-starter was removed in Camel Spring Boot 4.23, together with the csimple language.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel.springboot
+      artifactId: camel-csimple-joor-starter
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-langchain4j-tools
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateLangchain4jToolsStarterDependency
+displayName: Migrate camel-langchain4j-tools-starter to camel-ai-tool-starter
+description: >-
+  camel-langchain4j-tools-starter was removed in Camel Spring Boot 4.23. Renames it directly to
+  camel-ai-tool-starter. This is a plain rename of the existing starter dependency element, so unlike the plain
+  Camel camel-langchain4j-tools removal it needs no dependency-presence guard, and it does not conflict with
+  camel422.migrateAiToolStarterDependency, which only swaps a plain org.apache.camel:camel-ai-tool dependency
+  (added by camel422.migrateLangchain4jToolsUris) for the starter; the two never target the same element, so no
+  duplicate camel-ai-tool-starter entry can result. Producer endpoints for direct tool calling still need manual
+  migration to langchain4j-agent.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel.springboot
+      oldArtifactId: camel-langchain4j-tools-starter
+      newGroupId: org.apache.camel.springboot
+      newArtifactId: camel-ai-tool-starter
+      newVersion: 4.23.0
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-zeebe
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateZeebeStarterDependency
+displayName: Migrate camel-zeebe-starter to camel-camunda-starter
+description: >-
+  camel-zeebe-starter was removed in Camel Spring Boot 4.23 together with camel-zeebe. Renames it to
+  camel-camunda-starter, the Spring Boot auto-configuration starter for the new camel-camunda component.
+  NOTE: at the time this recipe was written camel-camunda-starter had not yet been published; verify it exists
+  under org.apache.camel.springboot before this recipe ships. If it does not, fall back to
+  org.apache.camel:camel-camunda (no Spring Boot auto-configuration) and document that in the release notes
+  instead.
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel.springboot
+      oldArtifactId: camel-zeebe-starter
+      newGroupId: org.apache.camel.springboot
+      newArtifactId: camel-camunda-starter
+      newVersion: 4.23.0
