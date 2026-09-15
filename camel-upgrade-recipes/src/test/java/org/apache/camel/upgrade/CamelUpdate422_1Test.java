@@ -29,6 +29,11 @@ import static org.openrewrite.yaml.Assertions.yaml;
 
 /**
  * Tests for migrating from Camel 4.22.0 to 4.22.1 (CAMEL-24539, camel-openai).
+ * <p>
+ * Whether a given CamelOpenAIResponse occurrence should become the embeddings/audio-transcription/
+ * audio-translation property, or stay CamelOpenAIResponse (chat-completion), is not mechanically
+ * decidable in general -- see {@code org.apache.camel.upgrade.camel422_1.FlagOpenAIFullResponsePropertyInJavaDsl}
+ * for why. So the recipe flags every occurrence with a review comment instead of rewriting it.
  */
 public class CamelUpdate422_1Test implements RewriteTest {
 
@@ -42,7 +47,7 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
     @Test
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
-    void javaDslMigratesEligibleOperationsAndLeavesOthersUnchanged() {
+    void javaDslFlagsOccurrencesAndLeavesLookalikesAndUnrelatedConstantAlone() {
         //language=java
         rewriteRun(
                 mavenProject("test-openai",
@@ -54,11 +59,8 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
                         class Test extends RouteBuilder {
                             public void configure() {
-                                // Single embeddings operation: renamed, lookalike names left alone
-                                from("direct:embeddings")
+                                from("direct:openai")
                                     .setProperty("CamelOpenAIResponseModel", constant("keep-model"))
-                                    .setProperty("CamelOpenAIResponsesResponse", constant("keep-responses"))
-                                    .to("openai:embeddings?storeFullResponse=true")
                                     .process(exchange -> {
                                         Object response = exchange.getProperty("CamelOpenAIResponse", Object.class);
                                         exchange.setProperty("CamelOpenAIResponse", response);
@@ -67,32 +69,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
                                     .setBody(simple("${exchangeProperty.CamelOpenAIResponse.data}"))
                                     .removeProperty("CamelOpenAIResponseId")
                                     .removeProperty("CamelOpenAIResponse");
-
-                                // Single audio-transcription operation: renamed to its own property
-                                from("direct:audio-transcription")
-                                    .to("openai:audio-transcription")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
-
-                                // Single audio-translation operation: renamed to its own property
-                                from("direct:audio-translation")
-                                    .to("openai:audio-translation")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
-
-                                // chat-completion still uses CamelOpenAIResponse: unchanged
-                                from("direct:chat")
-                                    .to("openai:chat-completion")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
-
-                                // Mixed operations: unchanged
-                                from("direct:mixed-chat-embeddings")
-                                    .to("openai:chat-completion")
-                                    .to("openai:embeddings")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
-
-                                from("direct:mixed-chat-tool")
-                                    .to("openai:chat-completion")
-                                    .to("openai:tool-execution")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
                             }
                         }
                         """,
@@ -102,49 +78,44 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
                         class Test extends RouteBuilder {
                             public void configure() {
-                                // Single embeddings operation: renamed, lookalike names left alone
-                                from("direct:embeddings")
+                                from("direct:openai")
                                     .setProperty("CamelOpenAIResponseModel", constant("keep-model"))
-                                    .setProperty("CamelOpenAIResponsesResponse", constant("keep-responses"))
-                                    .to("openai:embeddings?storeFullResponse=true")
                                     .process(exchange -> {
-                                        Object response = exchange.getProperty("CamelOpenAIEmbeddingsResponse", Object.class);
-                                        exchange.setProperty("CamelOpenAIEmbeddingsResponse", response);
+                                        Object response = exchange.getProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse", Object.class);
+                                        exchange.setProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse", response);
                                     })
-                                    .setProperty(OpenAIConstants.EMBEDDINGS_RESPONSE, exchangeProperty("CamelOpenAIEmbeddingsResponse"))
-                                    .setBody(simple("${exchangeProperty.CamelOpenAIEmbeddingsResponse.data}"))
+                                    .setProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/OpenAIConstants.RESPONSE, exchangeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse"))
+                                    .setBody(simple(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"${exchangeProperty.CamelOpenAIResponse.data}"))
                                     .removeProperty("CamelOpenAIResponseId")
-                                    .removeProperty("CamelOpenAIEmbeddingsResponse");
-
-                                // Single audio-transcription operation: renamed to its own property
-                                from("direct:audio-transcription")
-                                    .to("openai:audio-transcription")
-                                    .setProperty("CamelOpenAIAudioTranscriptionResponse", exchangeProperty("CamelOpenAIAudioTranscriptionResponse"));
-
-                                // Single audio-translation operation: renamed to its own property
-                                from("direct:audio-translation")
-                                    .to("openai:audio-translation")
-                                    .setProperty("CamelOpenAIAudioTranslationResponse", exchangeProperty("CamelOpenAIAudioTranslationResponse"));
-
-                                // chat-completion still uses CamelOpenAIResponse: unchanged
-                                from("direct:chat")
-                                    .to("openai:chat-completion")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
-
-                                // Mixed operations: unchanged
-                                from("direct:mixed-chat-embeddings")
-                                    .to("openai:chat-completion")
-                                    .to("openai:embeddings")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
-
-                                from("direct:mixed-chat-tool")
-                                    .to("openai:chat-completion")
-                                    .to("openai:tool-execution")
-                                    .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
+                                    .removeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse");
                             }
                         }
                         """
-                )
+                        ),
+                        // A user's own unrelated OpenAIConstants (no camel-openai import) must never be flagged.
+                        java(
+                        """
+                        package com.example;
+
+                        public final class OpenAIConstants {
+                            public static final String RESPONSE = "SomeUnrelatedConstant";
+                        }
+                        """
+                        ),
+                        java(
+                        """
+                        package com.example;
+
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        class UnrelatedRoute extends RouteBuilder {
+                            public void configure() {
+                                from("direct:other")
+                                    .setProperty(OpenAIConstants.RESPONSE, constant("x"));
+                            }
+                        }
+                        """
+                        )
                 )
         );
     }
@@ -162,8 +133,7 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
                         class Test extends RouteBuilder {
                             public void configure() {
-                                from("direct:embeddings")
-                                    .to("openai:embeddings?storeFullResponse=true")
+                                from("direct:openai")
                                     .setProperty("CamelOpenAIResponse", exchangeProperty("CamelOpenAIResponse"));
                             }
                         }
@@ -186,9 +156,8 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
                         class Test extends RouteBuilder {
                             public void configure() {
-                                from("direct:embeddings")
-                                    .to("openai:embeddings?storeFullResponse=true")
-                                    .setProperty("CamelOpenAIEmbeddingsResponse", exchangeProperty("CamelOpenAIEmbeddingsResponse"));
+                                from("direct:openai")
+                                    .setProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse", exchangeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse"));
                             }
                         }
                         """
@@ -199,7 +168,7 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
     @Test
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
-    void yamlDslMigratesEmbeddingsRouteAndLeavesChatRouteUnchanged() {
+    void yamlDslFlagsOccurrencesAndLeavesLookalikesAlone() {
         //language=yaml
         rewriteRun(
                 mavenProject("test-openai-yaml",
@@ -208,46 +177,33 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         """
                         - route:
                             from:
-                              uri: "direct:embeddings"
+                              uri: "direct:openai"
                             steps:
-                              - to:
-                                  uri: "openai:embeddings?storeFullResponse=true"
+                              - setProperty:
+                                  name: CamelOpenAIResponseModel
+                                  constant: keep-model
                               - setProperty:
                                   name: CamelOpenAIResponse
                                   simple: "${exchangeProperty.CamelOpenAIResponse}"
                               - setBody:
                                   simple: "${exchangeProperty.CamelOpenAIResponse.data}"
-                        - route:
-                            from:
-                              uri: "direct:chat"
-                            steps:
-                              - to:
-                                  uri: "openai:chat-completion"
-                              - setProperty:
-                                  name: CamelOpenAIResponse
-                                  simple: "${exchangeProperty.CamelOpenAIResponse}"
                         """,
                         """
                         - route:
                             from:
-                              uri: "direct:embeddings"
+                              uri: "direct:openai"
                             steps:
-                              - to:
-                                  uri: "openai:embeddings?storeFullResponse=true"
                               - setProperty:
-                                  name: CamelOpenAIEmbeddingsResponse
-                                  simple: "${exchangeProperty.CamelOpenAIEmbeddingsResponse}"
-                              - setBody:
-                                  simple: "${exchangeProperty.CamelOpenAIEmbeddingsResponse.data}"
-                        - route:
-                            from:
-                              uri: "direct:chat"
-                            steps:
-                              - to:
-                                  uri: "openai:chat-completion"
+                                  name: CamelOpenAIResponseModel
+                                  constant: keep-model
                               - setProperty:
+                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
                                   name: CamelOpenAIResponse
+                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
                                   simple: "${exchangeProperty.CamelOpenAIResponse}"
+                              - setBody:
+                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  simple: "${exchangeProperty.CamelOpenAIResponse.data}"
                         """
                 )
                 )
@@ -256,7 +212,7 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
     @Test
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
-    void xmlDslMigratesEmbeddingsRouteAndLeavesChatRouteUnchanged() {
+    void xmlDslFlagsOccurrencesAndLeavesLookalikesAlone() {
         //language=xml
         rewriteRun(
                 mavenProject("test-openai-xml",
@@ -264,8 +220,10 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         xml(
                         """
                         <route xmlns="http://camel.apache.org/schema/spring">
-                            <from uri="direct:embeddings"/>
-                            <to uri="openai:embeddings?storeFullResponse=true"/>
+                            <from uri="direct:openai"/>
+                            <setProperty name="CamelOpenAIResponseModel">
+                                <constant>keep-model</constant>
+                            </setProperty>
                             <setProperty name="CamelOpenAIResponse">
                                 <simple>${exchangeProperty.CamelOpenAIResponse}</simple>
                             </setProperty>
@@ -273,27 +231,13 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         """,
                         """
                         <route xmlns="http://camel.apache.org/schema/spring">
-                            <from uri="direct:embeddings"/>
-                            <to uri="openai:embeddings?storeFullResponse=true"/>
-                            <setProperty name="CamelOpenAIEmbeddingsResponse">
-                                <simple>${exchangeProperty.CamelOpenAIEmbeddingsResponse}</simple>
+                            <from uri="direct:openai"/>
+                            <setProperty name="CamelOpenAIResponseModel">
+                                <constant>keep-model</constant>
                             </setProperty>
-                        </route>
-                        """
-                )
-                )
-        );
-
-        //language=xml
-        rewriteRun(
-                mavenProject("test-openai-xml-chat",
-                        CamelTestUtil.pomXmlSpec("camel-openai", CamelTestUtil.CamelVersion.v4_22),
-                        xml(
-                        """
-                        <route xmlns="http://camel.apache.org/schema/spring">
-                            <from uri="direct:chat"/>
-                            <to uri="openai:chat-completion"/>
+                            <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
                             <setProperty name="CamelOpenAIResponse">
+                                <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
                                 <simple>${exchangeProperty.CamelOpenAIResponse}</simple>
                             </setProperty>
                         </route>

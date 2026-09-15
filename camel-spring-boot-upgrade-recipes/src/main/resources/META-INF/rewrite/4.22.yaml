@@ -21,7 +21,6 @@ displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.22
 description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.22.
 recipeList:
   - org.apache.camel.upgrade.camel421.CamelSpringBootMigrationRecipe
-  - org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel422.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel422.migrateSpringAiToolsStarterDependency
   - org.apache.camel.upgrade.camel422.migrateAiToolStarterDependency

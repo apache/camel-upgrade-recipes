@@ -6,7 +6,9 @@
 
 This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.22.1 LTS with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html[migration guide]).
 
-Only one 4.22.1 change can be migrated mechanically: the camel-openai `storeFullResponse` property rename (CAMEL-24539). Everything else backported into 4.22.1 is either a secure-default/runtime behaviour change or a deprecation with no replacement yet, and needs manual review.
+This recipe is not yet chained from `latest.yaml` or a Spring Boot `CamelMigrationRecipe`: per `RECIPE-CONVENTIONS.md`, a patch recipe is referenced from the *next main-version* yaml and, optionally, an LTS aggregate, and neither exists yet for the 4.22 line (a 4.22 LTS aggregate is tracked in https://github.com/apache/camel-upgrade-recipes/issues/129[#129]). Run it directly with `-Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe` until one of those exists.
+
+Only one 4.22.1 change is covered at all: the camel-openai `storeFullResponse` property change (CAMEL-24539), and it cannot be migrated mechanically -- see below. Everything else backported into 4.22.1 is either a secure-default/runtime behaviour change or a deprecation with no replacement yet, and needs manual review.
 
 === Migration coverage
 
@@ -18,7 +20,7 @@ The following table lists migration topics and indicates the level of coverage (
 
 | https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-openai-1[camel-openai: `storeFullResponse` properties]
 | ⚠️ Partial
-| `CamelOpenAIResponse` renamed to `CamelOpenAIEmbeddingsResponse`/`CamelOpenAIAudioTranscriptionResponse`/`CamelOpenAIAudioTranslationResponse` (and the matching `OpenAIConstants` field), automated across Java, XML and YAML DSL, gated on `camel-openai`, only in a route with a single embeddings/audio-transcription/audio-translation openai operation. Routes with several openai operations, chat-completion/responses/tool-execution/audio-speech, or processors/beans defined outside the route are left unchanged and need manual review.
+| Which of `CamelOpenAIEmbeddingsResponse`/`CamelOpenAIAudioTranscriptionResponse`/`CamelOpenAIAudioTranslationResponse` (or unchanged `CamelOpenAIResponse` for chat-completion) an occurrence should become is not mechanically decidable -- exchange properties cross route boundaries through error handlers, `onCompletion` and endpoints such as `direct:`. Rather than risk a wrong rewrite, every `CamelOpenAIResponse` / `OpenAIConstants.RESPONSE` occurrence (and the matching Simple-syntax forms) is flagged with a review comment in Java, XML and YAML DSL, gated on `camel-openai`. Manual review required to pick the right property name.
 
 | https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L16[camel-hazelcast: ReplicatedHazelcastAggregationRepository applies the default serialization filter]
 | ❌ None
