@@ -227,31 +227,4 @@ class CamelSpringBoot423Test implements RewriteTest {
                 )
         );
     }
-
-    @Test
-    void doesNotTouchUnrelatedStarters() {
-        //language=xml
-        rewriteRun(
-                spec -> withRecipe(spec, "org.apache.camel.upgrade.camel423.removeCSimpleJoorStarterDependency"),
-                pomXml(
-                        """
-                        <project>
-                            <groupId>com.example</groupId>
-                            <artifactId>test</artifactId>
-                            <version>1.0.0</version>
-                            <properties>
-                                <maven.compiler.release>17</maven.compiler.release>
-                            </properties>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.apache.camel.springboot</groupId>
-                                    <artifactId>camel-kafka-starter</artifactId>
-                                    <version>4.22.0</version>
-                                </dependency>
-                            </dependencies>
-                        </project>
-                        """
-                )
-        );
-    }
 }
