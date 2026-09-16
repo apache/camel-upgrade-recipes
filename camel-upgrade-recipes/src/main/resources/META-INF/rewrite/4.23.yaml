@@ -28,6 +28,8 @@ name: org.apache.camel.upgrade.camel423.CamelMigrationRecipe
 displayName: Migrates `camel 4.22` application to `camel 4.23`
 description: Migrates `camel 4.22` application to `camel 4.23`.
 recipeList:
+  ## inherited from patch recipe
+  - org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel423.migrateCSimpleJavaApi
   - org.apache.camel.upgrade.camel423.migrateCSimpleXmlDsl
   - org.apache.camel.upgrade.camel423.migrateCSimpleYamlDsl
