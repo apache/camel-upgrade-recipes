@@ -687,4 +687,43 @@ public class CamelUpdate423Test implements RewriteTest {
         );
     }
 
+    /**
+     * Per RECIPE-CONVENTIONS.md, camel422_1.CamelMigrationRecipe (the CAMEL-24539 camel-openai flag
+     * recipe) is not wired into latest.yaml directly; the next main-version recipe references it
+     * instead. This guards that wiring, so it can't be silently dropped in a future edit.
+     */
+    @Test
+    void camel423ChainIncludesCamel422_1PatchRecipe() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-openai-patch",
+                        CamelTestUtil.pomXmlSpec("camel-openai", CamelTestUtil.CamelVersion.v4_22),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class OpenAiRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:openai")
+                                            .removeProperty("CamelOpenAIResponse");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class OpenAiRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:openai")
+                                            .removeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
 }
