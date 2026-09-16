@@ -62,11 +62,9 @@ name: org.apache.camel.upgrade.camel423.migrateZeebeStarterDependency
 displayName: Migrate camel-zeebe-starter to camel-camunda-starter
 description: >-
   camel-zeebe-starter was removed in Camel Spring Boot 4.23 together with camel-zeebe. Renames it to
-  camel-camunda-starter, the Spring Boot auto-configuration starter for the new camel-camunda component.
-  NOTE: at the time this recipe was written camel-camunda-starter had not yet been published; verify it exists
-  under org.apache.camel.springboot before this recipe ships. If it does not, fall back to
-  org.apache.camel:camel-camunda (no Spring Boot auto-configuration) and document that in the release notes
-  instead.
+  camel-camunda-starter, the Spring Boot auto-configuration starter for the new camel-camunda component, added in
+  apache/camel-spring-boot#1978 and confirmed published as org.apache.camel.springboot:camel-camunda-starter (seen
+  as 4.23.0-SNAPSHOT on the Apache snapshots repository ahead of the 4.23.0 release).
 recipeList:
   - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
       oldGroupId: org.apache.camel.springboot
