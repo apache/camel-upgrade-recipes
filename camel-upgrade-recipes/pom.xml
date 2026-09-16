@@ -635,6 +635,14 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
+                                <!-- camel-openai for OpenAIConstants on the classpath (4.22.1) -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-openai</artifactId>
+                                    <version>4.22.0</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
                             </artifactItems>
                         </configuration>
                     </execution>

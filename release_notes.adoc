@@ -1,5 +1,80 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.22.1
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.22.1 LTS with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html[migration guide]).
+
+This recipe is not yet chained from `latest.yaml` or a Spring Boot `CamelMigrationRecipe`: per `RECIPE-CONVENTIONS.md`, a patch recipe is referenced from the *next main-version* yaml and, optionally, an LTS aggregate, and neither exists yet for the 4.22 line (a 4.22 LTS aggregate is tracked in https://github.com/apache/camel-upgrade-recipes/issues/129[#129]). Run it directly with `-Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe` until one of those exists.
+
+Only one 4.22.1 change is covered at all: the camel-openai `storeFullResponse` property change (CAMEL-24539), and it cannot be migrated mechanically -- see below. Everything else backported into 4.22.1 is either a secure-default/runtime behaviour change or a deprecation with no replacement yet, and needs manual review.
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-openai-1[camel-openai: `storeFullResponse` properties]
+| ⚠️ Partial
+| Which of `CamelOpenAIEmbeddingsResponse`/`CamelOpenAIAudioTranscriptionResponse`/`CamelOpenAIAudioTranslationResponse` (or unchanged `CamelOpenAIResponse` for chat-completion) an occurrence should become is not mechanically decidable -- exchange properties cross route boundaries through error handlers, `onCompletion` and endpoints such as `direct:`. Rather than risk a wrong rewrite, every `CamelOpenAIResponse` / `OpenAIConstants.RESPONSE` occurrence (and the matching Simple-syntax forms) is flagged with a review comment in Java, XML and YAML DSL, gated on `camel-openai`. Manual review required to pick the right property name.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L16[camel-hazelcast: ReplicatedHazelcastAggregationRepository applies the default serialization filter]
+| ❌ None
+| Runtime security default now also applied to the repository's self-bootstrapped `HazelcastInstance`/`ClientConfig`. Applications aggregating classes outside the default allow-list without supplying their own `hazelcastInstance`/`ClientConfig` must provide a `JavaSerializationFilterConfig`. Manual review required.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L36[camel-exec: `allowControlHeaders` is `insecure:dev`]
+| ❌ None
+| `allowControlHeaders=true` now fails to start under `camel.main.profile=prod` unless `camel.security.insecureDevPolicy` is relaxed. Manual configuration required.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L48[camel-azure-storage-blob/datalake and camel-google-storage: download symlink containment]
+| ❌ None
+| Local downloads through a symbolic link resolving outside the configured directory (`fileDir` / `downloadFileName`) are now rejected as a security fix; legitimate nested paths keep working. No migration needed.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L62[camel-jgroups: consumer deserialization filter]
+| ❌ None
+| The consumer now applies a JEP-290 `java.io.ObjectInputFilter` (the shared Camel default allow-list, or `jdk.serialFilter` when set) to the deserialized message body. Routes exchanging custom classes over the cluster must widen it with the new `deserializationFilter` endpoint option. Manual configuration required.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L89[camel-tika: `tikaConfig` deprecation]
+| ❌ None
+| `tikaConfig`/`tikaConfigUri` deprecated for removal in Camel 4.23 (Tika 4 drops `TikaConfig` and XML configuration). No replacement option exists yet, so no migration is possible until 4.23.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1829[camel-support: `BackgroundTask` cancellation]
+| ❌ None
+| `BackgroundTask.schedule`'s returned `Future` now correctly reports `isCancelled()==true` once the task completes, instead of the repeating schedule staying armed indefinitely. Behaviour fix, no migration needed.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1837[camel-master: `backOffMaxAttempts`]
+| ❌ None
+| `backOffMaxAttempts` now correctly bounds consumer start retries instead of being cut short by the default five second budget. Runtime behaviour fix, no migration needed.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1844[camel-core: REST client request validation and binary bodies]
+| ❌ None
+| With `clientRequestValidation` enabled, a required REST body is no longer coerced to `String`, so binary bodies (e.g. `application/octet-stream`) keep their original type. Bug fix, no migration needed.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1851[camel-infinispan: aggregation repository recovery]
+| ❌ None
+| `InfinispanAggregationRepository` now keeps completed-but-unconfirmed exchanges available for recovery instead of losing them; recovery now correctly targets exchanges that failed after completion rather than aggregations still in progress. Runtime behaviour fix, no migration needed.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1869[camel-servlet/camel-jetty: multipart upload whitelist and attachment header]
+| ❌ None
+| `fileNameExtWhitelist` is now checked against the submitted file name instead of the multipart field name (`camel-servlet`), and is now enforced at all (`camel-jetty`); the `camel-jetty` attachment header is now exposed under the multipart field name. Security fix — review the configured extension list before upgrading.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1895[camel-vertx-http: REST producer outbound header filter]
+| ❌ None
+| The REST producer now actually applies its outbound header filter (it previously consulted the inbound filter), so common HTTP headers such as `Content-Length`/`Host`/`Connection` are no longer copied onto the outgoing request unless configured. Manual review required if a route relied on one of those headers reaching the wire.
+
+| https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#L1914[camel-tensorflow-serving: `Target`/`Credentials` headers deprecated]
+| ❌ None
+| `CamelTensorFlowServingTarget`/`CamelTensorFlowServingCredentials` are deprecated but were already never read by the component (the gRPC channel is built once from the endpoint configuration), so no migration is needed — use the `target`/`credentials` endpoint options instead.
+
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc[Security-default backports documented only in the 4.23 guide]
+| ❌ None
+| Runtime/secure-default changes already effective as of 4.22.1 but only written up in the (unreleased) 4.23 guide: crypto-pgp `requireIntegrityProtection`, mllp `logPhi`, knative trust-all/`muteException`, mina/cxf/grpc `muteException`, http credential scope and OAuth2 token cache, http placeholders in `CamelHttpUri`, jetty/vertx CORS credentials, platform-http proxy exact path and header echo, netty-http security constraint, oauth `state`, shiro, keycloak issuer, xpath DOCTYPE, tika metadata filter, thrift, mail header filter, as2 `asyncMdnAllowedHosts`, remote-file jail, docling `allowUrlSource`/`allowFilePathSource`, dynamic-router `allowPredicateFromMessage`, spring-redis `deserializationFilter`, pqc key file permissions, paho-mqtt5 reconnect, saga LRA header, smooks external entities, local work directory symlinks. Each needs app-specific values or a manual opt-out; not automatable.
+|===
+
 == 4.22.0
 
 === Summary

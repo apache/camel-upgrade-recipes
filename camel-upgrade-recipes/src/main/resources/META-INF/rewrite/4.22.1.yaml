@@ -1,0 +1,59 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html
+# Specifically changes introduced in 4.22.1 (upgrading from 4.22.0 to 4.22.1)
+#
+# This patch is not yet referenced from any other recipe: there is no 4.23.yaml on this
+# branch to chain it from (see RECIPE-CONVENTIONS.md), and the 4.22 LTS aggregate is tracked
+# separately (https://github.com/apache/camel-upgrade-recipes/issues/129). Run it directly
+# with -Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe until
+# one of those exists.
+#####
+
+#####
+# Update the Camel project from 4.22.0 to 4.22.1
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe
+displayName: Migrates `camel 4.22.0` application to `camel 4.22.1`
+description: Migrates `camel 4.22.0` application to `camel 4.22.1`.
+recipeList:
+  - org.apache.camel.upgrade.camel422_1.flagOpenAIFullResponseProperty
+---
+## https://github.com/apache/camel/blob/camel-4.22.1/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-openai-1
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422_1.flagOpenAIFullResponseProperty
+displayName: Flag camel-openai CamelOpenAIResponse property for manual review (CAMEL-24539)
+description: >-
+  With storeFullResponse=true, the embeddings, audio-transcription and audio-translation camel-openai
+  operations now store their full response under an operation-specific exchange property instead of the
+  shared CamelOpenAIResponse property (chat-completion is unchanged). Which one applies to a given
+  CamelOpenAIResponse/OpenAIConstants.RESPONSE occurrence is not mechanically decidable in general -
+  exchange properties cross route boundaries via error handlers, onCompletion and endpoints such as
+  direct: - so this recipe adds a review comment at every occurrence instead of rewriting it. Only
+  applies if the camel-openai dependency is present.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-openai
+recipeList:
+  - org.apache.camel.upgrade.camel422_1.FlagOpenAIFullResponsePropertyInJavaDsl
+  - org.apache.camel.upgrade.camel422_1.FlagOpenAIFullResponsePropertyInXmlDsl
+  - org.apache.camel.upgrade.camel422_1.FlagOpenAIFullResponsePropertyInYamlDsl
