@@ -212,6 +212,30 @@ public class CamelUpdate422_1Test implements RewriteTest {
 
     @Test
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    void yamlDslIsIdempotent() {
+        //language=yaml
+        rewriteRun(
+                mavenProject("test-openai-yaml-idempotent",
+                        CamelTestUtil.pomXmlSpec("camel-openai", CamelTestUtil.CamelVersion.v4_22),
+                        yaml(
+                        """
+                        - route:
+                            from:
+                              uri: "direct:openai"
+                            steps:
+                              - setProperty:
+                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  name: CamelOpenAIResponse
+                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  simple: "${exchangeProperty.CamelOpenAIResponse}"
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void xmlDslFlagsOccurrencesAndLeavesLookalikesAlone() {
         //language=xml
         rewriteRun(
@@ -235,6 +259,29 @@ public class CamelUpdate422_1Test implements RewriteTest {
                             <setProperty name="CamelOpenAIResponseModel">
                                 <constant>keep-model</constant>
                             </setProperty>
+                            <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
+                            <setProperty name="CamelOpenAIResponse">
+                                <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
+                                <simple>${exchangeProperty.CamelOpenAIResponse}</simple>
+                            </setProperty>
+                        </route>
+                        """
+                )
+                )
+        );
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    void xmlDslIsIdempotent() {
+        //language=xml
+        rewriteRun(
+                mavenProject("test-openai-xml-idempotent",
+                        CamelTestUtil.pomXmlSpec("camel-openai", CamelTestUtil.CamelVersion.v4_22),
+                        xml(
+                        """
+                        <route xmlns="http://camel.apache.org/schema/spring">
+                            <from uri="direct:openai"/>
                             <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
                             <setProperty name="CamelOpenAIResponse">
                                 <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->

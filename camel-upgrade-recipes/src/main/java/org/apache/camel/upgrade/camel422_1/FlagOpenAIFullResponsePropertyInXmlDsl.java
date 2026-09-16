@@ -22,8 +22,11 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
+import org.openrewrite.xml.tree.Content;
 import org.openrewrite.xml.tree.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.upgrade.camel422_1.FlagOpenAIFullResponsePropertyInJavaDsl.WARNING_COMMENT;
@@ -31,6 +34,11 @@ import static org.apache.camel.upgrade.camel422_1.FlagOpenAIFullResponseProperty
 /**
  * Flags camel-openai {@code CamelOpenAIResponse} usages in XML DSL for manual review (CAMEL-24539).
  * See {@link FlagOpenAIFullResponsePropertyInJavaDsl} for why this marks instead of rewriting.
+ * <p>
+ * A comment is inserted as a real {@code Xml.Comment} sibling in the parent's content, right before
+ * the flagged tag, rather than as raw {@code <!--...-->} text glued into the tag's prefix: on reparse
+ * (e.g. a second recipe run) a prefix-embedded comment turns into its own sibling {@code Xml.Comment}
+ * node, so a prefix-string-based idempotency check would stop seeing it and duplicate the comment.
  */
 public class FlagOpenAIFullResponsePropertyInXmlDsl extends Recipe {
 
@@ -65,40 +73,57 @@ public class FlagOpenAIFullResponsePropertyInXmlDsl extends Recipe {
         public Xml.Tag doVisitTag(Xml.Tag tag, ExecutionContext ctx) {
             Xml.Tag t = super.doVisitTag(tag, ctx);
 
-            String tagName = t.getName();
-            boolean propertyTag = "setProperty".equals(tagName) || "removeProperty".equals(tagName);
+            List<? extends Content> content = t.getContent();
+            if (content == null || content.isEmpty()) {
+                return t;
+            }
 
-            boolean flagTag = false;
-            for (Xml.Attribute attr : t.getAttributes()) {
+            List<Content> newContent = null;
+            for (int i = 0; i < content.size(); i++) {
+                Content c = content.get(i);
+                if (c instanceof Xml.Tag && shouldFlag((Xml.Tag) c) && !hasPrecedingMarkerComment(content, i)) {
+                    if (newContent == null) {
+                        newContent = new ArrayList<>(content.subList(0, i));
+                    }
+                    newContent.add(RecipesUtil.createXmlComment(WARNING_COMMENT).withPrefix(c.getPrefix()));
+                }
+                if (newContent != null) {
+                    newContent.add(c);
+                }
+            }
+
+            return newContent != null ? t.withContent(newContent) : t;
+        }
+
+        private static boolean hasPrecedingMarkerComment(List<? extends Content> content, int index) {
+            return index > 0 && content.get(index - 1) instanceof Xml.Comment
+                    && ((Xml.Comment) content.get(index - 1)).getText().contains(MARKER);
+        }
+
+        private static boolean shouldFlag(Xml.Tag tag) {
+            boolean propertyTag = "setProperty".equals(tag.getName()) || "removeProperty".equals(tag.getName());
+
+            for (Xml.Attribute attr : tag.getAttributes()) {
                 String value = attr.getValueAsString();
                 if (value == null) {
                     continue;
                 }
                 if (propertyTag && "name".equals(attr.getKeyAsString()) && OLD_PROPERTY_NAME.equals(value)) {
-                    flagTag = true;
+                    return true;
                 }
                 if (SIMPLE_EXCHANGE_PROPERTY.matcher(value).find()) {
-                    flagTag = true;
+                    return true;
                 }
             }
-            if (t.getChildren().isEmpty()) {
-                String value = t.getValue().orElse(null);
+
+            if (tag.getChildren().isEmpty()) {
+                String value = tag.getValue().orElse(null);
                 if (value != null && SIMPLE_EXCHANGE_PROPERTY.matcher(value).find()) {
-                    flagTag = true;
+                    return true;
                 }
             }
 
-            if (flagTag && !t.getPrefix().contains(MARKER)) {
-                t = t.withPrefix(addCommentToPrefix(t.getPrefix()));
-            }
-
-            return t;
-        }
-
-        private static String addCommentToPrefix(String prefix) {
-            int lastNewline = prefix.lastIndexOf('\n');
-            String indent = lastNewline >= 0 ? prefix.substring(lastNewline + 1) : "";
-            return prefix + "<!--" + WARNING_COMMENT + "-->\n" + indent;
+            return false;
         }
     }
 }
