@@ -1,5 +1,93 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.23.0
+
+=== Summary
+
+This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.23.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html[migration guide]).
+
+This release also carries forward the Camel 4.22.1 patch recipe (`camel422_1.CamelMigrationRecipe`, covering CAMEL-24539) per the `RECIPE-CONVENTIONS.md` next-main-version convention; see the <<4.22.1>> section below for details.
+
+=== Migration coverage
+
+The following table lists migration topics and indicates the level of coverage (full, partial, or not covered), along with additional comments.
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_components_and_language_removal[camel-csimple: language and camel-csimple-joor/camel-csimple-maven-plugin removed]
+| ⚠️ Partial
+| `csimple(...)` → `simple(...)` automated via `ChangeMethodName` for `Builder`, `BuilderSupport`, `ExpressionClause` and `ExpressionClauseSupport`; `CSimpleExpression` → `SimpleExpression` via `ChangeType`; `<csimple>` → `<simple>` in XML DSL (gated on a Camel XML document) and `csimple:` → `simple:` in YAML DSL (gated on a Camel YAML DSL document); `camel-csimple-joor` dependency and `camel-csimple-maven-plugin` build plugin removed. `ChangeMethodName` does not rewrite a `import static ...Builder.csimple;` declaration, so a project that statically imports `csimple` needs a manual import fix-up (add the `simple` static import, remove the stale `csimple` one). Java routes that relied on csimple-only compiled syntax, the csimple imports file, and generated `CSimple*` sources need manual review.
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_zeebe[camel-zeebe renamed to camel-camunda]
+| ⚠️ Partial
+| Dependency renamed via `ChangeDependencyGroupIdAndArtifactId` (`camel-zeebe` → `camel-camunda`); `zeebe:` URIs renamed to `camunda:` and the `jobKey` endpoint option renamed to `jobType` via `ChangeComponentUriRecipe`; the 8 literal `CamelZeebe*` header names renamed to `CamelCamunda*` via `RenameHeaders`; `ZeebeConstants` → `CamundaConstants` and the 12 `model` DTO classes migrated via `ChangeType` (`AbstractZeebeResponse` → `AbstractCamundaResponse`, `ZeebeMessage` → `CamundaMessage`, the other 10 keep their simple name). Internal SPI classes (`ZeebeComponent`, `ZeebeConsumer`, `ZeebeProducer`, the `internal` and `processor` packages) are intentionally not renamed — a blanket `ChangePackage` risks producing references to types that were dropped rather than renamed, and these classes are not part of the public route-building API. `gatewayHost`/`gatewayPort` → `grpcAddress`, the new SaaS/REST options, worker auto-complete behaviour and the `zeebe()` Endpoint DSL builder need manual review. The Spring Boot `camel-zeebe-starter` is renamed to `camel-camunda-starter`, the Spring Boot auto-configuration starter for `camel-camunda` added in https://github.com/apache/camel-spring-boot/pull/1978[apache/camel-spring-boot#1978] and confirmed published as `org.apache.camel.springboot:camel-camunda-starter` (seen as `4.23.0-SNAPSHOT` on the Apache snapshots repository ahead of the 4.23.0 release).
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_langchain4j_tools[camel-langchain4j-tools module removed]
+| ⚠️ Partial
+| `camel-langchain4j-tools` dependency removed via `RemoveDependency`, gated on `camel-ai-tool` being present rather than on `camel-langchain4j-tools` itself. This ordering guard matters because `latest.yaml` runs the 4.23 recipe before the 4.22 recipe that migrates `langchain4j-tools:` URIs to `ai-tool:` and adds `camel-ai-tool`: gating removal on `camel-ai-tool` presence means the 4.23 removal simply does not fire until the 4.22 URI migration has completed (in an earlier or the same run), so the two recipes cannot race regardless of chain order. The Spring Boot `camel-langchain4j-tools-starter` is renamed directly to `camel-ai-tool-starter` (a plain rename, so it cannot collide with `camel422.migrateAiToolStarterDependency`, which only swaps a plain `camel-ai-tool` dependency). Producer endpoints for direct tool calling still need manual migration to `langchain4j-agent`.
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_ibm_cos[camel-ibm-cos: CACHE_CONTROL header value renamed]
+| ✅ Full
+| `CamelIBMCOSContentControl` → `CamelIBMCOSCacheControl` automated via the 4.18.3 `RenameHeaders` custom recipe (gated on `camel-ibm-cos`); existing `IBMCOSConstants.CACHE_CONTROL` usages need no change
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_headersmap[camel-headersmap removed]
+| ✅ Full
+| Automated removal of `org.apache.camel:camel-headersmap` dependency (only discovered via `META-INF/services`; Camel falls back to its default headers map factory automatically). Direct uses of `FastHeadersMapFactory` need manual removal.
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_reactive_executor_vertx[camel-reactive-executor-vertx removed]
+| ✅ Full
+| Automated removal of `org.apache.camel:camel-reactive-executor-vertx` dependency (only discovered via `META-INF/services`; Camel falls back to its default reactive executor automatically). Direct uses of `VertXReactiveExecutor` need manual removal.
+
+| https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_threadpoolfactory_vertx[camel-threadpoolfactory-vertx removed]
+| ✅ Full
+| Automated removal of `org.apache.camel:camel-threadpoolfactory-vertx` dependency (only discovered via `META-INF/services`; Camel falls back to its default thread pool factory automatically). Direct uses of `VertXThreadPoolFactory` need manual removal.
+
+| Components removed with no replacement: camel-digitalocean, camel-iec60870, camel-irc, camel-ironmq, camel-json-patch, camel-leveldb, camel-splunk (and their Spring Boot starters)
+| ❌ None
+| Deliberately not automated: removing the dependency would turn a clear build-time failure into a runtime "no component found" error. `splunk` → `splunk-hec` is not a drop-in replacement (producer-only, different options).
+
+| `MemoryIdempotentRepository` / `MemoryAggregationRepository` deprecated
+| ❌ None
+| Not automated: `memoryIdempotentRepository()` is an LRU cache capped at 1000 entries, while the suggested `MemoryKeyValueRepository` replacement is an unbounded `ConcurrentHashMap` with optional TTL — a mechanical swap would be a memory leak.
+
+| camel-tika: `tikaConfig`/`tikaConfigUri` removed
+| ❌ None
+| The configuration format moves from XML to JSON; not a mechanical rewrite.
+
+| camel-langchain4j: `transportType=sse` removed
+| ❌ None
+| `http` needs a server that supports streamable HTTP, usually at a different URL; not mechanical.
+
+| camel-openai: embeddings/audio full-response properties moved
+| ❌ None
+| Rewriting these would require matching each property read to its corresponding upstream operation.
+
+| camel-platform-http `proxy*` paths, camel-infinispan `CamelInfinispanOperationResult`, camel-tensorflow-serving headers
+| ❌ None
+| Deprecations with no mechanical equivalent.
+
+| Security defaults flipped (knative/grpc/mina/cxf `muteException`, mllp `logPhi`, sql `allowQueryFromHeader`/`allowTemplateFromHeader`, pgp `requireIntegrityProtection`, jetty/platform-http-vertx CORS credentials, as2 `asyncMdnAllowedHosts`, netty/jgroups/spring-redis deserialization filters, knative `ssl.trust.all`, docling/smooks/dynamic-router/exec/xpath, and the Spring Boot jolokia bind address, observability-services, debug JMX connector, vault fail-closed, lenient configuration binding, health stacktrace defaults)
+| ❌ None
+| Deliberately not automated: a recipe restoring any of these old values would silently undo a security hardening.
+
+| camel-jasypt-starter default algorithm
+| ❌ None
+| Pinning `PBEWithMD5AndDES` would keep old ciphertext working but locks in weak crypto; needs manual review.
+
+| Model accessors `Boolean` → `String` (`ParamDefinition.setRequired`, `RouteTemplateParameterDefinition.setRequired`, `ProcessorDefinition`/`CircuitBreakerDefinition`/`FailoverLoadBalancerDefinition.setInheritErrorHandler`), camel-catalog-lucene removal
+| ❌ None
+| Not implemented in this release; left for a follow-up (low usage of direct model-building code, and low risk if left as-is since these are deprecated overloads, not removed ones).
+
+| Behaviour or tooling only, nothing to rewrite: context reload, Avro trusted packages, CamelEvent JSON, consoles, groovy, javascript, URI normalization, pollEnrich/HTTP header placeholders, XmlConverter, staticSourceDir, a2a, ai-observability, archetypes, hazelcast, jbang/TUI/MCP renames, mail, oauth, netty-http, remote-file jail, salesforce plugin, keycloak, thrift, shiro, lra, microprofile-health, pqc, infinispan recovery, qdrant, vertx-http, servlet/jetty whitelist, BackgroundTask, camel-master, REST client validation, alibaba-eventbridge
+| ❌ None
+| No code-level change to automate.
+
+|===
+
+NOTE: At the time these recipes were written, Camel 4.23.0 had not yet been released to Maven Central, so the `camel-camunda` / `camel-camunda-starter` / `camel-ai-tool-starter` artifacts these recipes target don't resolve there yet either. All four are confirmed to genuinely exist as `4.23.0-SNAPSHOT` on the Apache snapshots repository (`https://repository.apache.org/content/repositories/snapshots/`), so this is purely a release-timing gap, not a naming or coordinate guess. Recipe logic and its tests are verified correct in isolation; the handful of test assertions that depend on actually resolving a plain `4.23.0` artifact from Maven Central (a Maven-parser warning comment, or the trailing `UpgradeDependencyVersion` step silently declining to bump to an unresolvable version) will pass once the release is published, with no code changes needed.
+
 == 4.22.1
 
 === Summary

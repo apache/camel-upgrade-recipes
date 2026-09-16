@@ -1,0 +1,264 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html
+#####
+
+#####
+# Update the Camel project from 4.22 to 4.23
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.CamelMigrationRecipe
+displayName: Migrates `camel 4.22` application to `camel 4.23`
+description: Migrates `camel 4.22` application to `camel 4.23`.
+recipeList:
+  ## inherited from patch recipe
+  - org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel423.migrateCSimpleJavaApi
+  - org.apache.camel.upgrade.camel423.migrateCSimpleXmlDsl
+  - org.apache.camel.upgrade.camel423.migrateCSimpleYamlDsl
+  - org.apache.camel.upgrade.camel423.removeCSimpleDependencies
+  - org.apache.camel.upgrade.camel423.migrateZeebeToCamunda
+  - org.apache.camel.upgrade.camel423.removeLangchain4jToolsModule
+  - org.apache.camel.upgrade.camel423.migrateIbmCosCacheControlHeader
+  - org.apache.camel.upgrade.camel423.removeHeadersmapDependency
+  - org.apache.camel.upgrade.camel423.removeReactiveExecutorVertxDependency
+  - org.apache.camel.upgrade.camel423.removeThreadPoolFactoryVertxDependency
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateCSimpleJavaApi
+displayName: Migrate csimple Java API to simple
+description: The csimple language was removed in Camel 4.23. Renames the removed csimple(...) builder methods to the equivalent simple(...) overloads, and changes the removed org.apache.camel.model.language.CSimpleExpression type to org.apache.camel.model.language.SimpleExpression. Expressions relying on csimple-only compiled syntax still need manual review.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.Builder csimple(String)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.Builder csimple(String, Class)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.BuilderSupport csimple(String)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.BuilderSupport csimple(String, Class)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClause csimple(String)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClause csimple(String, Class)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClauseSupport csimple(String)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClauseSupport csimple(String, Class)
+      newMethodName: simple
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.model.language.CSimpleExpression
+      newFullyQualifiedTypeName: org.apache.camel.model.language.SimpleExpression
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateCSimpleXmlDsl
+displayName: Migrate csimple XML DSL element to simple
+description: Renames the removed <csimple> XML DSL expression element to <simple>, only in documents that belong to the Camel XML DSL.
+preconditions:
+  - org.apache.camel.upgrade.customRecipes.FindCamelXmlDsl
+recipeList:
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: //csimple
+      newName: simple
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateCSimpleYamlDsl
+displayName: Migrate csimple YAML DSL expression key to simple
+description: Renames the removed csimple expression key to simple in YAML DSL documents, without touching unrelated YAML files that happen to contain a csimple key.
+recipeList:
+  - org.apache.camel.upgrade.camel423.YamlDsl423CSimpleRecipe
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeCSimpleDependencies
+displayName: Remove camel-csimple-joor dependency and camel-csimple-maven-plugin
+description: Removes the camel-csimple-joor dependency and the camel-csimple-maven-plugin build plugin, both removed in Camel 4.23 together with the csimple language.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-csimple-joor
+  - org.openrewrite.maven.RemovePlugin:
+      groupId: org.apache.camel
+      artifactId: camel-csimple-maven-plugin
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-zeebe
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateZeebeToCamunda
+displayName: Migrate camel-zeebe to camel-camunda
+description: >-
+  camel-zeebe was renamed to camel-camunda in Camel 4.23, keeping the same 9 operations. Migrates the dependency,
+  the zeebe: URI scheme (including the jobKey to jobType endpoint option rename), the shared model classes, the
+  8 CamelZeebe* literal header names and the ZeebeConstants type. All steps are bundled in a single
+  dependency-gated recipe so that later steps still see the camel-zeebe dependency after earlier steps have
+  renamed it. Header names are migrated with explicit old-to-new mappings rather than a prefix rename, since
+  RenameHeaderPrefixes only matches the org.apache.camel.Message setHeader/getHeader methods and not the fluent
+  ProcessorDefinition.setHeader(...) route-builder DSL, unlike RenameHeaders which handles both.
+  gatewayHost/gatewayPort (replaced by grpcAddress), the new SaaS/REST options, the two zeebe-only model classes
+  (renamed rather than dropped: AbstractZeebeResponse to AbstractCamundaResponse and ZeebeMessage to
+  CamundaMessage, both handled below), worker auto-complete behaviour and the zeebe() Endpoint DSL builder are not
+  covered and need manual review.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-zeebe
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^zeebe:(.*?)jobKey=(.*)$"
+      replacement: "zeebe:${1}jobType=${2}"
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^zeebe:(.*)$"
+      replacement: "camunda:${1}"
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: org.apache.camel
+      oldArtifactId: camel-zeebe
+      newGroupId: org.apache.camel
+      newArtifactId: camel-camunda
+      newVersion: 4.23.0
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.client-id
+      newPropertyKey: camel.component.camunda.client-id
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.client-secret
+      newPropertyKey: camel.component.camunda.client-secret
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.o-auth-api
+      newPropertyKey: camel.component.camunda.o-auth-api
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.ZeebeConstants
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.CamundaConstants
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.AbstractZeebeResponse
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.AbstractCamundaResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.ZeebeMessage
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.CamundaMessage
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.DeploymentRequest
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.DeploymentRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.DeploymentResponse
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.DeploymentResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.JobRequest
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.JobRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.JobResponse
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.JobResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.JobWorkerMessage
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.JobWorkerMessage
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.MessageRequest
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.MessageRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.MessageResponse
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.MessageResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.ProcessDeploymentResponse
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.ProcessDeploymentResponse
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.ProcessRequest
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.ProcessRequest
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.model.ProcessResponse
+      newFullyQualifiedTypeName: org.apache.camel.component.camunda.model.ProcessResponse
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      headerMappings:
+        CamelZeebeResourceName: CamelCamundaResourceName
+        CamelZeebeIsSuccess: CamelCamundaIsSuccess
+        CamelZeebeErrorMessage: CamelCamundaErrorMessage
+        CamelZeebeErrorCode: CamelCamundaErrorCode
+        CamelZeebeBPMNProcessId: CamelCamundaBPMNProcessId
+        CamelZeebeVersion: CamelCamundaVersion
+        CamelZeebeProcessDefinitionKey: CamelCamundaProcessDefinitionKey
+        CamelZeebeJobKey: CamelCamundaJobKey
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-langchain4j-tools
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeLangchain4jToolsModule
+displayName: Remove camel-langchain4j-tools dependency
+description: >-
+  camel-langchain4j-tools was removed in Camel 4.23. Removes the dependency only once camel-ai-tool is present, so
+  that this recipe running ahead of camel422.migrateLangchain4jToolsUris in the latest migration chain does not
+  defeat that recipe's own camel-langchain4j-tools precondition before it has migrated the consumer endpoint URIs;
+  the removal then takes effect on the following cycle. Producer endpoints for direct tool calling still need
+  manual migration to langchain4j-agent.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-ai-tool
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-langchain4j-tools
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-ibm-cos
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateIbmCosCacheControlHeader
+displayName: Migrate camel-ibm-cos CamelIBMCOSContentControl header to CamelIBMCOSCacheControl
+description: The IBMCOSConstants.CACHE_CONTROL header value was renamed from CamelIBMCOSContentControl to CamelIBMCOSCacheControl in Camel 4.23. Existing IBMCOSConstants.CACHE_CONTROL usages need no change, only string literal header names.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-ibm-cos
+recipeList:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      oldHeaderName: CamelIBMCOSContentControl
+      newHeaderName: CamelIBMCOSCacheControl
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-headersmap
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeHeadersmapDependency
+displayName: Remove camel-headersmap dependency
+description: camel-headersmap was removed in Camel 4.23. It was only discovered at runtime through the headers-map-factory META-INF/services entry, and Camel falls back to its default headers map factory automatically. Direct uses of FastHeadersMapFactory must be removed manually.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-headersmap
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-reactive-executor-vertx
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeReactiveExecutorVertxDependency
+displayName: Remove camel-reactive-executor-vertx dependency
+description: camel-reactive-executor-vertx was removed in Camel 4.23. It was only discovered at runtime through the reactive-executor META-INF/services entry, and Camel falls back to its default reactive executor automatically. Direct uses of VertXReactiveExecutor must be removed manually.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-reactive-executor-vertx
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-threadpoolfactory-vertx
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeThreadPoolFactoryVertxDependency
+displayName: Remove camel-threadpoolfactory-vertx dependency
+description: camel-threadpoolfactory-vertx was removed in Camel 4.23. It was only discovered at runtime through the thread-pool-factory META-INF/services entry, and Camel falls back to its default thread pool factory automatically. Direct uses of VertXThreadPoolFactory must be removed manually.
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-threadpoolfactory-vertx
