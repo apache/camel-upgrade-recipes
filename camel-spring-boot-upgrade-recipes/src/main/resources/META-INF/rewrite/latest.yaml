@@ -34,15 +34,24 @@ recipeList:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'camel-spring-boot-dependencies'
       newVersion: @camel-spring-boot-version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: 'camel-spring-boot-dependencies'
-      newVersion: @camel-spring-boot-version@
+  # Also update property-managed BOMs. UpgradeDependencyVersion resolves the target
+  # version from maven-metadata.xml; when that file is absent (e.g. staging repos),
+  # the recipe silently no-ops on a property reference. ChangePropertyValue sets the
+  # value directly and does not require metadata resolution.
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot-version
+      newValue: @camel-spring-boot-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.springboot.version
+      newValue: @camel-spring-boot-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: org.springframework.boot
       artifactId: "*"
       newVersion: @spring-boot-version@
       overrideManagedVersion: false
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: spring-boot-version
+      newValue: @spring-boot-version@
   - org.openrewrite.maven.UpgradePluginVersion:
       groupId: org.springframework.boot
       artifactId: spring-boot-maven-plugin
