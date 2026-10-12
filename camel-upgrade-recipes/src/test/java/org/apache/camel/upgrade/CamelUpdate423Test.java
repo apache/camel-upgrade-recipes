@@ -26,6 +26,7 @@ import org.openrewrite.test.TypeValidation;
 import static org.openrewrite.java.Assertions.java;
 import static org.openrewrite.java.Assertions.mavenProject;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.xml.Assertions.xml;
 import static org.openrewrite.yaml.Assertions.yaml;
 
@@ -726,4 +727,424 @@ public class CamelUpdate423Test implements RewriteTest {
         );
     }
 
+    @Test
+    void migrateJoorJavaApi() {
+        //language=java
+        rewriteRun(
+                java(
+                        """
+                        import org.apache.camel.builder.Builder;
+                        import org.apache.camel.builder.RouteBuilder;
+                        import org.apache.camel.model.language.JoorExpression;
+
+                        public class JoorRoute extends RouteBuilder {
+                            private JoorExpression expression = new JoorExpression("${body}");
+
+                            @Override
+                            public void configure() {
+                                from("direct:in")
+                                    .filter(Builder.joor("${body} != null"))
+                                    .setBody().joor("${body.toUpperCase()}")
+                                    .to("mock:result");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.builder.Builder;
+                        import org.apache.camel.builder.RouteBuilder;
+                        import org.apache.camel.model.language.JavaExpression;
+
+                        public class JoorRoute extends RouteBuilder {
+                            private JavaExpression expression = new JavaExpression("${body}");
+
+                            @Override
+                            public void configure() {
+                                from("direct:in")
+                                    .filter(Builder.java("${body} != null"))
+                                    .setBody().java("${body.toUpperCase()}")
+                                    .to("mock:result");
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    /**
+     * BeanFactoryDefinition.joor(String) still exists in 4.23, unlike the builder methods, so it must be
+     * left alone.
+     */
+    @Test
+    void leavesBeanFactoryDefinitionJoorUntouched() {
+        //language=java
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(0),
+                java(
+                        """
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        public class BeanJoorRoute extends RouteBuilder {
+                            @Override
+                            public void configure() {
+                                bean("myBean").joor("new com.example.MyBean()");
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migrateJoorXmlDsl() {
+        //language=xml
+        rewriteRun(
+                xml(
+                        """
+                        <routes xmlns="http://camel.apache.org/schema/spring">
+                            <route id="joorRoute">
+                                <from uri="direct:in"/>
+                                <filter>
+                                    <joor>${body} != null</joor>
+                                    <to uri="mock:result"/>
+                                </filter>
+                            </route>
+                        </routes>
+                        """,
+                        """
+                        <routes xmlns="http://camel.apache.org/schema/spring">
+                            <route id="joorRoute">
+                                <from uri="direct:in"/>
+                                <filter>
+                                    <java>${body} != null</java>
+                                    <to uri="mock:result"/>
+                                </filter>
+                            </route>
+                        </routes>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migrateJoorYamlDsl() {
+        //language=yaml
+        rewriteRun(
+                yaml(
+                        """
+                        - route:
+                            id: joorRoute
+                            from:
+                              uri: direct:in
+                              steps:
+                                - filter:
+                                    joor: "${body} != null"
+                                - to:
+                                    uri: mock:result
+                        """,
+                        """
+                        - route:
+                            id: joorRoute
+                            from:
+                              uri: direct:in
+                              steps:
+                                - filter:
+                                    java: "${body} != null"
+                                - to:
+                                    uri: mock:result
+                        """
+                )
+        );
+    }
+
+    @Test
+    void preconditionLeavesNonCamelYamlJoorKeyUntouched() {
+        //language=yaml
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(0),
+                yaml(
+                        """
+                        config:
+                          joor: "not a Camel document"
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migrateRemovedLanguageUris() {
+        //language=java
+        rewriteRun(
+                java(
+                        """
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        public class LanguageRoute extends RouteBuilder {
+                            @Override
+                            public void configure() {
+                                from("direct:in")
+                                    .to("language:csimple:${body} != null")
+                                    .to("language:joor:return body;")
+                                    .to("language:simple:${body}");
+                            }
+                        }
+                        """,
+                        """
+                        import org.apache.camel.builder.RouteBuilder;
+
+                        public class LanguageRoute extends RouteBuilder {
+                            @Override
+                            public void configure() {
+                                from("direct:in")
+                                    .to("language:simple:${body} != null")
+                                    .to("language:java:return body;")
+                                    .to("language:simple:${body}");
+                            }
+                        }
+                        """
+                )
+        );
+    }
+
+    @Test
+    void migrateMustacheHeaders() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-mustache",
+                        CamelTestUtil.pomXmlSpec("camel-mustache", CamelTestUtil.CamelVersion.v4_22),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class MustacheRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("MustacheResourceUri", constant("other.mustache"))
+                                            .setHeader("MustacheTemplate", constant("Hello {{name}}"))
+                                            .to("mustache:template.mustache");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class MustacheRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("CamelMustacheResourceUri", constant("other.mustache"))
+                                            .setHeader("CamelMustacheTemplate", constant("Hello {{name}}"))
+                                            .to("mustache:template.mustache");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void preconditionBlocksMustacheHeadersWithoutDependency() {
+        //language=java
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
+                mavenProject("test-no-mustache",
+                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class NoMustacheRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("MustacheResourceUri", constant("other.mustache"))
+                                            .to("mock:result");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void migrateChunkHeaders() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-chunk",
+                        CamelTestUtil.pomXmlSpec("camel-chunk", CamelTestUtil.CamelVersion.v4_22),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class ChunkRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("ChunkResourceUri", constant("other"))
+                                            .setHeader("ChunkTemplate", constant("Hello {$name}"))
+                                            .to("chunk:template");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class ChunkRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("CamelChunkResourceUri", constant("other"))
+                                            .setHeader("CamelChunkTemplate", constant("Hello {$name}"))
+                                            .to("chunk:template");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void migrateDebeziumOracleOutServerName() {
+        rewriteRun(
+                mavenProject("test-debezium-oracle",
+                        CamelTestUtil.pomXmlSpec("camel-debezium-oracle", CamelTestUtil.CamelVersion.v4_22),
+                        //language=java
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class DebeziumRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("debezium-oracle:myOracle?databaseOutServerName=dbzxout&databaseUser=scott")
+                                            .to("mock:result");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class DebeziumRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("debezium-oracle:myOracle?xstreamOutServerName=dbzxout&databaseUser=scott")
+                                            .to("mock:result");
+                                    }
+                                }
+                                """
+                        ),
+                        properties(
+                                "camel.component.debezium-oracle.database-out-server-name=dbzxout",
+                                "camel.component.debezium-oracle.xstream-out-server-name=dbzxout",
+                                spec -> spec.path("application.properties")
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    void migrateJoltCommunityFork() {
+        rewriteRun(
+                mavenProject("test-jolt",
+                        //language=xml
+                        pomXml(
+                                """
+                                <project>
+                                    <groupId>com.example</groupId>
+                                    <artifactId>test</artifactId>
+                                    <version>1.0.0</version>
+                                    <properties>
+                                        <maven.compiler.release>17</maven.compiler.release>
+                                    </properties>
+                                    <dependencies>
+                                        <dependency>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-jolt</artifactId>
+                                            <version>4.22.0</version>
+                                        </dependency>
+                                        <dependency>
+                                            <groupId>com.bazaarvoice.jolt</groupId>
+                                            <artifactId>jolt-core</artifactId>
+                                            <version>0.1.8</version>
+                                        </dependency>
+                                        <dependency>
+                                            <groupId>com.bazaarvoice.jolt</groupId>
+                                            <artifactId>json-utils</artifactId>
+                                            <version>0.1.8</version>
+                                        </dependency>
+                                    </dependencies>
+                                </project>
+                                """,
+                                """
+                                <project>
+                                    <groupId>com.example</groupId>
+                                    <artifactId>test</artifactId>
+                                    <version>1.0.0</version>
+                                    <properties>
+                                        <maven.compiler.release>17</maven.compiler.release>
+                                    </properties>
+                                    <dependencies>
+                                        <dependency>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-jolt</artifactId>
+                                            <version>4.22.0</version>
+                                        </dependency>
+                                        <dependency>
+                                            <groupId>io.github.jolt-community.jolt</groupId>
+                                            <artifactId>jolt-community-core</artifactId>
+                                            <version>1.3.0</version>
+                                        </dependency>
+                                        <dependency>
+                                            <groupId>io.github.jolt-community.jolt</groupId>
+                                            <artifactId>json-community-utils</artifactId>
+                                            <version>1.3.0</version>
+                                        </dependency>
+                                    </dependencies>
+                                </project>
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    void removeReactiveExecutorTomcatDependency() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-reactive-executor-tomcat</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                        </project>
+                        """
+                )
+        );
+    }
 }

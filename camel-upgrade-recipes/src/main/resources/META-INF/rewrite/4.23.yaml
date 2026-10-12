@@ -40,6 +40,18 @@ recipeList:
   - org.apache.camel.upgrade.camel423.removeHeadersmapDependency
   - org.apache.camel.upgrade.camel423.removeReactiveExecutorVertxDependency
   - org.apache.camel.upgrade.camel423.removeThreadPoolFactoryVertxDependency
+  - org.apache.camel.upgrade.camel423.migrateJoorJavaApi
+  - org.apache.camel.upgrade.camel423.migrateJoorXmlDsl
+  - org.apache.camel.upgrade.camel423.migrateJoorYamlDsl
+  - org.apache.camel.upgrade.camel423.migrateRemovedLanguageUris
+  - org.apache.camel.upgrade.camel423.migrateMustacheHeaders
+  - org.apache.camel.upgrade.camel423.migrateChunkHeaders
+  - org.apache.camel.upgrade.camel423.migrateDebeziumOracleOutServerName
+  - org.apache.camel.upgrade.camel423.migrateJoltCommunityFork
+  ## camel-reactive-executor-tomcat was deprecated in 4.22 and removed in 4.23, so the 4.22 removal
+  ## recipe is referenced here as well: a project upgrading straight from 4.22 to 4.23 would
+  ## otherwise keep a dependency on an artifact that no longer exists
+  - org.apache.camel.upgrade.camel422.removeCamelReactiveExecutorTomcatDependency
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
 type: specs.openrewrite.org/v1beta/recipe
@@ -93,7 +105,9 @@ name: org.apache.camel.upgrade.camel423.migrateCSimpleYamlDsl
 displayName: Migrate csimple YAML DSL expression key to simple
 description: Renames the removed csimple expression key to simple in YAML DSL documents, without touching unrelated YAML files that happen to contain a csimple key.
 recipeList:
-  - org.apache.camel.upgrade.camel423.YamlDsl423CSimpleRecipe
+  - org.apache.camel.upgrade.camel423.YamlDsl423LanguageKeyRecipe:
+      oldKey: csimple
+      newKey: simple
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
 type: specs.openrewrite.org/v1beta/recipe
@@ -262,3 +276,181 @@ recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: org.apache.camel
       artifactId: camel-threadpoolfactory-vertx
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-joor
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateJoorJavaApi
+displayName: Migrate joor Java API to java
+description: >-
+  The joor language was removed in Camel 4.23; it was renamed to java in 4.3 and the old name is now gone.
+  Renames the removed joor(...) builder methods to the equivalent java(...) overloads, and changes the removed
+  JoorExpression and JoorLanguage types to JavaExpression and JavaLanguage. The joor and java languages declare
+  identical options, so this is a one-to-one rename. BeanFactoryDefinition.joor(String) is deliberately left
+  alone: unlike the builder methods it still exists in 4.23. The camel-joor dependency is also left in place,
+  since the java language itself ships from that artifact.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.Builder joor(String)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.Builder joor(String, Class)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.BuilderSupport joor(String)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.BuilderSupport joor(String, Class)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClause joor(String)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClause joor(String, Class)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClauseSupport joor(String)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.ExpressionClauseSupport joor(String, Class)
+      newMethodName: java
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.LanguageBuilderFactory joor()
+      newMethodName: java
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.model.language.JoorExpression
+      newFullyQualifiedTypeName: org.apache.camel.model.language.JavaExpression
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.language.joor.JoorLanguage
+      newFullyQualifiedTypeName: org.apache.camel.language.joor.JavaLanguage
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-joor
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateJoorXmlDsl
+displayName: Migrate joor XML DSL element to java
+description: Renames the removed <joor> XML DSL expression element to <java>, only in documents that belong to the Camel XML DSL.
+preconditions:
+  - org.apache.camel.upgrade.customRecipes.FindCamelXmlDsl
+recipeList:
+  - org.openrewrite.xml.ChangeTagName:
+      elementName: //joor
+      newName: java
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-joor
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateJoorYamlDsl
+displayName: Migrate joor YAML DSL expression key to java
+description: Renames the removed joor expression key to java in YAML DSL documents, without touching unrelated YAML files that happen to contain a joor key.
+recipeList:
+  - org.apache.camel.upgrade.camel423.YamlDsl423LanguageKeyRecipe:
+      oldKey: joor
+      newKey: java
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateRemovedLanguageUris
+displayName: Migrate language component URIs of the removed csimple and joor languages
+description: >-
+  Renames the csimple and joor language names in language: component URIs, following the removal of both
+  languages in Camel 4.23. The replacement languages, simple and java, accept the same expression in the URI.
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^language:csimple:(.*)$"
+      replacement: "language:simple:${1}"
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^language:joor:(.*)$"
+      replacement: "language:java:${1}"
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-mustache-camel-chunk-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateMustacheHeaders
+displayName: Migrate camel-mustache header names to the Camel namespace
+description: >-
+  The MustacheConstants header values were moved into the Camel namespace in 4.23
+  (MustacheResourceUri to CamelMustacheResourceUri, MustacheTemplate to CamelMustacheTemplate). Only literal
+  header names need migrating; the constant names themselves are unchanged, so MustacheConstants usages are
+  unaffected.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-mustache
+recipeList:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      headerMappings:
+        MustacheResourceUri: CamelMustacheResourceUri
+        MustacheTemplate: CamelMustacheTemplate
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-mustache-camel-chunk-potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateChunkHeaders
+displayName: Migrate camel-chunk header names to the Camel namespace
+description: >-
+  The ChunkConstants header values were moved into the Camel namespace in 4.23 (ChunkResourceUri to
+  CamelChunkResourceUri, ChunkTemplate to CamelChunkTemplate). Only literal header names need migrating; the
+  constant names themselves are unchanged, so ChunkConstants usages are unaffected.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-chunk
+recipeList:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      headerMappings:
+        ChunkResourceUri: CamelChunkResourceUri
+        ChunkTemplate: CamelChunkTemplate
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-debezium-oracle-the-databaseoutservername-option-is-removed
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateDebeziumOracleOutServerName
+displayName: Migrate camel-debezium-oracle databaseOutServerName to xstreamOutServerName
+description: >-
+  The databaseOutServerName option of camel-debezium-oracle was removed in 4.23; xstreamOutServerName, which
+  already existed in 4.22 and configures the same setting, is now the only name. Migrates the endpoint URI
+  option, the camel.component.debezium-oracle configuration key and the configuration class setter.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-debezium-oracle
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
+      uriPattern: "^debezium-oracle:(.*?)databaseOutServerName=(.*)$"
+      replacement: "debezium-oracle:${1}xstreamOutServerName=${2}"
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.debezium-oracle.database-out-server-name
+      newPropertyKey: camel.component.debezium-oracle.xstream-out-server-name
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration setDatabaseOutServerName(String)
+      newMethodName: setXstreamOutServerName
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-jolt-switch-from-unmaintained-bazaarvoice-jolt-to-the-jolt-community-fork
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateJoltCommunityFork
+displayName: Migrate camel-jolt from the bazaarvoice jolt library to the jolt-community fork
+description: >-
+  camel-jolt switched from the unmaintained com.bazaarvoice.jolt library to the io.github.jolt-community.jolt
+  fork in 4.23. Renames the two Maven coordinates and the com.bazaarvoice.jolt package. Removr moved into a
+  removr subpackage in the fork, so it is migrated with an explicit ChangeType ahead of the package rename, and
+  the package rename is non-recursive so that no other subpackage is mapped onto the wrong name.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-jolt
+recipeList:
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: com.bazaarvoice.jolt
+      oldArtifactId: jolt-core
+      newGroupId: io.github.jolt-community.jolt
+      newArtifactId: jolt-community-core
+      # Applied to explicitly pinned versions only; BOM-managed dependencies keep their managed version
+      newVersion: 1.3.0
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: com.bazaarvoice.jolt
+      oldArtifactId: json-utils
+      newGroupId: io.github.jolt-community.jolt
+      newArtifactId: json-community-utils
+      newVersion: 1.3.0
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: com.bazaarvoice.jolt.Removr
+      newFullyQualifiedTypeName: io.joltcommunity.jolt.removr.Removr
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: com.bazaarvoice.jolt
+      newPackageName: io.joltcommunity.jolt
+      recursive: false
