@@ -19,11 +19,11 @@
 # Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html
 # Specifically changes introduced in 4.22.1 (upgrading from 4.22.0 to 4.22.1)
 #
-# This patch is not yet referenced from any other recipe: there is no 4.23.yaml on this
-# branch to chain it from (see RECIPE-CONVENTIONS.md), and the 4.22 LTS aggregate is tracked
-# separately (https://github.com/apache/camel-upgrade-recipes/issues/129). Run it directly
-# with -Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe until
-# one of those exists.
+# This patch recipe is referenced from org.apache.camel.upgrade.camel423.CamelMigrationRecipe,
+# the next main-version recipe, per RECIPE-CONVENTIONS.md. The 4.22 LTS aggregate is tracked
+# separately (https://github.com/apache/camel-upgrade-recipes/issues/129); until it exists, a
+# 4.22.0 to 4.22.1 patch upgrade is run directly with
+# -Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe.
 #####
 
 #####
