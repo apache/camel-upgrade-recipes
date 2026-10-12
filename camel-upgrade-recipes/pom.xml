@@ -651,6 +651,50 @@
                                     <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
                                 </artifactItem>
 
+                                <!-- 4.22 sources of the APIs removed or renamed in 4.23: CSimpleLanguage, the @Joor annotation and the
+                                     debezium-oracle databaseOutServerName accessors -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-languages</artifactId>
+                                    <version>${camel4.22-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-joor</artifactId>
+                                    <version>${camel4.22-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-oracle</artifactId>
+                                    <version>${camel4.22-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+                                <!-- supertype of the generated configuration class; without it javac cannot resolve its setters -->
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-debezium-common</artifactId>
+                                    <version>${camel4.22-version}</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- the bazaarvoice jolt library replaced by the jolt-community fork in 4.23 -->
+                                <artifactItem>
+                                    <groupId>com.bazaarvoice.jolt</groupId>
+                                    <artifactId>jolt-core</artifactId>
+                                    <version>0.1.8</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
+                                <!-- Bouncy Castle 1.85, the last version with the BCPQC parameter spec classes, for the camel-pqc ChangeType tests (4.23) -->
+                                <artifactItem>
+                                    <groupId>org.bouncycastle</groupId>
+                                    <artifactId>bcprov-jdk18on</artifactId>
+                                    <version>1.85</version>
+                                    <outputDirectory>${rewrite-tmp-classpath}</outputDirectory>
+                                </artifactItem>
+
                             </artifactItems>
                         </configuration>
                     </execution>

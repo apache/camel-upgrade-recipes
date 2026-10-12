@@ -23,6 +23,7 @@ import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.properties.Assertions.properties;
 
 /**
  * Each test activates its own narrow camel423 sub-recipe rather than the full
@@ -220,6 +221,98 @@ class CamelSpringBoot423Test implements RewriteTest {
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-camunda-starter</artifactId>
                                     <version>4.23.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """
+                ),
+                // the shared camel.component.zeebe.* keys are migrated by the plain Camel recipe; only the
+                // starter-only customizer key is migrated here
+                properties(
+                        """
+                        camel.component.zeebe.customizer.enabled=true
+                        camel.component.zeebe.client-id=my-client
+                        """,
+                        """
+                        camel.component.camunda.customizer.enabled=true
+                        camel.component.zeebe.client-id=my-client
+                        """,
+                        spec -> spec.path("application.properties")
+                )
+        );
+    }
+
+    @Test
+    void removedComponentStarters() {
+        //language=xml
+        rewriteRun(
+                spec -> withRecipe(spec, "org.apache.camel.upgrade.camel423.removedComponentStarters"),
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-spring-boot-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-digitalocean-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-iec60870-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-irc-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-ironmq-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-json-patch-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-leveldb-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-splunk-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-spring-boot-starter</artifactId>
+                                    <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
                         </project>

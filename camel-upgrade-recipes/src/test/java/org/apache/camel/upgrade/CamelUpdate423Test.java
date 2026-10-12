@@ -36,7 +36,8 @@ public class CamelUpdate423Test implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_23, true)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_22,
-                        "camel-core-model", "camel-api", "camel-support", "camel-zeebe", "jakarta.xml.bind-api"))
+                        "camel-core-model", "camel-api", "camel-support", "camel-core-languages", "camel-joor",
+                        "camel-zeebe", "camel-debezium-oracle", "camel-debezium-common", "jolt-core", "bcprov-jdk18on", "jakarta.xml.bind-api"))
                 .typeValidationOptions(TypeValidation.none())
                 .expectedCyclesThatMakeChanges(1);
     }
@@ -50,16 +51,21 @@ public class CamelUpdate423Test implements RewriteTest {
                         """
                         import org.apache.camel.builder.Builder;
                         import org.apache.camel.builder.RouteBuilder;
+                        import org.apache.camel.language.csimple.CSimpleLanguage;
                         import org.apache.camel.model.language.CSimpleExpression;
 
                         public class CSimpleRoute extends RouteBuilder {
                             private CSimpleExpression expression = new CSimpleExpression("${body}");
+                            private CSimpleLanguage language = new CSimpleLanguage();
 
                             @Override
                             public void configure() {
                                 from("direct:in")
                                     .filter(Builder.csimple("${body} != null"))
                                     .setBody().csimple("${body.toUpperCase()}")
+                                    .setHeader("name").csimple("${body}", String.class)
+                                    .setProperty("fromFactory", expression().csimple("${body}").end())
+                                    .setProperty("fromBuilder", expression().csimple().expression("${body}").end())
                                     .to("mock:result");
                             }
                         }
@@ -67,16 +73,21 @@ public class CamelUpdate423Test implements RewriteTest {
                         """
                         import org.apache.camel.builder.Builder;
                         import org.apache.camel.builder.RouteBuilder;
+                        import org.apache.camel.language.simple.SimpleLanguage;
                         import org.apache.camel.model.language.SimpleExpression;
 
                         public class CSimpleRoute extends RouteBuilder {
                             private SimpleExpression expression = new SimpleExpression("${body}");
+                            private SimpleLanguage language = new SimpleLanguage();
 
                             @Override
                             public void configure() {
                                 from("direct:in")
                                     .filter(Builder.simple("${body} != null"))
                                     .setBody().simple("${body.toUpperCase()}")
+                                    .setHeader("name").simple("${body}", String.class)
+                                    .setProperty("fromFactory", expression().simple("${body}").end())
+                                    .setProperty("fromBuilder", expression().simple().expression("${body}").end())
                                     .to("mock:result");
                             }
                         }
@@ -326,6 +337,34 @@ public class CamelUpdate423Test implements RewriteTest {
                                     }
                                 }
                                 """
+                        ),
+                        // gateway-host has no camunda counterpart (grpcAddress is a single URL) and is left for
+                        // manual review; the Spring Boot metadata spells oAuthAPI as o-auth-a-p-i, which relaxed
+                        // binding also folds onto the camelCase form
+                        properties(
+                                """
+                                camel.component.zeebe.enabled=true
+                                camel.component.zeebe.client-id=my-client
+                                camel.component.zeebe.client-secret=secret
+                                camel.component.zeebe.o-auth-api=https://login.example.com/oauth/token
+                                camel.component.zeebe.oAuthAPI=https://login.example.com/oauth/token
+                                camel.component.zeebe.bridge-error-handler=true
+                                camel.component.zeebe.lazy-start-producer=true
+                                camel.component.zeebe.autowired-enabled=false
+                                camel.component.zeebe.gateway-host=zeebe.example.com
+                                """,
+                                """
+                                camel.component.camunda.enabled=true
+                                camel.component.camunda.client-id=my-client
+                                camel.component.camunda.client-secret=secret
+                                camel.component.camunda.o-auth-api=https://login.example.com/oauth/token
+                                camel.component.camunda.o-auth-a-p-i=https://login.example.com/oauth/token
+                                camel.component.camunda.bridge-error-handler=true
+                                camel.component.camunda.lazy-start-producer=true
+                                camel.component.camunda.autowired-enabled=false
+                                camel.component.zeebe.gateway-host=zeebe.example.com
+                                """,
+                                spec -> spec.path("application.properties")
                         )
                 )
         );
@@ -735,6 +774,7 @@ public class CamelUpdate423Test implements RewriteTest {
                         """
                         import org.apache.camel.builder.Builder;
                         import org.apache.camel.builder.RouteBuilder;
+                        import org.apache.camel.language.joor.Joor;
                         import org.apache.camel.model.language.JoorExpression;
 
                         public class JoorRoute extends RouteBuilder {
@@ -745,13 +785,19 @@ public class CamelUpdate423Test implements RewriteTest {
                                 from("direct:in")
                                     .filter(Builder.joor("${body} != null"))
                                     .setBody().joor("${body.toUpperCase()}")
+                                    .setHeader("name").joor("${body}", String.class)
+                                    .setProperty("fromFactory", expression().joor().expression("${body}").end())
                                     .to("mock:result");
+                            }
+
+                            public void handle(@Joor("body.toString()") String text) {
                             }
                         }
                         """,
                         """
                         import org.apache.camel.builder.Builder;
                         import org.apache.camel.builder.RouteBuilder;
+                        import org.apache.camel.language.joor.Java;
                         import org.apache.camel.model.language.JavaExpression;
 
                         public class JoorRoute extends RouteBuilder {
@@ -762,7 +808,12 @@ public class CamelUpdate423Test implements RewriteTest {
                                 from("direct:in")
                                     .filter(Builder.java("${body} != null"))
                                     .setBody().java("${body.toUpperCase()}")
+                                    .setHeader("name").java("${body}", String.class)
+                                    .setProperty("fromFactory", expression().java().expression("${body}").end())
                                     .to("mock:result");
+                            }
+
+                            public void handle(@Java("body.toString()") String text) {
                             }
                         }
                         """
@@ -1036,9 +1087,39 @@ public class CamelUpdate423Test implements RewriteTest {
                                 }
                                 """
                         ),
+                        //language=java
+                        java(
+                                """
+                                import org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
+
+                                public class DebeziumConfig {
+                                    public String configure(OracleConnectorEmbeddedDebeziumConfiguration configuration) {
+                                        configuration.setDatabaseOutServerName("dbzxout");
+                                        return configuration.getDatabaseOutServerName();
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
+
+                                public class DebeziumConfig {
+                                    public String configure(OracleConnectorEmbeddedDebeziumConfiguration configuration) {
+                                        configuration.setXstreamOutServerName("dbzxout");
+                                        return configuration.getXstreamOutServerName();
+                                    }
+                                }
+                                """
+                        ),
+                        // relaxed binding also matches the camelCase spelling used with camel-main
                         properties(
-                                "camel.component.debezium-oracle.database-out-server-name=dbzxout",
-                                "camel.component.debezium-oracle.xstream-out-server-name=dbzxout",
+                                """
+                                camel.component.debezium-oracle.database-out-server-name=dbzxout
+                                camel.component.debezium-oracle.databaseOutServerName=dbzxout
+                                """,
+                                """
+                                camel.component.debezium-oracle.xstream-out-server-name=dbzxout
+                                camel.component.debezium-oracle.xstream-out-server-name=dbzxout
+                                """,
                                 spec -> spec.path("application.properties")
                         )
                 )
@@ -1106,6 +1187,48 @@ public class CamelUpdate423Test implements RewriteTest {
                                     </dependencies>
                                 </project>
                                 """
+                        ),
+                        // every bazaarvoice subpackage exists unchanged in the fork; only the top-level Removr moved
+                        //language=java
+                        java(
+                                """
+                                import com.bazaarvoice.jolt.Chainr;
+                                import com.bazaarvoice.jolt.Removr;
+                                import com.bazaarvoice.jolt.chainr.ChainrBuilder;
+                                import com.bazaarvoice.jolt.exception.SpecException;
+                                import com.bazaarvoice.jolt.exception.TransformException;
+
+                                public class JoltTransformer {
+                                    public Object transform(Object spec, Object input) {
+                                        try {
+                                            Chainr chainr = new ChainrBuilder(spec).build();
+                                            Removr removr = new Removr(spec);
+                                            return chainr.transform(removr.transform(input));
+                                        } catch (SpecException | TransformException e) {
+                                            throw new IllegalStateException(e);
+                                        }
+                                    }
+                                }
+                                """,
+                                """
+                                import io.joltcommunity.jolt.Chainr;
+                                import io.joltcommunity.jolt.chainr.ChainrBuilder;
+                                import io.joltcommunity.jolt.exception.SpecException;
+                                import io.joltcommunity.jolt.exception.TransformException;
+                                import io.joltcommunity.jolt.removr.Removr;
+
+                                public class JoltTransformer {
+                                    public Object transform(Object spec, Object input) {
+                                        try {
+                                            Chainr chainr = new ChainrBuilder(spec).build();
+                                            Removr removr = new Removr(spec);
+                                            return chainr.transform(removr.transform(input));
+                                        } catch (SpecException | TransformException e) {
+                                            throw new IllegalStateException(e);
+                                        }
+                                    }
+                                }
+                                """
                         )
                 )
         );
@@ -1144,6 +1267,185 @@ public class CamelUpdate423Test implements RewriteTest {
                             </properties>
                         </project>
                         """
+                )
+        );
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    void removedComponents() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-digitalocean</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-iec60870</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-irc</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-ironmq</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-json-patch</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-leveldb</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-splunk</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-catalog-lucene</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void removeExchangePoolingProperties() {
+        rewriteRun(
+                // relaxed binding also matches the camelCase spelling used with camel-main
+                properties(
+                        """
+                        camel.main.name=MyCamel
+                        camel.main.exchange-factory=pooled
+                        camel.main.exchange-factory-capacity=200
+                        camel.main.exchange-factory-statistics-enabled=true
+                        camel.main.exchangeFactory=pooled
+                        """,
+                        """
+                        camel.main.name=MyCamel
+                        """,
+                        spec -> spec.path("application.properties")
+                ),
+                yaml(
+                        """
+                        camel:
+                          main:
+                            name: MyCamel
+                            exchange-factory: pooled
+                            exchange-factory-capacity: 200
+                            exchange-factory-statistics-enabled: true
+                        """,
+                        """
+                        camel:
+                          main:
+                            name: MyCamel
+                        """,
+                        spec -> spec.path("application.yaml")
+                )
+        );
+    }
+
+    @Test
+    void migratePqcParameterSpecs() {
+        rewriteRun(
+                mavenProject("test-pqc",
+                        CamelTestUtil.pomXmlSpec("camel-pqc", CamelTestUtil.CamelVersion.v4_22),
+                        //language=java
+                        java(
+                                """
+                                import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+                                import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
+                                import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
+                                import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
+                                import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
+
+                                public class KeyMaterial {
+                                    private CMCEParameterSpec cmce;
+                                    private DilithiumParameterSpec dilithium;
+                                    private FrodoParameterSpec frodo;
+                                    private KyberParameterSpec kyber;
+                                    private SPHINCSPlusParameterSpec sphincs;
+                                }
+                                """,
+                                // five imports from one package are folded into a star import by the default import layout
+                                """
+                                import org.bouncycastle.jcajce.spec.*;
+
+                                public class KeyMaterial {
+                                    private CMCEParameterSpec cmce;
+                                    private MLDSAParameterSpec dilithium;
+                                    private FrodoKEMParameterSpec frodo;
+                                    private MLKEMParameterSpec kyber;
+                                    private SLHDSAParameterSpec sphincs;
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    @Test
+    void preconditionBlocksPqcSpecsWithoutDependency() {
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
+                mavenProject("test-no-pqc",
+                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
+                        //language=java
+                        java(
+                                """
+                                import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
+
+                                public class KeyMaterial {
+                                    private KyberParameterSpec kyber;
+                                }
+                                """
+                        )
                 )
         );
     }

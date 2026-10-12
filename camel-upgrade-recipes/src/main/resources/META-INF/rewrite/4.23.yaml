@@ -48,6 +48,9 @@ recipeList:
   - org.apache.camel.upgrade.camel423.migrateChunkHeaders
   - org.apache.camel.upgrade.camel423.migrateDebeziumOracleOutServerName
   - org.apache.camel.upgrade.camel423.migrateJoltCommunityFork
+  - org.apache.camel.upgrade.camel423.removedComponents
+  - org.apache.camel.upgrade.camel423.removeExchangePoolingProperties
+  - org.apache.camel.upgrade.camel423.migratePqcParameterSpecs
   ## camel-reactive-executor-tomcat was deprecated in 4.22 and removed in 4.23, so the 4.22 removal
   ## recipe is referenced here as well: a project upgrading straight from 4.22 to 4.23 would
   ## otherwise keep a dependency on an artifact that no longer exists
@@ -57,7 +60,13 @@ recipeList:
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel423.migrateCSimpleJavaApi
 displayName: Migrate csimple Java API to simple
-description: The csimple language was removed in Camel 4.23. Renames the removed csimple(...) builder methods to the equivalent simple(...) overloads, and changes the removed org.apache.camel.model.language.CSimpleExpression type to org.apache.camel.model.language.SimpleExpression. Expressions relying on csimple-only compiled syntax still need manual review.
+description: >-
+  The csimple language was removed in Camel 4.23. Renames the removed csimple(...) builder methods, including the
+  LanguageBuilderFactory csimple() builders, to the equivalent simple(...) overloads, and changes the removed
+  CSimpleExpression model type and CSimpleLanguage runtime type to SimpleExpression and SimpleLanguage. A static
+  import of Builder.csimple is rewritten when it is used; one that is shadowed by the inherited
+  BuilderSupport.csimple inside a RouteBuilder was already unused and is left behind. Expressions relying on
+  csimple-only compiled syntax still need manual review.
 recipeList:
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: org.apache.camel.builder.Builder csimple(String)
@@ -83,9 +92,18 @@ recipeList:
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: org.apache.camel.builder.ExpressionClauseSupport csimple(String, Class)
       newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.LanguageBuilderFactory csimple()
+      newMethodName: simple
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.LanguageBuilderFactory csimple(String)
+      newMethodName: simple
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: org.apache.camel.model.language.CSimpleExpression
       newFullyQualifiedTypeName: org.apache.camel.model.language.SimpleExpression
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.language.csimple.CSimpleLanguage
+      newFullyQualifiedTypeName: org.apache.camel.language.simple.SimpleLanguage
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
 type: specs.openrewrite.org/v1beta/recipe
@@ -127,14 +145,16 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel423.migrateZeebeToCamunda
 displayName: Migrate camel-zeebe to camel-camunda
 description: >-
-  camel-zeebe was renamed to camel-camunda in Camel 4.23, keeping the same 9 operations. Migrates the dependency,
-  the zeebe: URI scheme (including the jobKey to jobType endpoint option rename), the shared model classes, the
-  8 CamelZeebe* literal header names and the ZeebeConstants type. All steps are bundled in a single
+  camel-zeebe, deprecated since 4.19 in favour of camel-camunda (which has shipped since 4.19 with the same 9
+  operations), was removed in Camel 4.23. Migrates the dependency, the zeebe: URI scheme (including the jobKey to
+  jobType endpoint option rename), the shared model classes, the 8 CamelZeebe* literal header names, the
+  ZeebeConstants type and the camel.component.zeebe.* configuration keys that camel-camunda shares. All steps are bundled in a single
   dependency-gated recipe so that later steps still see the camel-zeebe dependency after earlier steps have
   renamed it. Header names are migrated with explicit old-to-new mappings rather than a prefix rename, since
   RenameHeaderPrefixes only matches the org.apache.camel.Message setHeader/getHeader methods and not the fluent
   ProcessorDefinition.setHeader(...) route-builder DSL, unlike RenameHeaders which handles both.
-  gatewayHost/gatewayPort (replaced by grpcAddress), the new SaaS/REST options, the two zeebe-only model classes
+  gatewayHost/gatewayPort (replaced by grpcAddress, a single URL), ZeebeConstants.DEFAULT_GATEWAY_HOST/PORT (no
+  CamundaConstants counterpart), the new SaaS/REST options, the two zeebe-only model classes
   (renamed rather than dropped: AbstractZeebeResponse to AbstractCamundaResponse and ZeebeMessage to
   CamundaMessage, both handled below), worker auto-complete behaviour and the zeebe() Endpoint DSL builder are not
   covered and need manual review.
@@ -164,6 +184,23 @@ recipeList:
   - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
       oldPropertyKey: camel.component.zeebe.o-auth-api
       newPropertyKey: camel.component.camunda.o-auth-api
+  # the generated Spring Boot metadata spells the oAuthAPI key as o-auth-a-p-i, which relaxed binding does not
+  # fold onto o-auth-api, so both spellings are migrated
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.o-auth-a-p-i
+      newPropertyKey: camel.component.camunda.o-auth-a-p-i
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.bridge-error-handler
+      newPropertyKey: camel.component.camunda.bridge-error-handler
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.lazy-start-producer
+      newPropertyKey: camel.component.camunda.lazy-start-producer
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.autowired-enabled
+      newPropertyKey: camel.component.camunda.autowired-enabled
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.component.zeebe.enabled
+      newPropertyKey: camel.component.camunda.enabled
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: org.apache.camel.component.zeebe.ZeebeConstants
       newFullyQualifiedTypeName: org.apache.camel.component.camunda.CamundaConstants
@@ -284,8 +321,10 @@ displayName: Migrate joor Java API to java
 description: >-
   The joor language was removed in Camel 4.23; it was renamed to java in 4.3 and the old name is now gone.
   Renames the removed joor(...) builder methods to the equivalent java(...) overloads, and changes the removed
-  JoorExpression and JoorLanguage types to JavaExpression and JavaLanguage. The joor and java languages declare
-  identical options, so this is a one-to-one rename. BeanFactoryDefinition.joor(String) is deliberately left
+  JoorExpression, JoorLanguage and @Joor annotation types to JavaExpression, JavaLanguage and @Java. The joor and
+  java languages declare identical options, so this is a one-to-one rename. A static import of Builder.joor is
+  rewritten when it is used; one that is shadowed by the inherited BuilderSupport.joor inside a RouteBuilder was
+  already unused and is left behind. BeanFactoryDefinition.joor(String) is deliberately left
   alone: unlike the builder methods it still exists in 4.23. The camel-joor dependency is also left in place,
   since the java language itself ships from that artifact.
 recipeList:
@@ -322,6 +361,9 @@ recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: org.apache.camel.language.joor.JoorLanguage
       newFullyQualifiedTypeName: org.apache.camel.language.joor.JavaLanguage
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.language.joor.Joor
+      newFullyQualifiedTypeName: org.apache.camel.language.joor.Java
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-joor
 type: specs.openrewrite.org/v1beta/recipe
@@ -404,7 +446,8 @@ displayName: Migrate camel-debezium-oracle databaseOutServerName to xstreamOutSe
 description: >-
   The databaseOutServerName option of camel-debezium-oracle was removed in 4.23; xstreamOutServerName, which
   already existed in 4.22 and configures the same setting, is now the only name. Migrates the endpoint URI
-  option, the camel.component.debezium-oracle configuration key and the configuration class setter.
+  option, the camel.component.debezium-oracle configuration key (kebab-case and camelCase, through relaxed
+  binding) and the configuration class getter and setter.
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
@@ -419,6 +462,9 @@ recipeList:
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration setDatabaseOutServerName(String)
       newMethodName: setXstreamOutServerName
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration getDatabaseOutServerName()
+      newMethodName: getXstreamOutServerName
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-jolt-switch-from-unmaintained-bazaarvoice-jolt-to-the-jolt-community-fork
 type: specs.openrewrite.org/v1beta/recipe
@@ -426,9 +472,10 @@ name: org.apache.camel.upgrade.camel423.migrateJoltCommunityFork
 displayName: Migrate camel-jolt from the bazaarvoice jolt library to the jolt-community fork
 description: >-
   camel-jolt switched from the unmaintained com.bazaarvoice.jolt library to the io.github.jolt-community.jolt
-  fork in 4.23. Renames the two Maven coordinates and the com.bazaarvoice.jolt package. Removr moved into a
-  removr subpackage in the fork, so it is migrated with an explicit ChangeType ahead of the package rename, and
-  the package rename is non-recursive so that no other subpackage is mapped onto the wrong name.
+  fork in 4.23. Renames the two Maven coordinates and the com.bazaarvoice.jolt package including its
+  subpackages, which all exist unchanged in the fork (chainr, defaultr, exception, modifier, shiftr, traversr,
+  utils and so on). Removr is the one class that moved, into a removr subpackage, so it is migrated with an
+  explicit ChangeType ahead of the package rename.
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
@@ -453,4 +500,95 @@ recipeList:
   - org.openrewrite.java.ChangePackage:
       oldPackageName: com.bazaarvoice.jolt
       newPackageName: io.joltcommunity.jolt
-      recursive: false
+      recursive: true
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removedComponents
+displayName: Remove the dependencies of components removed in Camel 4.23 without a replacement
+description: >-
+  camel-digitalocean, camel-iec60870, camel-irc, camel-ironmq, camel-json-patch, camel-leveldb, camel-splunk and
+  camel-catalog-lucene were removed in Camel 4.23 without a drop-in replacement, so their dependencies are removed
+  as in earlier releases. Routes using the removed components still need manual migration (camel-splunk-hec is
+  producer-only and is not a drop-in replacement for camel-splunk).
+recipeList:
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-digitalocean
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-iec60870
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-irc
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-ironmq
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-json-patch
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-leveldb
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-splunk
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: org.apache.camel
+      artifactId: camel-catalog-lucene
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-core-exchange-pooling-deprecated
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.removeExchangePoolingProperties
+displayName: Remove the deprecated exchange pooling properties
+description: >-
+  Exchange pooling was deprecated in Camel 4.23 and the upgrade guide recommends removing the
+  camel.main.exchange-factory property together with the related capacity and statistics properties. The keys are
+  matched with relaxed binding, so the camelCase spellings are removed as well. Code using the deprecated
+  Pooled* classes needs manual review.
+recipeList:
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: camel.main.exchange-factory
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: camel.main.exchange-factory-capacity
+  - org.openrewrite.properties.DeleteProperty:
+      propertyKey: camel.main.exchange-factory-statistics-enabled
+  - org.openrewrite.yaml.DeleteProperty:
+      propertyKey: camel.main.exchange-factory
+  - org.openrewrite.yaml.DeleteProperty:
+      propertyKey: camel.main.exchange-factory-capacity
+  - org.openrewrite.yaml.DeleteProperty:
+      propertyKey: camel.main.exchange-factory-statistics-enabled
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-pqc-bouncy-castle-186-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migratePqcParameterSpecs
+displayName: Migrate the removed Bouncy Castle BCPQC parameter spec classes used with camel-pqc
+description: >-
+  Camel 4.23 moved to Bouncy Castle 1.86, which removed the legacy org.bouncycastle.pqc.jcajce.spec parameter
+  spec classes. Changes them to the org.bouncycastle.jcajce.spec classes of the BC provider: CMCEParameterSpec,
+  FrodoParameterSpec to FrodoKEMParameterSpec, KyberParameterSpec to MLKEMParameterSpec, DilithiumParameterSpec
+  to MLDSAParameterSpec and SPHINCSPlusParameterSpec to SLHDSAParameterSpec. The static parameter-set fields of
+  the new classes carry the standardized names (for example MLKEMParameterSpec.ml_kem_768 instead of
+  KyberParameterSpec.kyber768), so field references still need a manual fix-up. PicnicParameterSpec,
+  PQCSignatureAlgorithms.PICNIC and PQCDefaultPicnicMaterial have no replacement.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-pqc
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec
+      newFullyQualifiedTypeName: org.bouncycastle.jcajce.spec.CMCEParameterSpec
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec
+      newFullyQualifiedTypeName: org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec
+      newFullyQualifiedTypeName: org.bouncycastle.jcajce.spec.MLKEMParameterSpec
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec
+      newFullyQualifiedTypeName: org.bouncycastle.jcajce.spec.MLDSAParameterSpec
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec
+      newFullyQualifiedTypeName: org.bouncycastle.jcajce.spec.SLHDSAParameterSpec
