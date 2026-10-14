@@ -256,15 +256,15 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel423.removeLangchain4jToolsModule
 displayName: Remove camel-langchain4j-tools dependency
 description: >-
-  camel-langchain4j-tools was removed in Camel 4.23. Removes the dependency only once camel-ai-tool is present, so
-  that this recipe running ahead of camel422.migrateLangchain4jToolsUris in the latest migration chain does not
-  defeat that recipe's own camel-langchain4j-tools precondition before it has migrated the consumer endpoint URIs;
-  the removal then takes effect on the following cycle. Producer endpoints for direct tool calling still need
-  manual migration to langchain4j-agent.
+  camel-langchain4j-tools was removed in Camel 4.23. Removes the dependency; the consumer endpoint URIs are
+  migrated to ai-tool by camel422.migrateLangchain4jToolsUris, which the latest migration chain runs after this
+  recipe. That ordering is safe within a single cycle: ModuleHasDependency preconditions are evaluated from the
+  scan phase, which completes before any pom is edited, so the 4.22 recipe still sees camel-langchain4j-tools.
+  Producer endpoints for direct tool calling still need manual migration to langchain4j-agent.
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
-      artifactIdPattern: camel-ai-tool
+      artifactIdPattern: camel-langchain4j-tools
 recipeList:
   - org.openrewrite.maven.RemoveDependency:
       groupId: org.apache.camel
@@ -274,7 +274,11 @@ recipeList:
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel423.migrateIbmCosCacheControlHeader
 displayName: Migrate camel-ibm-cos CamelIBMCOSContentControl header to CamelIBMCOSCacheControl
-description: The IBMCOSConstants.CACHE_CONTROL header value was renamed from CamelIBMCOSContentControl to CamelIBMCOSCacheControl in Camel 4.23. Existing IBMCOSConstants.CACHE_CONTROL usages need no change, only string literal header names.
+description: >-
+  The IBMCOSConstants.CACHE_CONTROL header value was renamed from CamelIBMCOSContentControl to
+  CamelIBMCOSCacheControl in Camel 4.23, and the Endpoint DSL header name builder method followed it from
+  iBMCOSContentControl() to iBMCOSCacheControl(). Existing IBMCOSConstants.CACHE_CONTROL usages need no change,
+  only string literal header names and the Endpoint DSL builder method.
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
@@ -283,6 +287,9 @@ recipeList:
   - org.apache.camel.upgrade.camel418_3.RenameHeaders:
       oldHeaderName: CamelIBMCOSContentControl
       newHeaderName: CamelIBMCOSCacheControl
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.endpoint.dsl.IBMCOSEndpointBuilderFactory.IBMCOSHeaderNameBuilder iBMCOSContentControl()
+      newMethodName: iBMCOSCacheControl
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-headersmap
 type: specs.openrewrite.org/v1beta/recipe
@@ -393,14 +400,18 @@ name: org.apache.camel.upgrade.camel423.migrateRemovedLanguageUris
 displayName: Migrate language component URIs of the removed csimple and joor languages
 description: >-
   Renames the csimple and joor language names in language: component URIs, following the removal of both
-  languages in Camel 4.23. The replacement languages, simple and java, accept the same expression in the URI.
+  languages in Camel 4.23. The replacement languages, simple and java, accept the same expression, whether it is
+  inlined after the language name, passed through the script query parameter, or sent in the CamelLanguageScript
+  header with a bare language:csimple or language:joor URI. The camel.language.csimple.* and camel.language.joor.*
+  configuration keys are not migrated, as the replacement languages do not share their options; camel-main fails
+  at startup on a key for an unknown language, so they have to be reviewed manually.
 recipeList:
   - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
-      uriPattern: "^language:csimple:(.*)$"
-      replacement: "language:simple:${1}"
+      uriPattern: "^language:csimple(?=$|[:?])(.*)$"
+      replacement: "language:simple${1}"
   - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
-      uriPattern: "^language:joor:(.*)$"
-      replacement: "language:java:${1}"
+      uriPattern: "^language:joor(?=$|[:?])(.*)$"
+      replacement: "language:java${1}"
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-mustache-camel-chunk-potential-breaking-change
 type: specs.openrewrite.org/v1beta/recipe
@@ -447,7 +458,7 @@ description: >-
   The databaseOutServerName option of camel-debezium-oracle was removed in 4.23; xstreamOutServerName, which
   already existed in 4.22 and configures the same setting, is now the only name. Migrates the endpoint URI
   option, the camel.component.debezium-oracle configuration key (kebab-case and camelCase, through relaxed
-  binding) and the configuration class getter and setter.
+  binding), the configuration class getter and setter, and the Endpoint DSL and Component DSL builder methods.
 preconditions:
   - org.openrewrite.java.dependencies.search.ModuleHasDependency:
       groupIdPattern: org.apache.camel
@@ -465,6 +476,12 @@ recipeList:
   - org.openrewrite.java.ChangeMethodName:
       methodPattern: org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration getDatabaseOutServerName()
       newMethodName: getXstreamOutServerName
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder databaseOutServerName(String)
+      newMethodName: xstreamOutServerName
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.component.dsl.DebeziumOracleComponentBuilderFactory.DebeziumOracleComponentBuilder databaseOutServerName(String)
+      newMethodName: xstreamOutServerName
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-jolt-switch-from-unmaintained-bazaarvoice-jolt-to-the-jolt-community-fork
 type: specs.openrewrite.org/v1beta/recipe

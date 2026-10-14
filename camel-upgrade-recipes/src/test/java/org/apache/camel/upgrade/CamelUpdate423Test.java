@@ -37,7 +37,8 @@ public class CamelUpdate423Test implements RewriteTest {
         CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_23, true)
                 .parser(CamelTestUtil.parserFromClasspath(CamelTestUtil.CamelVersion.v4_22,
                         "camel-core-model", "camel-api", "camel-support", "camel-core-languages", "camel-joor",
-                        "camel-zeebe", "camel-debezium-oracle", "camel-debezium-common", "jolt-core", "bcprov-jdk18on", "jakarta.xml.bind-api"))
+                        "camel-zeebe", "camel-debezium-oracle", "camel-debezium-common", "camel-endpointdsl", "camel-componentdsl",
+                        "jolt-core", "bcprov-jdk18on", "jakarta.xml.bind-api"))
                 .typeValidationOptions(TypeValidation.none())
                 .expectedCyclesThatMakeChanges(1);
     }
@@ -425,6 +426,33 @@ public class CamelUpdate423Test implements RewriteTest {
                                     }
                                 }
                                 """
+                        ),
+                        //language=java
+                        java(
+                                """
+                                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                                public class IbmCosEndpointDslRoute extends EndpointRouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:next")
+                                            .setHeader(ibmCos().iBMCOSContentControl(), constant("no-cache"))
+                                            .to(ibmCos("mybucket"));
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                                public class IbmCosEndpointDslRoute extends EndpointRouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:next")
+                                            .setHeader(ibmCos().iBMCOSCacheControl(), constant("no-cache"))
+                                            .to(ibmCos("mybucket"));
+                                    }
+                                }
+                                """
                         )
                 )
         );
@@ -565,13 +593,12 @@ public class CamelUpdate423Test implements RewriteTest {
 
     @Test
     @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
-    void removeLangchain4jToolsRequiresAiToolPresent() {
+    void removeLangchain4jToolsModule() {
         //language=xml
         rewriteRun(
                 spec -> CamelTestUtil.recipe(spec, CamelTestUtil.CamelVersion.v4_23, true,
-                                "org.apache.camel.upgrade.camel423.removeLangchain4jToolsModule")
-                        .expectedCyclesThatMakeChanges(0),
-                mavenProject("test-negative-langchain4j-tools",
+                                "org.apache.camel.upgrade.camel423.removeLangchain4jToolsModule"),
+                mavenProject("test-langchain4j-tools-only",
                         pomXml(
                                 """
                                 <project>
@@ -588,6 +615,16 @@ public class CamelUpdate423Test implements RewriteTest {
                                             <version>4.22.0</version>
                                         </dependency>
                                     </dependencies>
+                                </project>
+                                """,
+                                """
+                                <project>
+                                    <groupId>com.example</groupId>
+                                    <artifactId>test</artifactId>
+                                    <version>1.0.0</version>
+                                    <properties>
+                                        <maven.compiler.release>17</maven.compiler.release>
+                                    </properties>
                                 </project>
                                 """
                         )
@@ -649,17 +686,17 @@ public class CamelUpdate423Test implements RewriteTest {
     }
 
     /**
-     * The full chain in latest.yaml runs camel423 before camel422. camel423 removes
-     * camel-langchain4j-tools only once camel-ai-tool is present, so on a project that has never been
-     * migrated, camel422.migrateLangchain4jToolsUris must still see the camel-langchain4j-tools
-     * dependency, migrate the consumer URI and add camel-ai-tool in the first cycle; camel423 then
-     * removes the now-redundant camel-langchain4j-tools dependency on the following cycle.
+     * The full chain in latest.yaml runs camel423 before camel422, so camel423 removes the
+     * camel-langchain4j-tools dependency before camel422.migrateLangchain4jToolsUris runs. That recipe
+     * is still applied in the same cycle, because its ModuleHasDependency precondition is evaluated from
+     * the scan phase, which completes before any pom is edited. A single cycle therefore migrates the
+     * consumer URI, adds camel-ai-tool and removes camel-langchain4j-tools, which matters because
+     * rewrite:run only runs a second cycle when a recipe asks for one, and none of these do.
      */
     @Test
     void fullChainMigratesLangchain4jToolsUriBeforeRemovingDependency() {
         rewriteRun(
-                spec -> spec.recipeFromResources("org.apache.camel.upgrade.CamelMigrationRecipe")
-                        .expectedCyclesThatMakeChanges(2),
+                spec -> spec.recipeFromResources("org.apache.camel.upgrade.CamelMigrationRecipe"),
                 mavenProject("test-langchain4j-tools-chain",
                         //language=xml
                         pomXml(
@@ -823,7 +860,8 @@ public class CamelUpdate423Test implements RewriteTest {
 
     /**
      * BeanFactoryDefinition.joor(String) still exists in 4.23, unlike the builder methods, so it must be
-     * left alone.
+     * left alone. RouteTemplateDefinition.templateBean(String) is the DSL entry point that returns a
+     * BeanFactoryDefinition, which keeps the call type-attributed and the test meaningful.
      */
     @Test
     void leavesBeanFactoryDefinitionJoorUntouched() {
@@ -837,7 +875,10 @@ public class CamelUpdate423Test implements RewriteTest {
                         public class BeanJoorRoute extends RouteBuilder {
                             @Override
                             public void configure() {
-                                bean("myBean").joor("new com.example.MyBean()");
+                                routeTemplate("myTemplate")
+                                    .templateBean("myBean").joor("new com.example.MyBean()")
+                                    .from("direct:in")
+                                    .to("mock:result");
                             }
                         }
                         """
@@ -871,6 +912,21 @@ public class CamelUpdate423Test implements RewriteTest {
                                 </filter>
                             </route>
                         </routes>
+                        """
+                )
+        );
+    }
+
+    @Test
+    void preconditionLeavesNonCamelXmlJoorTagUntouched() {
+        //language=xml
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(0),
+                xml(
+                        """
+                        <config>
+                            <joor>not a Camel document</joor>
+                        </config>
                         """
                 )
         );
@@ -934,7 +990,11 @@ public class CamelUpdate423Test implements RewriteTest {
                             public void configure() {
                                 from("direct:in")
                                     .to("language:csimple:${body} != null")
+                                    .to("language:csimple?script=${body} != null&transform=false")
+                                    .to("language:csimple")
                                     .to("language:joor:return body;")
+                                    .to("language:joor?script=return body;")
+                                    .to("language:joor")
                                     .to("language:simple:${body}");
                             }
                         }
@@ -947,7 +1007,11 @@ public class CamelUpdate423Test implements RewriteTest {
                             public void configure() {
                                 from("direct:in")
                                     .to("language:simple:${body} != null")
+                                    .to("language:simple?script=${body} != null&transform=false")
+                                    .to("language:simple")
                                     .to("language:java:return body;")
+                                    .to("language:java?script=return body;")
+                                    .to("language:java")
                                     .to("language:simple:${body}");
                             }
                         }
@@ -1110,6 +1174,58 @@ public class CamelUpdate423Test implements RewriteTest {
                                 }
                                 """
                         ),
+                        //language=java
+                        java(
+                                """
+                                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                                public class DebeziumEndpointDslRoute extends EndpointRouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from(debeziumOracle("myOracle").databaseOutServerName("dbzxout").databaseUser("scott"))
+                                            .to(mock("result"));
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                                public class DebeziumEndpointDslRoute extends EndpointRouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from(debeziumOracle("myOracle").xstreamOutServerName("dbzxout").databaseUser("scott"))
+                                            .to(mock("result"));
+                                    }
+                                }
+                                """
+                        ),
+                        //language=java
+                        java(
+                                """
+                                import org.apache.camel.CamelContext;
+                                import org.apache.camel.builder.component.ComponentsBuilderFactory;
+
+                                public class DebeziumComponentDsl {
+                                    public void configure(CamelContext context) {
+                                        ComponentsBuilderFactory.debeziumOracle()
+                                            .databaseOutServerName("dbzxout")
+                                            .register(context, "debezium-oracle");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.CamelContext;
+                                import org.apache.camel.builder.component.ComponentsBuilderFactory;
+
+                                public class DebeziumComponentDsl {
+                                    public void configure(CamelContext context) {
+                                        ComponentsBuilderFactory.debeziumOracle()
+                                            .xstreamOutServerName("dbzxout")
+                                            .register(context, "debezium-oracle");
+                                    }
+                                }
+                                """
+                        ),
                         // relaxed binding also matches the camelCase spelling used with camel-main
                         properties(
                                 """
@@ -1119,6 +1235,36 @@ public class CamelUpdate423Test implements RewriteTest {
                                 """
                                 camel.component.debezium-oracle.xstream-out-server-name=dbzxout
                                 camel.component.debezium-oracle.xstream-out-server-name=dbzxout
+                                """,
+                                spec -> spec.path("application.properties")
+                        )
+                )
+        );
+    }
+
+    @Test
+    void preconditionBlocksDebeziumOracleWithoutDependency() {
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
+                mavenProject("test-no-debezium-oracle",
+                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
+                        //language=java
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class NoDebeziumRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("debezium-oracle:myOracle?databaseOutServerName=dbzxout")
+                                            .to("mock:result");
+                                    }
+                                }
+                                """
+                        ),
+                        properties(
+                                """
+                                camel.component.debezium-oracle.database-out-server-name=dbzxout
                                 """,
                                 spec -> spec.path("application.properties")
                         )
@@ -1403,25 +1549,44 @@ public class CamelUpdate423Test implements RewriteTest {
                                 import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
                                 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
                                 import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
-                                import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 
                                 public class KeyMaterial {
                                     private CMCEParameterSpec cmce;
                                     private DilithiumParameterSpec dilithium;
                                     private FrodoParameterSpec frodo;
                                     private KyberParameterSpec kyber;
-                                    private SPHINCSPlusParameterSpec sphincs;
                                 }
                                 """,
-                                // five imports from one package are folded into a star import by the default import layout
+                                // at most four imports from one package per file: five would be folded into a star
+                                // import, and whether that folding happens depends on the order in which the pom and
+                                // the Java sources are visited once the pom bump has marked the classpath dirty
                                 """
-                                import org.bouncycastle.jcajce.spec.*;
+                                import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
+                                import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
+                                import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
+                                import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 
                                 public class KeyMaterial {
                                     private CMCEParameterSpec cmce;
                                     private MLDSAParameterSpec dilithium;
                                     private FrodoKEMParameterSpec frodo;
                                     private MLKEMParameterSpec kyber;
+                                }
+                                """
+                        ),
+                        //language=java
+                        java(
+                                """
+                                import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
+
+                                public class SignatureMaterial {
+                                    private SPHINCSPlusParameterSpec sphincs;
+                                }
+                                """,
+                                """
+                                import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
+
+                                public class SignatureMaterial {
                                     private SLHDSAParameterSpec sphincs;
                                 }
                                 """
@@ -1443,6 +1608,56 @@ public class CamelUpdate423Test implements RewriteTest {
 
                                 public class KeyMaterial {
                                     private KyberParameterSpec kyber;
+                                }
+                                """
+                        )
+                )
+        );
+    }
+    @Test
+    void preconditionBlocksChunkHeadersWithoutDependency() {
+        //language=java
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
+                mavenProject("test-no-chunk",
+                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class NoChunkRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("ChunkResourceUri", constant("other"))
+                                            .to("mock:result");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    /**
+     * The jolt recipe renames a third-party package recursively, so it must stay confined to modules
+     * that actually depend on camel-jolt.
+     */
+    @Test
+    void preconditionBlocksJoltWithoutDependency() {
+        rewriteRun(
+                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
+                mavenProject("test-no-jolt",
+                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
+                        //language=java
+                        java(
+                                """
+                                import com.bazaarvoice.jolt.Chainr;
+                                import com.bazaarvoice.jolt.Removr;
+
+                                public class JoltTransformer {
+                                    private Chainr chainr;
+                                    private Removr removr;
                                 }
                                 """
                         )

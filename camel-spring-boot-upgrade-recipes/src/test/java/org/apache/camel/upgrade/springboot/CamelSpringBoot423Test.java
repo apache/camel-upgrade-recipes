@@ -128,9 +128,9 @@ class CamelSpringBoot423Test implements RewriteTest {
 
     @Test
     void migrateLangchain4jToolsStarterDoesNotDuplicateAiToolStarter() {
-        // camel422.migrateAiToolStarterDependency only swaps a plain org.apache.camel:camel-ai-tool
-        // dependency; running it alongside camel423's starter-to-starter rename must not produce two
-        // camel-ai-tool-starter entries.
+        // camel422.migrateAiToolStarterDependency swaps the plain org.apache.camel:camel-ai-tool
+        // dependency that camel422.migrateLangchain4jToolsUris adds; running it alongside camel423's
+        // starter-to-starter rename must not produce two camel-ai-tool-starter entries.
         //language=xml
         rewriteRun(
                 spec -> withRecipe(spec,
@@ -154,6 +154,11 @@ class CamelSpringBoot423Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
                                     <artifactId>camel-langchain4j-tools-starter</artifactId>
+                                    <version>4.22.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-ai-tool</artifactId>
                                     <version>4.22.0</version>
                                 </dependency>
                             </dependencies>
