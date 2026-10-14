@@ -803,6 +803,76 @@ public class CamelUpdate423Test implements RewriteTest {
         );
     }
 
+    /**
+     * The mustache and chunk header renames shipped in 4.18.5 and 4.22.2 as well, so the recipes live in
+     * the camel418_5 namespace and reach the 4.23 chain through camel422_2.CamelMigrationRecipe.
+     */
+    @Test
+    void camel423ChainIncludesCamel418_5PatchRecipes() {
+        //language=java
+        rewriteRun(
+                mavenProject("test-mustache-patch",
+                        CamelTestUtil.pomXmlSpec("camel-mustache", CamelTestUtil.CamelVersion.v4_22),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class MustacheRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("MustacheTemplate", constant("Hello {{name}}"))
+                                            .to("mustache:template.mustache");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class MustacheRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:in")
+                                            .setHeader("CamelMustacheTemplate", constant("Hello {{name}}"))
+                                            .to("mustache:template.mustache");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
+    /**
+     * The Bouncy Castle 1.86 upgrade shipped in 4.22.2 as well, so the pqc recipe lives in the camel422_2
+     * namespace and the 4.23 chain references camel422_2.CamelMigrationRecipe.
+     */
+    @Test
+    void camel423ChainIncludesCamel422_2PatchRecipe() {
+        rewriteRun(
+                mavenProject("test-pqc-patch",
+                        CamelTestUtil.pomXmlSpec("camel-pqc", CamelTestUtil.CamelVersion.v4_22),
+                        //language=java
+                        java(
+                                """
+                                import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
+
+                                public class KeyMaterial {
+                                    private KyberParameterSpec kyber;
+                                }
+                                """,
+                                """
+                                import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+
+                                public class KeyMaterial {
+                                    private MLKEMParameterSpec kyber;
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
     @Test
     void migrateJoorJavaApi() {
         //language=java
@@ -1016,107 +1086,6 @@ public class CamelUpdate423Test implements RewriteTest {
                             }
                         }
                         """
-                )
-        );
-    }
-
-    @Test
-    void migrateMustacheHeaders() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-mustache",
-                        CamelTestUtil.pomXmlSpec("camel-mustache", CamelTestUtil.CamelVersion.v4_22),
-                        java(
-                                """
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                public class MustacheRoute extends RouteBuilder {
-                                    @Override
-                                    public void configure() {
-                                        from("direct:in")
-                                            .setHeader("MustacheResourceUri", constant("other.mustache"))
-                                            .setHeader("MustacheTemplate", constant("Hello {{name}}"))
-                                            .to("mustache:template.mustache");
-                                    }
-                                }
-                                """,
-                                """
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                public class MustacheRoute extends RouteBuilder {
-                                    @Override
-                                    public void configure() {
-                                        from("direct:in")
-                                            .setHeader("CamelMustacheResourceUri", constant("other.mustache"))
-                                            .setHeader("CamelMustacheTemplate", constant("Hello {{name}}"))
-                                            .to("mustache:template.mustache");
-                                    }
-                                }
-                                """
-                        )
-                )
-        );
-    }
-
-    @Test
-    void preconditionBlocksMustacheHeadersWithoutDependency() {
-        //language=java
-        rewriteRun(
-                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
-                mavenProject("test-no-mustache",
-                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
-                        java(
-                                """
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                public class NoMustacheRoute extends RouteBuilder {
-                                    @Override
-                                    public void configure() {
-                                        from("direct:in")
-                                            .setHeader("MustacheResourceUri", constant("other.mustache"))
-                                            .to("mock:result");
-                                    }
-                                }
-                                """
-                        )
-                )
-        );
-    }
-
-    @Test
-    void migrateChunkHeaders() {
-        //language=java
-        rewriteRun(
-                mavenProject("test-chunk",
-                        CamelTestUtil.pomXmlSpec("camel-chunk", CamelTestUtil.CamelVersion.v4_22),
-                        java(
-                                """
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                public class ChunkRoute extends RouteBuilder {
-                                    @Override
-                                    public void configure() {
-                                        from("direct:in")
-                                            .setHeader("ChunkResourceUri", constant("other"))
-                                            .setHeader("ChunkTemplate", constant("Hello {$name}"))
-                                            .to("chunk:template");
-                                    }
-                                }
-                                """,
-                                """
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                public class ChunkRoute extends RouteBuilder {
-                                    @Override
-                                    public void configure() {
-                                        from("direct:in")
-                                            .setHeader("CamelChunkResourceUri", constant("other"))
-                                            .setHeader("CamelChunkTemplate", constant("Hello {$name}"))
-                                            .to("chunk:template");
-                                    }
-                                }
-                                """
-                        )
                 )
         );
     }
@@ -1533,108 +1502,6 @@ public class CamelUpdate423Test implements RewriteTest {
                             name: MyCamel
                         """,
                         spec -> spec.path("application.yaml")
-                )
-        );
-    }
-
-    @Test
-    void migratePqcParameterSpecs() {
-        rewriteRun(
-                mavenProject("test-pqc",
-                        CamelTestUtil.pomXmlSpec("camel-pqc", CamelTestUtil.CamelVersion.v4_22),
-                        //language=java
-                        java(
-                                """
-                                import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
-                                import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
-                                import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
-                                import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
-
-                                public class KeyMaterial {
-                                    private CMCEParameterSpec cmce;
-                                    private DilithiumParameterSpec dilithium;
-                                    private FrodoParameterSpec frodo;
-                                    private KyberParameterSpec kyber;
-                                }
-                                """,
-                                // at most four imports from one package per file: five would be folded into a star
-                                // import, and whether that folding happens depends on the order in which the pom and
-                                // the Java sources are visited once the pom bump has marked the classpath dirty
-                                """
-                                import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
-                                import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
-                                import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-                                import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-
-                                public class KeyMaterial {
-                                    private CMCEParameterSpec cmce;
-                                    private MLDSAParameterSpec dilithium;
-                                    private FrodoKEMParameterSpec frodo;
-                                    private MLKEMParameterSpec kyber;
-                                }
-                                """
-                        ),
-                        //language=java
-                        java(
-                                """
-                                import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
-
-                                public class SignatureMaterial {
-                                    private SPHINCSPlusParameterSpec sphincs;
-                                }
-                                """,
-                                """
-                                import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
-
-                                public class SignatureMaterial {
-                                    private SLHDSAParameterSpec sphincs;
-                                }
-                                """
-                        )
-                )
-        );
-    }
-
-    @Test
-    void preconditionBlocksPqcSpecsWithoutDependency() {
-        rewriteRun(
-                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
-                mavenProject("test-no-pqc",
-                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
-                        //language=java
-                        java(
-                                """
-                                import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
-
-                                public class KeyMaterial {
-                                    private KyberParameterSpec kyber;
-                                }
-                                """
-                        )
-                )
-        );
-    }
-    @Test
-    void preconditionBlocksChunkHeadersWithoutDependency() {
-        //language=java
-        rewriteRun(
-                spec -> spec.expectedCyclesThatMakeChanges(CamelTestUtil.isRecipeOverridden() ? 1 : 0),
-                mavenProject("test-no-chunk",
-                        CamelTestUtil.pomXmlSpec("camel-core", CamelTestUtil.CamelVersion.v4_22),
-                        java(
-                                """
-                                import org.apache.camel.builder.RouteBuilder;
-
-                                public class NoChunkRoute extends RouteBuilder {
-                                    @Override
-                                    public void configure() {
-                                        from("direct:in")
-                                            .setHeader("ChunkResourceUri", constant("other"))
-                                            .to("mock:result");
-                                    }
-                                }
-                                """
-                        )
                 )
         );
     }

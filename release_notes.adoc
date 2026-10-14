@@ -6,7 +6,7 @@
 
 This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.23.0 with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html[migration guide]).
 
-This release also carries forward the Camel 4.22.1 patch recipe (`camel422_1.CamelMigrationRecipe`, covering CAMEL-24539) per the `RECIPE-CONVENTIONS.md` next-main-version convention; see the <<4.22.1>> section below for details.
+This release also carries forward the Camel 4.22.2 and 4.22.1 patch recipes (`camel422_2.CamelMigrationRecipe` and `camel422_1.CamelMigrationRecipe`) per the `RECIPE-CONVENTIONS.md` next-main-version convention; see the <<4.22.2>> and <<4.22.1>> sections below. Two of the 4.23 changes were backported to patch releases, so their recipes live in the patch namespaces and the 4.23 chain only references them: the Bouncy Castle 1.86 parameter spec migration (`camel422_2`, also 4.22.2) and the mustache/chunk header renames (`camel418_5`, also 4.18.5 and 4.22.2).
 
 === Migration coverage
 
@@ -50,7 +50,7 @@ The following table lists migration topics and indicates the level of coverage (
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_mustache_camel_chunk_potential_breaking_change[camel-mustache, camel-chunk: header names moved into the Camel namespace]
 | ✅ Full
-| `MustacheResourceUri`/`MustacheTemplate` → `CamelMustacheResourceUri`/`CamelMustacheTemplate` and `ChunkResourceUri`/`ChunkTemplate` → `CamelChunkResourceUri`/`CamelChunkTemplate`, automated via the 4.18.3 `RenameHeaders` custom recipe and gated on `camel-mustache` / `camel-chunk` respectively. The constant names are unchanged, so `MustacheConstants`/`ChunkConstants` usages need no change.
+| Inherited from the 4.18.5 patch recipes `camel418_5.migrateMustacheHeaders` / `camel418_5.migrateChunkHeaders` through `camel422_2.CamelMigrationRecipe`, since the rename shipped in 4.18.5 and 4.22.2 as well: `MustacheResourceUri`/`MustacheTemplate` → `CamelMustacheResourceUri`/`CamelMustacheTemplate` and `ChunkResourceUri`/`ChunkTemplate` → `CamelChunkResourceUri`/`CamelChunkTemplate`, automated via the 4.18.3 `RenameHeaders` custom recipe and gated on `camel-mustache` / `camel-chunk` respectively. The constant names are unchanged, so `MustacheConstants`/`ChunkConstants` usages need no change.
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_debezium_oracle_the_databaseoutservername_option_is_removed[camel-debezium-oracle: `databaseOutServerName` removed]
 | ✅ Full
@@ -74,7 +74,7 @@ The following table lists migration topics and indicates the level of coverage (
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_23.html#_camel_pqc_bouncy_castle_1_86_breaking_change[camel-pqc: Bouncy Castle 1.86]
 | ⚠️ Partial
-| The removed `org.bouncycastle.pqc.jcajce.spec` classes migrated via `ChangeType` to their `org.bouncycastle.jcajce.spec` counterparts (`CMCEParameterSpec`, `FrodoParameterSpec` → `FrodoKEMParameterSpec`, `KyberParameterSpec` → `MLKEMParameterSpec`, `DilithiumParameterSpec` → `MLDSAParameterSpec`, `SPHINCSPlusParameterSpec` → `SLHDSAParameterSpec`), gated on `camel-pqc`. The static parameter-set fields carry new names (`ml_kem_768` instead of `kyber768`), the `parameterSpec` URI option values `dilithium2|3|5` became `ML-DSA-44|65|87`, and `PICNIC` (`PQCSignatureAlgorithms.PICNIC`, `PQCDefaultPicnicMaterial`, `PicnicParameterSpec`) has no replacement: all manual.
+| Inherited from the 4.22.2 patch recipe `camel422_2.migratePqcParameterSpecs`, since Bouncy Castle 1.86 shipped in 4.22.2 as well: the removed `org.bouncycastle.pqc.jcajce.spec` classes migrated via `ChangeType` to their `org.bouncycastle.jcajce.spec` counterparts (`CMCEParameterSpec`, `FrodoParameterSpec` → `FrodoKEMParameterSpec`, `KyberParameterSpec` → `MLKEMParameterSpec`, `DilithiumParameterSpec` → `MLDSAParameterSpec`, `SPHINCSPlusParameterSpec` → `SLHDSAParameterSpec`), gated on `camel-pqc`. The static parameter-set fields carry new names (`ml_kem_768` instead of `kyber768`), the `parameterSpec` URI option values `dilithium2|3|5` became `ML-DSA-44|65|87`, and `PICNIC` (`PQCSignatureAlgorithms.PICNIC`, `PQCDefaultPicnicMaterial`, `PicnicParameterSpec`) has no replacement: all manual.
 
 | `MemoryIdempotentRepository` / `MemoryAggregationRepository` deprecated
 | ❌ None
@@ -124,13 +124,40 @@ The following table lists migration topics and indicates the level of coverage (
 
 NOTE: At the time these recipes were written, Camel 4.23.0 had not yet been released to Maven Central. The tests that resolve a `4.23.0` artifact (the `camel-camunda`, `camel-camunda-starter` and `camel-ai-tool-starter` renames and every `UpgradeDependencyVersion` expectation) were run against the Apache staging repositories of the 4.23.0 vote, `orgapachecamel-2081` (Camel) and `orgapachecamel-2082` (Camel Spring Boot), and fail with a Maven-parser warning comment until the release reaches Central.
 
+== 4.22.2
+
+=== Summary
+
+Patch recipes for Camel 4.22.2 (`camel422_2.CamelMigrationRecipe`), described by the https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#upgrading-from-4221-to-4222[4.22 migration guide]. Per `RECIPE-CONVENTIONS.md` the chain is referenced from `camel423.CamelMigrationRecipe`; a 4.22 LTS aggregate is tracked in https://github.com/apache/camel-upgrade-recipes/issues/129[#129]. A standalone 4.22.1 to 4.22.2 upgrade runs it directly with `-Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_2.CamelMigrationRecipe`.
+
+The backported changes were taken from the `camel-4.22.x` branch sources, since the copy of the 4.22 guide on that branch lags behind the one on `main`.
+
+=== Migration coverage
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-pqc---bouncy-castle-186-breaking-change[camel-pqc: Bouncy Castle 1.86]
+| ⚠️ Partial
+| `camel422_2.migratePqcParameterSpecs`: the removed `org.bouncycastle.pqc.jcajce.spec` classes migrated via `ChangeType` to their `org.bouncycastle.jcajce.spec` counterparts (`CMCEParameterSpec`, `FrodoParameterSpec` → `FrodoKEMParameterSpec`, `KyberParameterSpec` → `MLKEMParameterSpec`, `DilithiumParameterSpec` → `MLDSAParameterSpec`, `SPHINCSPlusParameterSpec` → `SLHDSAParameterSpec`), gated on `camel-pqc`. The static parameter-set fields carry new names (`ml_kem_768` instead of `kyber768`), the `parameterSpec` URI option values `dilithium2|3|5` became `ML-DSA-44|65|87`, `mceliece348864`/`frodokem640` are no longer accepted, stored CMCE/Frodo/Picnic keys must be regenerated, and `PICNIC` (`PQCSignatureAlgorithms.PICNIC`, `PQCDefaultPicnicMaterial`, `PicnicParameterSpec`) has no replacement: all manual.
+
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-mustache-camel-chunk---potential-breaking-change[camel-mustache, camel-chunk: header names moved into the Camel namespace]
+| ✅ Full
+| Inherited from the 4.18.5 patch recipes `camel418_5.migrateMustacheHeaders` / `camel418_5.migrateChunkHeaders`; see <<4.18.5>>.
+
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#upgrading-from-4221-to-4222[Behaviour or secure-default changes only: route group MBean counters, top-level `onException` in YAML route dumps, netty-http role matching, azure-eventhubs, xslt implicit DOM sources, zipfile/tarfile `maxDecompressedSize`, oauth post login url, spring-ws SOAP header filtering, http-common/platform-http-vertx `fileNameExtWhitelist`, URI masking, Rest DSL response Content-Type, debezium failed engine, saga `Long-Running-Action` header, coap `muteException`, docling output path, undertow WebSocket security, crypto `CryptoDataFormat`, aws2-s3 unreadable listed objects]
+| ❌ None
+| Runtime behaviour or secure-default changes that need app-specific review (for example `coap://...?muteException=false` or `jailStartingDirectory=false` to opt back in); nothing to rewrite mechanically.
+|===
+
 == 4.22.1
 
 === Summary
 
 This is a release supporting Camel, Camel Quarkus and Camel Spring Boot 4.22.1 LTS with the required upgrade recipes (described by the https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html[migration guide]).
 
-This recipe is not yet chained from `latest.yaml` or a Spring Boot `CamelMigrationRecipe`: per `RECIPE-CONVENTIONS.md`, a patch recipe is referenced from the *next main-version* yaml and, optionally, an LTS aggregate, and neither exists yet for the 4.22 line (a 4.22 LTS aggregate is tracked in https://github.com/apache/camel-upgrade-recipes/issues/129[#129]). Run it directly with `-Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe` until one of those exists.
+Per `RECIPE-CONVENTIONS.md`, a patch recipe is referenced from the *next main-version* yaml and, optionally, an LTS aggregate: since 4.23.0 this recipe is referenced from `camel423.CamelMigrationRecipe`, and a 4.22 LTS aggregate is tracked in https://github.com/apache/camel-upgrade-recipes/issues/129[#129]. A standalone 4.22.0 to 4.22.1 upgrade runs it directly with `-Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe`.
 
 Only one 4.22.1 change is covered at all: the camel-openai `storeFullResponse` property change (CAMEL-24539), and it cannot be migrated mechanically -- see below. Everything else backported into 4.22.1 is either a secure-default/runtime behaviour change or a deprecation with no replacement yet, and needs manual review.
 
@@ -251,7 +278,7 @@ The following table lists migration topics and indicates the level of coverage (
 
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_22.html#_camel_atmosphere_websocket_potential_breaking_change[camel-atmosphere-websocket: Exchange header values renamed]
 | ⚠️ Partial
-| Literal `websocket.*` → `CamelAtmosphereWebsocket*` header values automated via the 4.18.3 `RenameHeaders` custom recipe (gated on `camel-atmosphere-websocket`); symbolic `WebsocketConstants` usages need no change, cross-transport propagation of the now-`Camel*`-prefixed headers requires manual review
+| Provided by the 4.18.4 patch recipe `camel418_4.migrateAtmosphereWebsocketHeaders`, referenced from the 4.22 chain since the rename shipped in 4.18.4 as well: literal `websocket.*` → `CamelAtmosphereWebsocket*` header values automated via the 4.18.3 `RenameHeaders` custom recipe (gated on `camel-atmosphere-websocket`); symbolic `WebsocketConstants` usages need no change, cross-transport propagation of the now-`Camel*`-prefixed headers requires manual review
 
 
 |===
@@ -409,6 +436,50 @@ The following table lists migration topics and indicates the level of coverage (
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_tracing_deprecation[camel-tracing (Deprecation)] | ❌ None | Component deprecation requires manual migration decision.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_camel_zeebe_deprecation[camel-zeebe (Deprecation)] | ❌ None | Deprecated component requires manual migration to camel-camunda.
 | https://camel.apache.org/manual/camel-4x-upgrade-guide-4_19.html#_removed_components[Removed Components] | ✅ Full | Component removal: Automatically migrated.
+|===
+
+== 4.18.5
+
+=== Summary
+
+Patch recipes for Camel 4.18.5 LTS (`camel418_5.CamelMigrationRecipe`), described by the https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#upgrading-from-4184-to-4185[4.18 migration guide]. The chain is referenced first by `Camel418LTSMigrationRecipe` and `CamelSpringBoot418LTSMigrationRecipe`, whose target version is now 4.18.5, and its recipes are reused by `camel422_2.CamelMigrationRecipe` and, through it, `camel423.CamelMigrationRecipe`, since the same change ships in 4.22.2 and 4.23.0.
+
+The backported changes were taken from the `camel-4.18.5` tag sources; the copy of the 4.18 guide at that tag does not list the mustache/chunk rename, only the one on `main` does.
+
+=== Migration coverage
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-mustache-camel-chunk---potential-breaking-change[camel-mustache, camel-chunk: header names moved into the Camel namespace]
+| ✅ Full
+| `MustacheResourceUri`/`MustacheTemplate` → `CamelMustacheResourceUri`/`CamelMustacheTemplate` and `ChunkResourceUri`/`ChunkTemplate` → `CamelChunkResourceUri`/`CamelChunkTemplate`, automated via the 4.18.3 `RenameHeaders` custom recipe and gated on `camel-mustache` / `camel-chunk` respectively. The constant names are unchanged, so `MustacheConstants`/`ChunkConstants` usages need no change. The headers are only read with `allowTemplateFromHeader=true`, and the `Camel` prefix means they are now filtered at transport boundaries.
+
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#upgrading-from-4184-to-4185[Behaviour or secure-default changes only: netty-http role matching, azure-eventhubs, zipfile/tarfile `maxDecompressedSize`, oauth post login url, spring-ws SOAP header filtering, http-common/platform-http-vertx `fileNameExtWhitelist`, URI masking, Rest DSL response Content-Type, docling input/output paths, dynamic-router `allowPredicateFromMessage`, remote-file consumer containment, azure-storage/google-storage symlink containment, spring-redis deserialization filter, google-mail `raw`, google-vertexai `jsonMode`, infinispan recovery, vertx-http REST header filter, jgroups deserialization filter, smooks external entities, saga `Long-Running-Action` header, coap `muteException`, undertow WebSocket security]
+| ❌ None
+| Runtime behaviour or secure-default changes that need app-specific review; nothing to rewrite mechanically.
+|===
+
+== 4.18.4
+
+=== Summary
+
+Patch recipes for Camel 4.18.4 LTS (`camel418_4.CamelMigrationRecipe`), described by the https://github.com/apache/camel/blob/camel-4.18.4/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#upgrading-from-4183-to-4184[4.18 migration guide]. The chain is referenced by `Camel418LTSMigrationRecipe` and `CamelSpringBoot418LTSMigrationRecipe`, and its recipe is reused by `camel422.CamelMigrationRecipe`, since the same change ships in 4.22.0.
+
+=== Migration coverage
+
+[%autowidth,stripes=hover]
+|===
+| Migration | Coverage | Comment
+
+| https://github.com/apache/camel/blob/camel-4.18.4/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-atmosphere-websocket---potential-breaking-change[camel-atmosphere-websocket: Exchange header values renamed]
+| ⚠️ Partial
+| Literal `websocket.*` → `CamelAtmosphereWebsocket*` header values automated via the 4.18.3 `RenameHeaders` custom recipe (gated on `camel-atmosphere-websocket`); symbolic `WebsocketConstants` usages need no change, cross-transport propagation of the now-`Camel*`-prefixed headers requires manual review.
+
+| https://github.com/apache/camel/blob/camel-4.18.4/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#upgrading-from-4183-to-4184[Behaviour changes only: Multicast `UseOriginalAggregationStrategy`, azure-servicebus lock renewal, http gzip double decompression, mail/knative/ironmq/azure-eventhubs header filtering]
+| ❌ None
+| Runtime behaviour fixes; nothing to rewrite.
 |===
 
 == 4.18.3

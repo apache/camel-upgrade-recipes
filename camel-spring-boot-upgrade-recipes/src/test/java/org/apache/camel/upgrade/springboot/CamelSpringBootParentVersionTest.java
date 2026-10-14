@@ -65,7 +65,7 @@ class CamelSpringBootParentVersionTest implements RewriteTest {
                                     <parent>
                                         <groupId>org.apache.camel.springboot</groupId>
                                         <artifactId>spring-boot</artifactId>
-                                        <version>4.18.3</version>
+                                        <version>4.18.5</version>
                                     </parent>
                                     <groupId>com.example</groupId>
                                     <artifactId>test</artifactId>

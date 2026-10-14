@@ -60,11 +60,14 @@ public class CamelTestUtil {
         v4_18(4, 18, 0),
         v4_18_1(4, 18, 1, true),
         v4_18_3(4, 18, 3, true),
+        v4_18_4(4, 18, 4, true),
+        v4_18_5(4, 18, 5, true),
         v4_19(4, 19, 0),
         v4_20(4, 20, 0),
         v4_21(4, 21, 0),
         v4_22(4, 22, 0),
         v4_22_1(4, 22, 1, true),
+        v4_22_2(4, 22, 2, true),
         v4_23(4, 23, 0);
 
         private int major;
@@ -84,7 +87,7 @@ public class CamelTestUtil {
         }
 
         public String getVersion() {
-            return getRecipeFile() + "." + patch;
+            return major + "." + minor + "." + patch;
         }
 
         private String getRecipeFile() {

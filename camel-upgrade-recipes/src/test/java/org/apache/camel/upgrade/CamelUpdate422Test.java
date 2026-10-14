@@ -411,6 +411,10 @@ public class CamelUpdate422Test implements RewriteTest {
         );
     }
 
+    /**
+     * Inherited from the 4.18.4 patch recipe (camel418_4.migrateAtmosphereWebsocketHeaders), which the 4.22
+     * chain references; this guards the wiring, the recipe itself is covered by {@link CamelUpdate418_4Test}.
+     */
     @Test
     void migrateAtmosphereWebsocketHeaders() {
         //language=java
