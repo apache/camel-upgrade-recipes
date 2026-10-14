@@ -119,7 +119,7 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.springframework.boot</groupId>
                                     <artifactId>spring-boot-starter</artifactId>
-                                    <version>4.1.0</version>
+                                    <version>4.1.1</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
@@ -177,7 +177,7 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.springframework.boot</groupId>
                                     <artifactId>spring-boot-starter</artifactId>
-                                    <version>4.1.0</version>
+                                    <version>4.1.1</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>

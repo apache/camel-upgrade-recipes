@@ -161,3 +161,14 @@ recipeList:
   - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
       uriPattern: "^spring-ai-tools:(.*)$"
       replacement: "ai-tool:${1}"
+---
+## kept for compatibility: camel-upgrade-recipes 4.22.0 shipped the migration under this name
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders
+displayName: Migrate camel-atmosphere-websocket header values to new naming convention (compatibility alias)
+description: >-
+  Compatibility alias for the name this migration shipped under in camel-upgrade-recipes 4.22.0. The recipe now
+  lives in the 4.18.4 patch namespace, since the header rename also ships in Camel 4.18.4; reference
+  org.apache.camel.upgrade.camel418_4.migrateAtmosphereWebsocketHeaders directly in new configurations.
+recipeList:
+  - org.apache.camel.upgrade.camel418_4.migrateAtmosphereWebsocketHeaders

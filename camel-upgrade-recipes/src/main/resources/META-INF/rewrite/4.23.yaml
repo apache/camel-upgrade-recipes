@@ -44,6 +44,7 @@ recipeList:
   - org.apache.camel.upgrade.camel423.migrateJoorJavaApi
   - org.apache.camel.upgrade.camel423.migrateJoorXmlDsl
   - org.apache.camel.upgrade.camel423.migrateJoorYamlDsl
+  - org.apache.camel.upgrade.camel423.migrateJoorLanguageProperties
   - org.apache.camel.upgrade.camel423.migrateRemovedLanguageUris
   - org.apache.camel.upgrade.camel423.migrateDebeziumOracleOutServerName
   - org.apache.camel.upgrade.camel423.migrateJoltCommunityFork
@@ -392,6 +393,25 @@ recipeList:
       oldKey: joor
       newKey: java
 ---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#camel-joor
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel423.migrateJoorLanguageProperties
+displayName: Migrate camel.language.joor configuration keys to camel.language.java
+description: >-
+  Renames the camel.language.joor.* configuration keys to camel.language.java.*. JoorLanguage extended JavaLanguage
+  without options of its own, so configResource, preCompile and singleQuotes carry over one to one; camel-main
+  fails at startup on a key for the removed joor language. Relaxed binding also covers the camelCase spellings.
+recipeList:
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.language.joor.config-resource
+      newPropertyKey: camel.language.java.config-resource
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.language.joor.pre-compile
+      newPropertyKey: camel.language.java.pre-compile
+  - org.apache.camel.upgrade.customRecipes.PropertiesAndYamlKeyUpdate:
+      oldPropertyKey: camel.language.joor.single-quotes
+      newPropertyKey: camel.language.java.single-quotes
+---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_23.adoc#components-and-language-removal
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel423.migrateRemovedLanguageUris
@@ -400,9 +420,10 @@ description: >-
   Renames the csimple and joor language names in language: component URIs, following the removal of both
   languages in Camel 4.23. The replacement languages, simple and java, accept the same expression, whether it is
   inlined after the language name, passed through the script query parameter, or sent in the CamelLanguageScript
-  header with a bare language:csimple or language:joor URI. The camel.language.csimple.* and camel.language.joor.*
-  configuration keys are not migrated, as the replacement languages do not share their options; camel-main fails
-  at startup on a key for an unknown language, so they have to be reviewed manually.
+  header with a bare language:csimple or language:joor URI. The camel.language.csimple.* configuration keys are not
+  migrated, as the simple language has no counterpart for the csimple options; camel-main fails at startup on a key
+  for an unknown language, so they have to be reviewed manually. The camel.language.joor.* keys are renamed by
+  migrateJoorLanguageProperties.
 recipeList:
   - org.apache.camel.upgrade.customRecipes.ChangeComponentUriRecipe:
       uriPattern: "^language:csimple(?=$|[:?])(.*)$"

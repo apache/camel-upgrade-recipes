@@ -1048,6 +1048,45 @@ public class CamelUpdate423Test implements RewriteTest {
     }
 
     @Test
+    void migrateJoorLanguageProperties() {
+        rewriteRun(
+                properties(
+                        """
+                        camel.language.joor.config-resource=classpath:joor.properties
+                        camel.language.joor.pre-compile=false
+                        camel.language.joor.singleQuotes=false
+                        camel.language.java.config-resource=classpath:java.properties
+                        """,
+                        """
+                        camel.language.java.config-resource=classpath:joor.properties
+                        camel.language.java.pre-compile=false
+                        camel.language.java.single-quotes=false
+                        camel.language.java.config-resource=classpath:java.properties
+                        """,
+                        spec -> spec.path("application.properties")
+                ),
+                yaml(
+                        """
+                        camel:
+                          language:
+                            joor:
+                              config-resource: classpath:joor.properties
+                              pre-compile: false
+                        """,
+                        // the yaml ChangePropertyKey keeps the shared camel.language prefix nested and writes the
+                        // renamed remainder as one dotted key, which camel-main and Spring Boot both flatten
+                        """
+                        camel:
+                          language:
+                            java.config-resource: classpath:joor.properties
+                            java.pre-compile: false
+                        """,
+                        spec -> spec.path("application.yaml")
+                )
+        );
+    }
+
+    @Test
     void migrateRemovedLanguageUris() {
         //language=java
         rewriteRun(

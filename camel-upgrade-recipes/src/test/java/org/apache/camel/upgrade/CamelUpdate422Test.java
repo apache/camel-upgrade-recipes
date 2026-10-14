@@ -465,6 +465,49 @@ public class CamelUpdate422Test implements RewriteTest {
         );
     }
 
+    /**
+     * camel-upgrade-recipes 4.22.0 shipped the atmosphere-websocket migration as
+     * camel422.migrateAtmosphereWebsocketHeaders, so that name is kept as an alias of the 4.18.4 recipe.
+     */
+    @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
+    void atmosphereWebsocketHeadersAliasStillWorks() {
+        //language=java
+        rewriteRun(
+                // the alias delegates across yaml files, so load the whole classpath of yaml resources
+                spec -> spec.recipeFromResources("org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders"),
+                mavenProject("test-atmosphere-websocket-alias",
+                        CamelTestUtil.pomXmlSpec("camel-atmosphere-websocket", CamelTestUtil.CamelVersion.v4_21),
+                        java(
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class WebsocketRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:next")
+                                            .setHeader("websocket.connectionKey", header("myKey"))
+                                            .to("atmosphere-websocket:///servicepath");
+                                    }
+                                }
+                                """,
+                                """
+                                import org.apache.camel.builder.RouteBuilder;
+
+                                public class WebsocketRoute extends RouteBuilder {
+                                    @Override
+                                    public void configure() {
+                                        from("direct:next")
+                                            .setHeader("CamelAtmosphereWebsocketConnectionKey", header("myKey"))
+                                            .to("atmosphere-websocket:///servicepath");
+                                    }
+                                }
+                                """
+                        )
+                )
+        );
+    }
+
     @Test
     void preconditionBlocksMinioWithoutDependency() {
         //language=java
