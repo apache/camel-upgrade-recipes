@@ -119,7 +119,7 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.springframework.boot</groupId>
                                     <artifactId>spring-boot-starter</artifactId>
-                                    <version>4.1.0</version>
+                                    <version>4.1.1</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
@@ -177,7 +177,7 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.springframework.boot</groupId>
                                     <artifactId>spring-boot-starter</artifactId>
-                                    <version>4.1.0</version>
+                                    <version>4.1.1</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
@@ -191,6 +191,10 @@ class CamelSpringBoot422Test implements RewriteTest {
         );
     }
 
+    /**
+     * The plain artifact is kept, only its version is bumped by the nested camel419 recipe, which
+     * upgrades every org.apache.camel dependency to the latest release.
+     */
     @Test
     void doesNotSwapAiToolInNonBootModule() {
         //language=xml
@@ -209,6 +213,23 @@ class CamelSpringBoot422Test implements RewriteTest {
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-ai-tool</artifactId>
                                     <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """,
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-ai-tool</artifactId>
+                                    <version>4.23.0</version>
                                 </dependency>
                             </dependencies>
                         </project>

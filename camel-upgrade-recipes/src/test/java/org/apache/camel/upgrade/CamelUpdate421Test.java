@@ -17,6 +17,7 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -221,7 +222,12 @@ public class CamelUpdate421Test implements RewriteTest {
         new CamelUpdate418_3Test().mongoDbGridFsHeadersMigrationJava();
     }
 
+    /**
+     * Disabled in the LATEST suite: camel-irc is removed in 4.23, so camel423.removedComponents deletes
+     * the dependency that this test expects to see bumped.
+     */
     @Test
+    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void ircHeadersMigrationJava() {
         //language=java
         rewriteRun(

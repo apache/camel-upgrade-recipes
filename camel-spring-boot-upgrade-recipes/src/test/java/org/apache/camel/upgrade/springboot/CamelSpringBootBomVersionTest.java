@@ -84,7 +84,7 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                             <properties>
                                 <camel-spring-boot-version>4.23.0-SNAPSHOT</camel-spring-boot-version>
                                 <maven.compiler.release>17</maven.compiler.release>
-                                <spring-boot-version>4.1.0</spring-boot-version>
+                                <spring-boot-version>4.1.1</spring-boot-version>
                             </properties>
                             <dependencyManagement>
                                 <dependencies>

@@ -1,0 +1,73 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide-4_18.html
+# Specifically changes introduced in 4.18.5 (upgrading from 4.18.4 to 4.18.5)
+#
+# The mustache and chunk header renames also ship in Camel 4.22.2 and 4.23.0, so per RECIPE-CONVENTIONS.md the
+# recipes live here and the camel422_2 and camel423 CamelMigrationRecipe chains reference them.
+#####
+
+#####
+# Update the Camel project from 4.18.4 to 4.18.5
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418_5.CamelMigrationRecipe
+displayName: Migrates `camel 4.18.4` application to `camel 4.18.5`
+description: Migrates `camel 4.18.4` application to `camel 4.18.5`.
+recipeList:
+  - org.apache.camel.upgrade.camel418_5.migrateMustacheHeaders
+  - org.apache.camel.upgrade.camel418_5.migrateChunkHeaders
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-mustache-camel-chunk---potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418_5.migrateMustacheHeaders
+displayName: Migrate camel-mustache header names to the Camel namespace
+description: >-
+  The MustacheConstants header values were moved into the Camel namespace in 4.18.5, 4.22.2 and 4.23.0
+  (MustacheResourceUri to CamelMustacheResourceUri, MustacheTemplate to CamelMustacheTemplate). Only literal
+  header names need migrating; the constant names themselves are unchanged, so MustacheConstants usages are
+  unaffected.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-mustache
+recipeList:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      headerMappings:
+        MustacheResourceUri: CamelMustacheResourceUri
+        MustacheTemplate: CamelMustacheTemplate
+---
+## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_18.adoc#camel-mustache-camel-chunk---potential-breaking-change
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.camel418_5.migrateChunkHeaders
+displayName: Migrate camel-chunk header names to the Camel namespace
+description: >-
+  The ChunkConstants header values were moved into the Camel namespace in 4.18.5, 4.22.2 and 4.23.0
+  (ChunkResourceUri to CamelChunkResourceUri, ChunkTemplate to CamelChunkTemplate). Only literal header names
+  need migrating; the constant names themselves are unchanged, so ChunkConstants usages are unaffected.
+preconditions:
+  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
+      groupIdPattern: org.apache.camel
+      artifactIdPattern: camel-chunk
+recipeList:
+  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
+      headerMappings:
+        ChunkResourceUri: CamelChunkResourceUri
+        ChunkTemplate: CamelChunkTemplate

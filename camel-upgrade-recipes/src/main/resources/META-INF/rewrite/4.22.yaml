@@ -35,7 +35,8 @@ recipeList:
   - org.apache.camel.upgrade.camel422.migrateSpringAiToolsDependency
   - org.apache.camel.upgrade.camel422.migrateLangchain4jToolsUris
   - org.apache.camel.upgrade.camel422.migrateSpringAiToolsUris
-  - org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders
+  ## inherited from patch recipe: the same header rename ships in 4.18.4
+  - org.apache.camel.upgrade.camel418_4.migrateAtmosphereWebsocketHeaders
 ---
 ## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-azure---component-specific-credentialtype-enums-removed
 type: specs.openrewrite.org/v1beta/recipe
@@ -161,20 +162,13 @@ recipeList:
       uriPattern: "^spring-ai-tools:(.*)$"
       replacement: "ai-tool:${1}"
 ---
-## https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#camel-atmosphere-websocket---potential-breaking-change
+## kept for compatibility: camel-upgrade-recipes 4.22.0 shipped the migration under this name
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.camel.upgrade.camel422.migrateAtmosphereWebsocketHeaders
-displayName: Migrate camel-atmosphere-websocket header values to new naming convention
-description: Renames the atmosphere-websocket Exchange header string values from websocket.* to CamelAtmosphereWebsocket*, only when the camel-atmosphere-websocket dependency is present. Symbolic WebsocketConstants references are unaffected and need no migration.
-preconditions:
-  - org.openrewrite.java.dependencies.search.ModuleHasDependency:
-      groupIdPattern: org.apache.camel
-      artifactIdPattern: camel-atmosphere-websocket
+displayName: Migrate camel-atmosphere-websocket header values to new naming convention (compatibility alias)
+description: >-
+  Compatibility alias for the name this migration shipped under in camel-upgrade-recipes 4.22.0. The recipe now
+  lives in the 4.18.4 patch namespace, since the header rename also ships in Camel 4.18.4; reference
+  org.apache.camel.upgrade.camel418_4.migrateAtmosphereWebsocketHeaders directly in new configurations.
 recipeList:
-  - org.apache.camel.upgrade.camel418_3.RenameHeaders:
-      headerMappings:
-        websocket.connectionKey.list: CamelAtmosphereWebsocketConnectionKeyList
-        websocket.connectionKey: CamelAtmosphereWebsocketConnectionKey
-        websocket.sendToAll: CamelAtmosphereWebsocketSendToAll
-        websocket.eventType: CamelAtmosphereWebsocketEventType
-        websocket.errorType: CamelAtmosphereWebsocketErrorType
+  - org.apache.camel.upgrade.camel418_4.migrateAtmosphereWebsocketHeaders
