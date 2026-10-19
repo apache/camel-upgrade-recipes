@@ -81,13 +81,13 @@ public class CamelUpdate422_1Test implements RewriteTest {
                                 from("direct:openai")
                                     .setProperty("CamelOpenAIResponseModel", constant("keep-model"))
                                     .process(exchange -> {
-                                        Object response = exchange.getProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse", Object.class);
-                                        exchange.setProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse", response);
+                                        Object response = exchange.getProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse", Object.class);
+                                        exchange.setProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse", response);
                                     })
-                                    .setProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/OpenAIConstants.RESPONSE, exchangeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse"))
-                                    .setBody(simple(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"${exchangeProperty.CamelOpenAIResponse.data}"))
+                                    .setProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/OpenAIConstants.RESPONSE, exchangeProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse"))
+                                    .setBody(simple(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"${exchangeProperty.CamelOpenAIResponse.data}"))
                                     .removeProperty("CamelOpenAIResponseId")
-                                    .removeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse");
+                                    .removeProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse");
                             }
                         }
                         """
@@ -157,7 +157,7 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         class Test extends RouteBuilder {
                             public void configure() {
                                 from("direct:openai")
-                                    .setProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse", exchangeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse"));
+                                    .setProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse", exchangeProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse"));
                             }
                         }
                         """
@@ -197,12 +197,12 @@ public class CamelUpdate422_1Test implements RewriteTest {
                                   name: CamelOpenAIResponseModel
                                   constant: keep-model
                               - setProperty:
-                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
                                   name: CamelOpenAIResponse
-                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
                                   simple: "${exchangeProperty.CamelOpenAIResponse}"
                               - setBody:
-                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
                                   simple: "${exchangeProperty.CamelOpenAIResponse.data}"
                         """
                 )
@@ -224,9 +224,9 @@ public class CamelUpdate422_1Test implements RewriteTest {
                               uri: "direct:openai"
                             steps:
                               - setProperty:
-                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
                                   name: CamelOpenAIResponse
-                                  # CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.
+                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
                                   simple: "${exchangeProperty.CamelOpenAIResponse}"
                         """
                 )
@@ -259,9 +259,9 @@ public class CamelUpdate422_1Test implements RewriteTest {
                             <setProperty name="CamelOpenAIResponseModel">
                                 <constant>keep-model</constant>
                             </setProperty>
-                            <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
+                            <!-- CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.-->
                             <setProperty name="CamelOpenAIResponse">
-                                <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
+                                <!-- CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.-->
                                 <simple>${exchangeProperty.CamelOpenAIResponse}</simple>
                             </setProperty>
                         </route>
@@ -282,9 +282,9 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         """
                         <route xmlns="http://camel.apache.org/schema/spring">
                             <from uri="direct:openai"/>
-                            <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
+                            <!-- CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.-->
                             <setProperty name="CamelOpenAIResponse">
-                                <!-- CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.-->
+                                <!-- CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.-->
                                 <simple>${exchangeProperty.CamelOpenAIResponse}</simple>
                             </setProperty>
                         </route>
