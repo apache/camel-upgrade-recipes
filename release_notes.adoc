@@ -130,7 +130,7 @@ NOTE: At the time these recipes were written, Camel 4.23.0 had not yet been rele
 
 Patch recipes for Camel 4.22.2 (`camel422_2.CamelMigrationRecipe`), described by the https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#upgrading-from-4221-to-4222[4.22 migration guide]. Per `RECIPE-CONVENTIONS.md` the chain is referenced from `camel423.CamelMigrationRecipe`; a 4.22 LTS aggregate is tracked in https://github.com/apache/camel-upgrade-recipes/issues/129[#129]. A standalone 4.22.1 to 4.22.2 upgrade runs it directly with `-Drewrite.activeRecipes=org.apache.camel.upgrade.camel422_2.CamelMigrationRecipe`.
 
-The backported changes were taken from the `camel-4.22.x` branch sources, since the copy of the 4.22 guide on that branch lags behind the one on `main`.
+The backported changes were verified against the `camel-4.22.2` tag sources, since the copy of the 4.22 guide on the `camel-4.22.x` branch lags behind the one on `main`.
 
 === Migration coverage
 
@@ -146,9 +146,9 @@ The backported changes were taken from the `camel-4.22.x` branch sources, since 
 | ✅ Full
 | Inherited from the 4.18.5 patch recipes `camel418_5.migrateMustacheHeaders` / `camel418_5.migrateChunkHeaders`; see <<4.18.5>>.
 
-| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#upgrading-from-4221-to-4222[Behaviour or secure-default changes only: lra (only the configured coordinator's LRAs are joined, unsigned participant callbacks warned about), route group MBean counters, top-level `onException` in YAML route dumps, netty-http role matching, azure-eventhubs, xslt implicit DOM sources, zipfile/tarfile `maxDecompressedSize`, oauth post login url, spring-ws SOAP header filtering, http-common/platform-http-vertx `fileNameExtWhitelist`, URI masking, Rest DSL response Content-Type, debezium failed engine, coap `muteException`, docling output path, undertow WebSocket security, crypto `CryptoDataFormat`, aws2-s3 unreadable listed objects]
+| https://github.com/apache/camel/blob/main/docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_22.adoc#upgrading-from-4221-to-4222[Behaviour or secure-default changes only: lra (only the configured coordinator's LRAs are joined, unsigned participant callbacks warned about), route group MBean counters, top-level `onException` in YAML route dumps, pqc `KeyGenerator`/`KeyAgreement` used by one exchange at a time, netty-http role matching, graphql credentials only sent to the `httpUri` authority, telegram webhook secret token, azure-eventhubs, xslt implicit DOM sources, mina/mllp/smpp host name verification over TLS, zipfile/tarfile `maxDecompressedSize`, oauth (stateless `OAuthBearerTokenProcessor`, post login url, client credentials token cache), spring-ws SOAP header filtering (response and outbound), http-common/platform-http-vertx `fileNameExtWhitelist`, URI masking, Rest DSL response Content-Type, chunk direct tag rendered literally, debezium failed engine, coap `muteException`, docling output path, undertow WebSocket security, crypto `CryptoDataFormat`, aws2-s3 unreadable listed objects]
 | ❌ None
-| Runtime behaviour or secure-default changes that need app-specific review (for example `coap://...?muteException=false` to opt back in); nothing to rewrite mechanically. Verified by JIRA key against the `camel-4.22.x` branch: the saga and telegram entries that the guide on `main` lists under 4.22.2 are not on the branch.
+| Runtime behaviour or secure-default changes that need app-specific review (for example `coap://...?muteException=false` to opt back in); nothing to rewrite mechanically. Verified by JIRA key against the `camel-4.22.2` tag: every entry that the guide on `main` lists under 4.22.2 is in the tag except camel-saga (CAMEL-25058), which is not on the `camel-4.22.x` branch.
 |===
 
 == 4.22.1
