@@ -82,7 +82,7 @@ camel418.CamelMigrationRecipe    (4.17   -> 4.18)
 
 ## Target Version Bumps
 
-Only the aggregates set the target version: `latest.yaml` and the LTS yamls (`4.18LTS.yaml`, ...) carry the `UpgradeDependencyVersion` / `UpgradePluginVersion` / `UpgradeParentVersion` / `ChangePropertyValue` entries for `org.apache.camel` and `org.apache.camel.springboot`, in both modules. A version recipe (`4.19.yaml`, `4.22.1.yaml`, ...) must not bump these versions itself: it is shared by every aggregate that includes it, and OpenRewrite's `UpgradeDependencyVersion` never downgrades, so a bump to the latest release inside a version recipe would pin an LTS aggregate to the wrong line. The Spring Boot `4.9.yaml` and `4.10.yaml` predate this rule and still bump `camel-spring-boot-bom`.
+Only the aggregates set the target version: `latest.yaml` and the LTS yamls (`4.18LTS.yaml`, ...) carry the `UpgradeDependencyVersion` / `UpgradePluginVersion` / `UpgradeParentVersion` / `ChangePropertyValue` entries for `org.apache.camel` and `org.apache.camel.springboot`, in both modules. A version recipe (`4.19.yaml`, `4.22.1.yaml`, ...) must not bump these versions itself: it is shared by every aggregate that includes it, and OpenRewrite's `UpgradeDependencyVersion` never downgrades, so a bump to the latest release inside a version recipe would pin an LTS aggregate to the wrong line. `TargetVersionOnlyInAggregatesTest` in both modules fails the build when a version recipe references a `@camel-...-version@` placeholder, upgrades an `org.apache.camel*` coordinate or changes a `camel*version` property.
 
 ## Exception: 4.10.x
 
