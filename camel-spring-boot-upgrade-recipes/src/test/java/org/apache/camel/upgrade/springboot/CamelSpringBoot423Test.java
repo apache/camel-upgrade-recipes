@@ -27,13 +27,9 @@ import static org.openrewrite.properties.Assertions.properties;
 
 /**
  * Each test activates its own narrow camel423 sub-recipe rather than the full
- * camel423.CamelSpringBootMigrationRecipe chain. That chain transitively includes
- * camel419.CamelSpringBootMigrationRecipe, which unconditionally upgrades every existing
- * org.apache.camel.springboot:* dependency to @camel-spring-boot-version@ (this reactor's own
- * project.version) as its very first step; exercising the full chain here would make every
- * assertion depend on that unrelated, reactor-version-sensitive bump instead of on the recipe under
- * test. LatestRecipeTest and the coverage in CamelSpringBoot422Test already guard that the chain is
- * wired correctly.
+ * camel423.CamelSpringBootMigrationRecipe chain, so that every assertion depends only on the
+ * recipe under test. LatestRecipeTest and the coverage in CamelSpringBoot422Test already guard
+ * that the chain is wired correctly; the target-version bumps live in latest.yaml only.
  */
 class CamelSpringBoot423Test implements RewriteTest {
 
