@@ -20,9 +20,11 @@ name: org.apache.camel.upgrade.CamelSpringBoot418LTSMigrationRecipe
 displayName: Migrate to Camel Spring Boot 4.18 LTS
 description: >-
   Migrates Camel Spring Boot applications to 4.18 LTS.
-  This recipe aggregates all migration steps from 4.9 to 4.18.3
+  This recipe aggregates all migration steps from 4.9 to 4.18.5
   while keeping Spring Boot on the 3.x line.
 recipeList:
+  - org.apache.camel.upgrade.camel418_5.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel418_4.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel418_3.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel418_1.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel418.CamelSpringBootMigrationRecipe
@@ -39,6 +41,19 @@ recipeList:
       groupId: 'org.apache.camel.springboot'
       artifactId: 'camel-spring-boot-dependencies'
       newVersion: @camel4.18-lts-version@
+  # Also update property-managed BOMs. UpgradeDependencyVersion resolves the target
+  # version from maven-metadata.xml; when that file is absent (e.g. staging repos),
+  # the recipe silently no-ops on a property reference. ChangePropertyValue sets the
+  # value directly and does not require metadata resolution.
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot.version
+      newValue: @camel4.18-lts-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot-version
+      newValue: @camel4.18-lts-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.springboot.version
+      newValue: @camel4.18-lts-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel'
       artifactId: '*'

@@ -119,7 +119,7 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.springframework.boot</groupId>
                                     <artifactId>spring-boot-starter</artifactId>
-                                    <version>4.1.0</version>
+                                    <version>4.1.1</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
@@ -177,7 +177,7 @@ class CamelSpringBoot422Test implements RewriteTest {
                                 <dependency>
                                     <groupId>org.springframework.boot</groupId>
                                     <artifactId>spring-boot-starter</artifactId>
-                                    <version>4.1.0</version>
+                                    <version>4.1.1</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>org.apache.camel.springboot</groupId>
@@ -191,6 +191,10 @@ class CamelSpringBoot422Test implements RewriteTest {
         );
     }
 
+    /**
+     * The plain artifact is left untouched: the version recipes only migrate code, the target
+     * version is set by latest.yaml and the LTS aggregates.
+     */
     @Test
     void doesNotSwapAiToolInNonBootModule() {
         //language=xml
@@ -209,6 +213,45 @@ class CamelSpringBoot422Test implements RewriteTest {
                                     <groupId>org.apache.camel</groupId>
                                     <artifactId>camel-ai-tool</artifactId>
                                     <version>4.22.0</version>
+                                </dependency>
+                            </dependencies>
+                        </project>
+                        """
+                )
+        );
+    }
+
+    /**
+     * The chain reaches camel419.CamelSpringBootMigrationRecipe, which used to bump every
+     * org.apache.camel and org.apache.camel.springboot coordinate to the latest release. That
+     * pinned every aggregate including it to the latest version, and since UpgradeDependencyVersion
+     * never downgrades, an LTS aggregate could not set its own target afterwards. The bumps now live
+     * only in latest.yaml and the LTS aggregates.
+     */
+    @Test
+    void versionRecipesDoNotBumpCamelVersions() {
+        //language=xml
+        rewriteRun(
+                pomXml(
+                        """
+                        <project>
+                            <groupId>com.example</groupId>
+                            <artifactId>test</artifactId>
+                            <version>1.0.0</version>
+                            <properties>
+                                <camel.version>4.18.0</camel.version>
+                                <maven.compiler.release>17</maven.compiler.release>
+                            </properties>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.apache.camel.springboot</groupId>
+                                    <artifactId>camel-spring-boot-starter</artifactId>
+                                    <version>4.18.0</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core</artifactId>
+                                    <version>${camel.version}</version>
                                 </dependency>
                             </dependencies>
                         </project>

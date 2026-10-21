@@ -20,8 +20,8 @@ import org.apache.camel.upgrade.*;
 import org.junit.platform.suite.api.*;
 
 /**
- * Test suite for Camel 4.18.3 LTS migration.
- * Includes all tests from 4.0 to 4.18.3, covering the complete upgrade path.
+ * Test suite for Camel 4.18.5 LTS migration.
+ * Includes all tests from 4.0 to 4.18.5, covering the complete upgrade path.
  */
 @SelectClasses({
     CamelUpdate45Test.class,
@@ -37,7 +37,9 @@ import org.junit.platform.suite.api.*;
     CamelUpdate417Test.class,
     CamelUpdate418Test.class,
     CamelUpdate418_1Test.class,
-    CamelUpdate418_3Test.class
+    CamelUpdate418_3Test.class,
+    CamelUpdate418_4Test.class,
+    CamelUpdate418_5Test.class
 })
 @SelectPackages({"org.apache.camel.upgrade.versions",
         "org.apache.camel.upgrade.camel40",

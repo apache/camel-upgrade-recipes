@@ -21,29 +21,52 @@ displayName: Migrate to Apache Camel Spring Boot @camel-latest-version@
 description: >-
   Migrate applications to Apache Camel Spring Boot @camel-latest-version@ and Spring Boot @spring-boot-version@.
 recipeList:
-  - org.apache.camel.upgrade.camel422.CamelSpringBootMigrationRecipe
+  # The target-version bumps run first, so that the version recipes below add new starters
+  # against the target Camel Spring Boot BOM. They live only here and in the LTS aggregates:
+  # a version recipe (4.19.yaml, ...) must not bump versions itself, because every aggregate
+  # that includes it would be pinned to this release, and UpgradeDependencyVersion never
+  # downgrades, so an LTS aggregate could not target its own line afterwards.
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel-latest-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.version
+      newValue: @camel-latest-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: '*camel*'
       artifactId: 'camel-spring-boot-bom'
       newVersion: @camel-spring-boot-version@
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: 'org.apache.camel.springboot'
-      artifactId: 'spring-boot'
+      artifactId: '*'
       newVersion: @camel-spring-boot-version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
+  - org.openrewrite.maven.UpgradeParentVersion:
       groupId: 'org.apache.camel.springboot'
-      artifactId: 'camel-spring-boot-dependencies'
+      artifactId: '*'
       newVersion: @camel-spring-boot-version@
   # Also update property-managed BOMs. UpgradeDependencyVersion resolves the target
   # version from maven-metadata.xml; when that file is absent (e.g. staging repos),
   # the recipe silently no-ops on a property reference. ChangePropertyValue sets the
   # value directly and does not require metadata resolution.
   - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot.version
+      newValue: @camel-spring-boot-version@
+  - org.openrewrite.maven.ChangePropertyValue:
       key: camel-spring-boot-version
       newValue: @camel-spring-boot-version@
   - org.openrewrite.maven.ChangePropertyValue:
       key: camel.springboot.version
       newValue: @camel-spring-boot-version@
+  - org.apache.camel.upgrade.camel423.CamelSpringBootMigrationRecipe
   - org.openrewrite.maven.UpgradeDependencyVersion:
       groupId: org.springframework.boot
       artifactId: "*"

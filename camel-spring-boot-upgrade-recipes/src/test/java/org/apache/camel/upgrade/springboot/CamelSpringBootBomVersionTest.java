@@ -18,35 +18,56 @@ package org.apache.camel.upgrade.springboot;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
-import org.openrewrite.config.Environment;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openrewrite.maven.Assertions.pomXml;
 
 /**
- * Regression tests for property-managed BOM version upgrade in CamelSpringBootMigrationRecipe.
+ * Regression tests for the property-managed BOM version upgrade in the aggregate recipes.
  *
  * {@code UpgradeDependencyVersion} resolves the new version from {@code maven-metadata.xml}.
  * When that file is absent from the repository (e.g. staging or mirror repos that do not
  * publish metadata), the recipe silently no-ops on a property reference such as
  * {@code ${camel-spring-boot-version}}. The companion {@code ChangePropertyValue} entries
  * set the property value directly and do not require metadata resolution.
+ * <p>
+ * The rewrite tests run the LTS recipe because its target is a fixed released version, unlike
+ * the latest recipe whose target follows {@code project.version}: an unreleased SNAPSHOT cannot be
+ * resolved, which leaves Maven-parser warning markers in the output that depend on the environment
+ * (and on the number of recipes that touch the POM afterwards), and the expectation would break
+ * at release time. {@link #aggregatesChangeTheBomProperties()} covers {@code latest.yaml} itself.
  */
 class CamelSpringBootBomVersionTest implements RewriteTest {
 
+    private static final Path REWRITE_DIR = Paths.get("src/main/resources/META-INF/rewrite");
+
+    private static final String[] BOM_PROPERTIES = {
+            "camel-spring-boot-version", "camel.springboot.version", "camel-spring-boot.version"};
+
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(Environment.builder()
-                .scanYamlResources()
-                .build()
-                .activateRecipes("org.apache.camel.upgrade.CamelSpringBootMigrationRecipe"));
+        spec.recipeFromResources("org.apache.camel.upgrade.CamelSpringBoot418LTSMigrationRecipe");
     }
 
     /**
-     * BOM imported via {@code ${camel-spring-boot-version}} property — the shape used by
-     * Apache camel-spring-boot-examples. UpgradeDependencyVersion cannot update this when
-     * maven-metadata.xml is absent; ChangePropertyValue is used instead.
+     * BOM imported via {@code ${camel-spring-boot-version}} property, the shape used by
+     * Apache camel-spring-boot-examples.
      */
     @DocumentExample
     @Test
@@ -60,8 +81,7 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                             <artifactId>my-app</artifactId>
                             <version>1.0.0</version>
                             <properties>
-                                <camel-spring-boot-version>4.18.1</camel-spring-boot-version>
-                                <spring-boot-version>3.5.0</spring-boot-version>
+                                <camel-spring-boot-version>4.10.0</camel-spring-boot-version>
                             </properties>
                             <dependencyManagement>
                                 <dependencies>
@@ -82,13 +102,11 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                             <artifactId>my-app</artifactId>
                             <version>1.0.0</version>
                             <properties>
-                                <camel-spring-boot-version>4.23.0-SNAPSHOT</camel-spring-boot-version>
-                                <maven.compiler.release>17</maven.compiler.release>
-                                <spring-boot-version>4.1.0</spring-boot-version>
+                                <camel-spring-boot-version>4.18.5</camel-spring-boot-version>
                             </properties>
                             <dependencyManagement>
                                 <dependencies>
-                                    <!--~~(org.apache.camel.springboot:camel-spring-boot-dependencies:4.23.0-SNAPSHOT failed. Unable to download POM: org.apache.camel.springboot:camel-spring-boot-dependencies:4.23.0-SNAPSHOT.)~~>--><dependency>
+                                    <dependency>
                                         <groupId>org.apache.camel.springboot</groupId>
                                         <artifactId>camel-spring-boot-dependencies</artifactId>
                                         <version>${camel-spring-boot-version}</version>
@@ -117,7 +135,7 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                             <artifactId>my-app</artifactId>
                             <version>1.0.0</version>
                             <properties>
-                                <camel.springboot.version>4.18.1</camel.springboot.version>
+                                <camel.springboot.version>4.10.0</camel.springboot.version>
                             </properties>
                             <dependencyManagement>
                                 <dependencies>
@@ -138,12 +156,11 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                             <artifactId>my-app</artifactId>
                             <version>1.0.0</version>
                             <properties>
-                                <camel.springboot.version>4.23.0-SNAPSHOT</camel.springboot.version>
-                                <maven.compiler.release>17</maven.compiler.release>
+                                <camel.springboot.version>4.18.5</camel.springboot.version>
                             </properties>
                             <dependencyManagement>
                                 <dependencies>
-                                    <!--~~(org.apache.camel.springboot:camel-spring-boot-dependencies:4.23.0-SNAPSHOT failed. Unable to download POM: org.apache.camel.springboot:camel-spring-boot-dependencies:4.23.0-SNAPSHOT.)~~>--><dependency>
+                                    <dependency>
                                         <groupId>org.apache.camel.springboot</groupId>
                                         <artifactId>camel-spring-boot-dependencies</artifactId>
                                         <version>${camel.springboot.version}</version>
@@ -159,13 +176,7 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
     }
 
     /**
-     * Literal-version BOM — handled by the existing UpgradeDependencyVersion entry.
-     * This test confirms that path is preserved and still works.
-     * Note: OpenRewrite cannot resolve {@code 4.23.0-SNAPSHOT} from Maven Central
-     * (no maven-metadata.xml for SNAPSHOT), so {@code UpgradeDependencyVersion} is a
-     * no-op for the literal version. The property-based companion recipes are the
-     * reliable path for SNAPSHOT versions. The {@code maven.compiler.release} property
-     * is added by the Spring Boot 3→4 upgrade recipe triggered by the 4.19 chain.
+     * Literal-version BOM, handled by the {@code UpgradeDependencyVersion} entry.
      */
     @Test
     void literalVersionBomIsUpdated() {
@@ -182,7 +193,7 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                                     <dependency>
                                         <groupId>org.apache.camel.springboot</groupId>
                                         <artifactId>camel-spring-boot-dependencies</artifactId>
-                                        <version>4.18.1</version>
+                                        <version>4.10.0</version>
                                         <type>pom</type>
                                         <scope>import</scope>
                                     </dependency>
@@ -195,15 +206,12 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                             <groupId>com.example</groupId>
                             <artifactId>my-app</artifactId>
                             <version>1.0.0</version>
-                            <properties>
-                                <maven.compiler.release>17</maven.compiler.release>
-                            </properties>
                             <dependencyManagement>
                                 <dependencies>
                                     <dependency>
                                         <groupId>org.apache.camel.springboot</groupId>
                                         <artifactId>camel-spring-boot-dependencies</artifactId>
-                                        <version>4.18.1</version>
+                                        <version>4.18.5</version>
                                         <type>pom</type>
                                         <scope>import</scope>
                                     </dependency>
@@ -213,5 +221,67 @@ class CamelSpringBootBomVersionTest implements RewriteTest {
                         """
                 )
         );
+    }
+
+    /**
+     * Every aggregate ({@code latest.yaml} and the {@code *LTS.yaml} files) that upgrades the
+     * {@code org.apache.camel.springboot} BOM must also set the property names it is commonly
+     * managed through, to the same target version. This is checked on the yaml source so that it
+     * does not depend on the target version being resolvable.
+     */
+    @Test
+    void aggregatesChangeTheBomProperties() throws IOException {
+        List<Path> aggregates;
+        try (Stream<Path> files = Files.list(REWRITE_DIR)) {
+            aggregates = files
+                    .filter(p -> p.getFileName().toString().equals("latest.yaml")
+                            || p.getFileName().toString().endsWith("LTS.yaml"))
+                    .sorted()
+                    .toList();
+        }
+        assertFalse(aggregates.isEmpty(), "no aggregate yaml found in " + REWRITE_DIR.toAbsolutePath());
+
+        for (Path aggregate : aggregates) {
+            List<Map<String, String>> entries = recipeEntries(Files.readString(aggregate));
+            String bomVersion = entries.stream()
+                    .filter(e -> "org.openrewrite.maven.UpgradeDependencyVersion".equals(e.get("recipe")))
+                    .filter(e -> "org.apache.camel.springboot".equals(e.get("groupId")))
+                    .map(e -> e.get("newVersion"))
+                    .findFirst()
+                    .orElse(null);
+            assertNotNull(bomVersion, aggregate.getFileName() + " does not upgrade the org.apache.camel.springboot BOM");
+            for (String property : BOM_PROPERTIES) {
+                assertTrue(entries.stream().anyMatch(e -> "org.openrewrite.maven.ChangePropertyValue".equals(e.get("recipe"))
+                                && property.equals(e.get("key"))
+                                && bomVersion.equals(e.get("newValue"))),
+                        aggregate.getFileName() + " does not set the " + property + " property to " + bomVersion);
+            }
+        }
+    }
+
+    private static final Pattern ENTRY = Pattern.compile("^  - ([\\w.]+):?\\s*$");
+    private static final Pattern OPTION = Pattern.compile("^      (\\w+):\\s*(.+?)\\s*$");
+
+    /**
+     * Reads the {@code recipeList} entries of a yaml file as maps of the recipe name ({@code recipe})
+     * and its options. Only the flat {@code key: value} options used by the aggregates are read.
+     */
+    private static List<Map<String, String>> recipeEntries(String yaml) {
+        List<Map<String, String>> entries = new ArrayList<>();
+        Map<String, String> current = null;
+        for (String line : yaml.split("\n")) {
+            Matcher entry = ENTRY.matcher(line);
+            if (entry.matches()) {
+                current = new LinkedHashMap<>();
+                current.put("recipe", entry.group(1));
+                entries.add(current);
+                continue;
+            }
+            Matcher option = OPTION.matcher(line);
+            if (current != null && option.matches()) {
+                current.put(option.group(1), option.group(2).replaceAll("^['\"]|['\"]$", ""));
+            }
+        }
+        return entries;
     }
 }

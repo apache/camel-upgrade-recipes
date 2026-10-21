@@ -28,7 +28,3 @@ recipeList:
   - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
   - org.apache.camel.upgrade.UpgradeToJava17
   - org.apache.camel.upgrade.JavaVersion17
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: '*camel*'
-      artifactId: 'camel-spring-boot-bom'
-      newVersion: @camel-spring-boot-version@

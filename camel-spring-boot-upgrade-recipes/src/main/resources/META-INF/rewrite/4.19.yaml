@@ -20,38 +20,6 @@ name: org.apache.camel.upgrade.camel419.CamelSpringBootMigrationRecipe
 displayName: Migrates Camel Spring Boot applications to Camel Spring Boot 4.19
 description: Migrates Camel Spring Boot applications to Camel Spring Boot 4.19.
 recipeList:
-  # Upgrade versions FIRST before adding new 4.19 dependencies
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel'
-      artifactId: '*'
-      newVersion: @camel-latest-version@
-  - org.openrewrite.maven.UpgradePluginVersion:
-      groupId: 'org.apache.camel'
-      artifactId: '*'
-      newVersion: @camel-latest-version@
-  - org.openrewrite.maven.UpgradeParentVersion:
-      groupId: 'org.apache.camel'
-      artifactId: '*'
-      newVersion: @camel-latest-version@
-  - org.openrewrite.maven.ChangePropertyValue:
-      key: camel.version
-      newValue: @camel-latest-version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: '*camel*'
-      artifactId: 'camel-spring-boot-bom'
-      newVersion: @camel-spring-boot-version@
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: '*'
-      newVersion: @camel-spring-boot-version@
-  - org.openrewrite.maven.UpgradeParentVersion:
-      groupId: 'org.apache.camel.springboot'
-      artifactId: '*'
-      newVersion: @camel-spring-boot-version@
-  - org.openrewrite.maven.ChangePropertyValue:
-      key: camel-spring-boot.version
-      newValue: @camel-spring-boot-version@
-  # Now run API migrations that may add new dependencies
   - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
   - org.apache.camel.upgrade.camel418.CamelSpringBootMigrationRecipe
   - org.apache.camel.upgrade.camel419.upgradeJUnit5To6
