@@ -794,7 +794,7 @@ public class CamelUpdate423Test implements RewriteTest {
                                     @Override
                                     public void configure() {
                                         from("direct:openai")
-                                            .removeProperty(/* CAMEL-24539 (Camel 4.22.1): with storeFullResponse=true, embeddings/audio-transcription/audio-translation now use CamelOpenAIEmbeddingsResponse/CamelOpenAIAudioTranscriptionResponse/CamelOpenAIAudioTranslationResponse instead of CamelOpenAIResponse; chat-completion is unchanged. Verify which operation this refers to and update the property name manually if needed.*/"CamelOpenAIResponse");
+                                            .removeProperty(/* CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.*/"CamelOpenAIResponse");
                                     }
                                 }
                                 """
