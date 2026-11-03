@@ -1,0 +1,93 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.CamelSpringBoot422LTSMigrationRecipe
+displayName: Migrate to Camel Spring Boot 4.22 LTS
+description: >-
+  Migrates Camel Spring Boot applications to 4.22 LTS and Spring Boot @spring-boot-version@.
+  This recipe aggregates all migration steps from 4.9 to @camel4.22-lts-version@.
+recipeList:
+  # The target-version bumps run first, as in latest.yaml, so that the version recipes below add
+  # new starters against the target Camel Spring Boot BOM.
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.version
+      newValue: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: '*camel*'
+      artifactId: 'camel-spring-boot-bom'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel.springboot'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel.springboot'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  # Also update property-managed BOMs. UpgradeDependencyVersion resolves the target
+  # version from maven-metadata.xml; when that file is absent (e.g. staging repos),
+  # the recipe silently no-ops on a property reference. ChangePropertyValue sets the
+  # value directly and does not require metadata resolution.
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot.version
+      newValue: @camel4.22-lts-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel-spring-boot-version
+      newValue: @camel4.22-lts-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.springboot.version
+      newValue: @camel4.22-lts-version@
+  - org.apache.camel.upgrade.camel422_2.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel422.CamelSpringBootMigrationRecipe
+  # Camel Spring Boot 4.22.x runs on the same Spring Boot line as the latest release, so the
+  # Spring targets are shared with latest.yaml: the Spring Boot 3 to 4 migration chained through
+  # camel419.CamelSpringBootMigrationRecipe already moves to those versions.
+  # CamelSpringBoot422LtsVersionTest fails once the latest Spring Boot line moves on.
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.springframework.boot
+      artifactId: "*"
+      newVersion: @spring-boot-version@
+      overrideManagedVersion: false
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: spring-boot-version
+      newValue: @spring-boot-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-maven-plugin
+      newVersion: @spring-boot-version@
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: org.springframework
+      artifactId: "*"
+      newVersion: @springframework-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-parent
+      newVersion: @spring-boot-version@

@@ -175,6 +175,10 @@ public class CamelTestUtil {
         return getString(
                 "camel4.18.lts.version", "Could not determine 4.18 lts version from properties file.");
     }
+    public static String getCamel422LtsVersion() {
+        return getString(
+                "camel4.22.lts.version", "Could not determine 4.22 lts version from properties file.");
+    }
 
 
     /**
@@ -242,6 +246,8 @@ public class CamelTestUtil {
                 return getCamelLatestVersion();
             case "org.apache.camel.upgrade.Camel418LTSMigrationRecipe":
                 return getCamel418LtsVersion();
+            case "org.apache.camel.upgrade.Camel422LTSMigrationRecipe":
+                return getCamel422LtsVersion();
             case "org.apache.camel.upgrade.Camel410LTSMigrationRecipe":
                 return getCamel410LtsVersion();
             default:
