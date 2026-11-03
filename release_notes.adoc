@@ -1,5 +1,11 @@
 = Camel Upgrade Recipes - Release notes
 
+== 4.24.0
+
+=== Camel 4.22 LTS migration recipes
+
+New aggregates for the Camel 4.22 LTS line (https://github.com/apache/camel-upgrade-recipes/issues/129[#129]), following the 4.18 LTS ones: `Camel422LTSMigrationRecipe` (`4.22LTS.yaml` in `camel-upgrade-recipes`) and `CamelSpringBoot422LTSMigrationRecipe` (`4.22LTS.yaml` in `camel-spring-boot-upgrade-recipes`). They chain every version recipe up to `camel422`, then the 4.22.1 and 4.22.2 patch recipes, without the 4.23 changes, and set the Camel and Camel Spring Boot versions to 4.22.2 (the `camel4.22-lts-version` property). Camel Spring Boot 4.22.x is on the same Spring Boot 4.1.x line as the latest release, so the Spring Boot aggregate shares the Spring targets of `CamelSpringBootMigrationRecipe`; `CamelSpringBoot422LtsVersionTest` fails once the latest Spring Boot target leaves that line. `CamelUpdate422LtsTestSuite` runs the 4.0 to 4.22.2 tests against the core aggregate.
+
 == 4.23.0
 
 === Summary
