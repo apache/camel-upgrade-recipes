@@ -1,0 +1,61 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.upgrade.Camel422LTSMigrationRecipe
+displayName: Migrate to Camel 4.22LTS
+description: Migrates Apache Camel application to 4.22 LTS. This recipe aggregates all migration steps from 4.0 to @camel4.22-lts-version@.
+recipeList:
+  - org.apache.camel.upgrade.camel422_2.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel422_1.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel422.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel421.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel420.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel419.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel418.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel417.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel416.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel415.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel414.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel413.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel412.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel411.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel410.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel49.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel47.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel46.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel45.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel44.CamelMigrationRecipe
+  - org.apache.camel.upgrade.camel40.CamelMigrationRecipe
+  - org.apache.camel.upgrade.UpgradeToJava17
+  - org.apache.camel.upgrade.JavaVersion17
+  - org.apache.camel.upgrade.UpdatePropertiesAndYamlKeys
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradePluginVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.UpgradeParentVersion:
+      groupId: 'org.apache.camel'
+      artifactId: '*'
+      newVersion: @camel4.22-lts-version@
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: camel.version
+      newValue: @camel4.22-lts-version@

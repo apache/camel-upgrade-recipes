@@ -35,7 +35,9 @@
         <!-- Items annotated with @sync are updated by running `mvn -f camel-spring-boot-upgrade-recipes cq:sync-versions -N`
              from the repository root. Run it after changing a spring-boot version, otherwise CI fails. -->
 
-        <!-- versions for camel-spring-boot latest, has to be kept aligned to the latest camel-spring-boot release -->
+        <!-- versions for camel-spring-boot latest, has to be kept aligned to the latest camel-spring-boot release.
+             Also the Spring targets of CamelSpringBoot422LTSMigrationRecipe, since camel-spring-boot 4.22.x is on the
+             same Spring Boot 4.1.x line: CamelSpringBoot422LtsVersionTest fails when spring-boot-version leaves it. -->
         <spring-boot-version>4.1.2</spring-boot-version>
         <springframework-version>7.0.10</springframework-version><!-- @sync org.springframework.boot:spring-boot-dependencies:${spring-boot-version} prop:spring-framework.version -->
         <spring-security-version>7.1.2</spring-security-version><!-- @sync org.springframework.boot:spring-boot-dependencies:${spring-boot-version} prop:spring-security.version -->
