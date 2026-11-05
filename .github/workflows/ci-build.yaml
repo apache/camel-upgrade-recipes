@@ -74,3 +74,8 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B clean install -Dno-format
+
+      - name: Check Spring versions are in sync with the Spring Boot BOMs
+        run: |
+          mvn -B -f camel-spring-boot-upgrade-recipes cq:sync-versions -N
+          git diff --exit-code

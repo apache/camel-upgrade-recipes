@@ -91,6 +91,9 @@ This project is released as standard Apache Camel module.
         <rewrite-recipe-bom.version>3.24.0</rewrite-recipe-bom.version>
 ```
 
+NOTE: The Spring Framework, Security and Batch versions in `camel-spring-boot-upgrade-recipes/pom.xml` are annotated with `@sync` and derived from the matching `spring-boot-dependencies` BOM.
+After changing a `spring-boot-*version` property, run `mvn -f camel-spring-boot-upgrade-recipes cq:sync-versions -N` from the repository root and commit the result. CI fails if they are out of sync.
+
 NOTE: The `camel-latest-version` property is automatically verified by the test suite (`LatestCamelVersionTest`) to match the highest version recipe file. If you add a new version recipe (e.g., `4.21.yaml`), the test will fail until you update the property.
 
 Check that everything is alright and run:
