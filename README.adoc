@@ -189,8 +189,7 @@ svn commit -m "Cleaning cancelled Camel Upgrade Recipes release *$VERSION)"
 
 ## Applying OpenRewrite best practices
 
-On pull requests, a GitHub Action is run to apply OpenRewrite best practices to the codebase.
-To minimize changes, you can run the following command locally to apply the same best practices:
+The `openrewrite` profile applies the OpenRewrite recipe best practices to the codebase. Run it locally before opening a pull request:
 
 ```
 mvn -Popenrewrite rewrite:run
