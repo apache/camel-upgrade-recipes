@@ -17,7 +17,6 @@
 package org.apache.camel.upgrade;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.test.TypeValidation;
@@ -46,7 +45,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void javaDslFlagsOccurrencesAndLeavesLookalikesAndUnrelatedConstantAlone() {
         //language=java
         rewriteRun(
@@ -121,7 +119,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void javaDslWithoutCamelOpenAIDependencyIsUnchanged() {
         //language=java
         rewriteRun(
@@ -144,7 +141,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void javaDslIsIdempotent() {
         //language=java
         rewriteRun(
@@ -167,7 +163,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void yamlDslFlagsOccurrencesAndLeavesLookalikesAlone() {
         //language=yaml
         rewriteRun(
@@ -178,32 +173,32 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         - route:
                             from:
                               uri: "direct:openai"
-                            steps:
-                              - setProperty:
-                                  name: CamelOpenAIResponseModel
-                                  constant: keep-model
-                              - setProperty:
-                                  name: CamelOpenAIResponse
-                                  simple: "${exchangeProperty.CamelOpenAIResponse}"
-                              - setBody:
-                                  simple: "${exchangeProperty.CamelOpenAIResponse.data}"
+                              steps:
+                                - setProperty:
+                                    name: CamelOpenAIResponseModel
+                                    constant: keep-model
+                                - setProperty:
+                                    name: CamelOpenAIResponse
+                                    simple: "${exchangeProperty.CamelOpenAIResponse}"
+                                - setBody:
+                                    simple: "${exchangeProperty.CamelOpenAIResponse.data}"
                         """,
                         """
                         - route:
                             from:
                               uri: "direct:openai"
-                            steps:
-                              - setProperty:
-                                  name: CamelOpenAIResponseModel
-                                  constant: keep-model
-                              - setProperty:
-                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
-                                  name: CamelOpenAIResponse
-                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
-                                  simple: "${exchangeProperty.CamelOpenAIResponse}"
-                              - setBody:
-                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
-                                  simple: "${exchangeProperty.CamelOpenAIResponse.data}"
+                              steps:
+                                - setProperty:
+                                    name: CamelOpenAIResponseModel
+                                    constant: keep-model
+                                - setProperty:
+                                    # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
+                                    name: CamelOpenAIResponse
+                                    # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
+                                    simple: "${exchangeProperty.CamelOpenAIResponse}"
+                                - setBody:
+                                    # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
+                                    simple: "${exchangeProperty.CamelOpenAIResponse.data}"
                         """
                 )
                 )
@@ -211,7 +206,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void yamlDslIsIdempotent() {
         //language=yaml
         rewriteRun(
@@ -222,12 +216,12 @@ public class CamelUpdate422_1Test implements RewriteTest {
                         - route:
                             from:
                               uri: "direct:openai"
-                            steps:
-                              - setProperty:
-                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
-                                  name: CamelOpenAIResponse
-                                  # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
-                                  simple: "${exchangeProperty.CamelOpenAIResponse}"
+                              steps:
+                                - setProperty:
+                                    # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
+                                    name: CamelOpenAIResponse
+                                    # CAMEL-24539: with storeFullResponse=true, embeddings and audio operations now store the full response under CamelOpenAIEmbeddingsResponse or CamelOpenAIAudio*Response instead of CamelOpenAIResponse; review this usage.
+                                    simple: "${exchangeProperty.CamelOpenAIResponse}"
                         """
                 )
                 )
@@ -235,7 +229,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void xmlDslFlagsOccurrencesAndLeavesLookalikesAlone() {
         //language=xml
         rewriteRun(
@@ -272,7 +265,6 @@ public class CamelUpdate422_1Test implements RewriteTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = CamelTestUtil.PROPERTY_USE_RECIPE, matches = ".+")
     void xmlDslIsIdempotent() {
         //language=xml
         rewriteRun(
